@@ -9,6 +9,9 @@
 
 ![Device](./fotos/device.jpg)
 ![Device 3d](./fotos/device3d.jpg)
+![Fysiek2](./fotos/Fysiek2.jpg)
+![Fysiek1](./fotos/Fysiek1.jpg)
+
 
 ### Benodigdheden
 
