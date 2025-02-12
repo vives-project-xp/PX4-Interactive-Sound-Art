@@ -36,3 +36,4 @@ Bekabeling Speaker: USB connectie
 
 Alles zou moeten worden gevoed worden via 1 stekker dus er zouden vanuit de 1ne "SoundBox" naar de andere stroomkabels moeten leiden
 ![bekabelingMacro](./fotos/voorstelling%20bekabeling%20Macro.png)
+Volledig draadloos langs buiten? -> Batterijen? -> zwaarder -> duurder 
