@@ -18,6 +18,7 @@ Bekabeling Raspberry Pi 5: Raspberry Pi 27W USB-C Power Supply - Zwart - EU
 ![PinoutRPi5](./fotos/raspberry-pi-5-gpio-pinout-diagram.webp)
 
 Bekabeling ESP32: Micro-USB / USB-C aansluiten op 5V  
+ESP32 op het stroomnet? -> AC naar DC omvormer (5V netvoeding)
 ![PinoutESP32](./fotos/esp32Pinout.png)
 
 
