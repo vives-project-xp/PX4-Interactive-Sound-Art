@@ -12,3 +12,6 @@ de noten die gespeeld worden in die toonlader/sleutel horen. We kunnen ook kijke
 - speelt toon af met juist pitch of sample
 
 
+- Bv: om de 10cm een noot (dus 120cm)
+- 1 noot die doorklinkt (dus we werken met hele noten voor te beginnen)
+- Voorlopig met apparte files werken, (misschien later noten in code veranderen)
