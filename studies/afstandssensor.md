@@ -10,7 +10,7 @@
 https://opencircuit.be/product/hc-sr04-ultrasonische-afstands-detectie-module
 
 ## VL53L0X
- - Gebruikt laser (infrarood) i.p.v. geluid → Geen last van lawaai!
+ - Gebruikt laser (infrarood) i.p.v. geluid → Geen last van lawaai! 
  - Goedkoop
  - Spanning(voeding en signaal): 3.3-5V DC
  - Detectie afstand: 50-1200mm(standaard)
