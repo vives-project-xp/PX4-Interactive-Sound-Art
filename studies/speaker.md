@@ -4,6 +4,7 @@
 - Kan je mooi aan de "doos" monteren 
 - PAM8610 of andere module nodig voor aansluiting met de pi (12V voeding aangeraden)
 - ![alt text](./fotos/versterkingsmodule.webp)
+- LM385 audio amplifier (voorbeeld: https://www.instructables.com/ESP-32-Based-Audio-Player/) 
 
 - **Extra info**: 
   - De PAM8610 biedt 10W vermogen per kanaal (stereo-output).
