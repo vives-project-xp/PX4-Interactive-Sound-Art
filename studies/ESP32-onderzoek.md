@@ -171,22 +171,3 @@ Door deze technieken toe te passen, kan de gebruiker een **expressief instrument
 
 ---
 
-## 🔹 Toepassing in Jouw Project
-Voor jouw project, waarbij **de handhoogte het geluid van een instrument regelt**, kan deze methode worden gebruikt om:
-
-✅ **Realistische instrumentklanken te genereren** via **SoundFonts en FluidSynth**  
-✅ **Dynamische toonhoogte te berekenen** op basis van de handhoogte  
-✅ **Hoge kwaliteit geluid uit te sturen** via **PCM5102A naar een speaker**  
-✅ **Extra expressie toe te voegen** door volume, pitch bending en instrumentwisselingen  
-
----
-
-## 🔹 Conclusie
-De **combinatie van ESP32 + PCM5102A + FluidSynth** maakt het mogelijk om een **realistisch, interactief muzikaal instrument** te bouwen. Dit systeem kan gebruikt worden voor **touchless synthesizers, interactieve installaties en experimentele muziekprojecten**.
-
-💡 **Vervolgonderzoek kan zich richten op:**
-- **Meerdere ESP32’s synchroniseren voor een orkest-effect**
-- **Realtime effecten toevoegen, zoals echo en reverb**
-- **Draadloze aansturing via Bluetooth MIDI**
-
-🚀 **Deze methode vormt de basis voor een innovatief en expressief muzikaal project!** 🎶

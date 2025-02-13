@@ -18,6 +18,7 @@ Bekabeling Raspberry Pi 5: Raspberry Pi 27W USB-C Power Supply - Zwart - EU
 ![PinoutRPi5](./fotos/raspberry-pi-5-gpio-pinout-diagram.webp)
 
 Bekabeling ESP32: Micro-USB / USB-C aansluiten op 5V  
+ESP32 op het stroomnet? -> AC naar DC omvormer (5V netvoeding)
 ![PinoutESP32](./fotos/esp32Pinout.png)
 
 
@@ -41,4 +42,9 @@ Bekabeling Speaker: USB connectie
 
 Alles zou moeten worden gevoed worden via 1 stekker dus er zouden vanuit de 1ne "SoundBox" naar de andere stroomkabels moeten leiden  
 ![bekabelingMacro](./fotos/voorstelling%20bekabeling%20Macro.png)
+
+
 Volledig draadloos langs buiten? -> Batterijen? -> zwaarder -> duurder 
+
+Wifi of Bluetooth voor draadloze communicatie?
+Meerdere "SoundBoxes" connecten via ESP-Now (indien we ESP32 gebruiken)
