@@ -14,26 +14,31 @@ Stroomvoorziening Speaker: 12V
 
 ## Bekabeling
 
-Bekabeling Raspberry Pi 5: Raspberry Pi 27W USB-C Power Supply - Zwart - EU   
+Bekabeling Raspberry Pi 5: Raspberry Pi 27W USB-C Power Supply - Zwart - EU     
 ![PinoutRPi5](./fotos/raspberry-pi-5-gpio-pinout-diagram.webp)
-Bekabeling SK6812 LEDs: ![alt text](./fotos/SK6812LED.png)
+
+Bekabeling ESP32: Micro-USB / USB-C aansluiten op 5V  
+![PinoutESP32](./fotos/esp32Pinout.png)
+
+
+Bekabeling SK6812 LEDs:   ![alt text](./fotos/SK6812LED.png)
 
 Bekabeling Bewegingssensor: 
 - HC-SR04:
 VCC: Powers the sensor (5V)
 Trig: Trigger Input Pin
 Echo: Echo Output Pin
-GND: Common GND
+GND: Common GND  
 ![ArduinoAansluiting](./fotos/ultrasonic-sensor-with-arduino-hc-sr04.webp)
 - VL53L0X: 
 IN: 3.3-5V DC Ingangsspanning
 GND: ground/min
 SCL: I2C clock signaal
-SDA: I2C data signaal
+SDA: I2C data signaal  
 ![PinoutVL53L0X](./fotos/VL53L0XPinout.png)
 
 Bekabeling Speaker: USB connectie
 
-Alles zou moeten worden gevoed worden via 1 stekker dus er zouden vanuit de 1ne "SoundBox" naar de andere stroomkabels moeten leiden
+Alles zou moeten worden gevoed worden via 1 stekker dus er zouden vanuit de 1ne "SoundBox" naar de andere stroomkabels moeten leiden  
 ![bekabelingMacro](./fotos/voorstelling%20bekabeling%20Macro.png)
 Volledig draadloos langs buiten? -> Batterijen? -> zwaarder -> duurder 
