@@ -13,7 +13,7 @@
 - Flexibel en krachtiger dan USB-speakers.
 - Geschikt voor maatwerkprojecten en betere geluidskwaliteit.
 - Geen softwarematige drivers nodig.
-
+S
 ### Nadelen:
 - Complexere setup met aparte voeding en mogelijk soldeerwerk.
 - Kans op storing bij incorrecte bekabeling of voeding.
