@@ -15,3 +15,5 @@ de noten die gespeeld worden in die toonlader/sleutel horen. We kunnen ook kijke
 - Bv: om de 10cm een noot (dus 120cm)
 - 1 noot die doorklinkt (dus we werken met hele noten voor te beginnen)
 - Voorlopig met apparte files werken, (misschien later noten in code veranderen)
+
+- Latere uitbreiding (akkoorden, gebroken akkoorden etc...)
