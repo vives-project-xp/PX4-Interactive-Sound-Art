@@ -18,12 +18,11 @@
 - Onderkant "kist" uit bv. hout
 - Speaker
 - Microcontroller
-- Regeling power
+- Regeling power (Level shifters, spanningsregelaar, ??)
 - Sensor
 - Ledstrip
 - [Acrylen buis](https://www.kunststofshop.nl/acrylaat-plexiglas/acrylaat-buizen/melkwit-opaal/acrylaat-buis-opaal-2000x90x3mm-2000x90x3mm/a-7699-20000036)
 - [Doorzichtige velcro](https://www.conrad.be/nl/p/3m-klittenband-om-vast-te-plakken-l-x-b-1-25-m-x-25-mm-transparant-1-stuk-s-2144908.html?gad_source=1&refresh=true)
-- Level shifters???
 
 
 ### Uitbreiding
