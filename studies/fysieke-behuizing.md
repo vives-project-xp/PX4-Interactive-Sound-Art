@@ -12,18 +12,16 @@
 ![Fysiek2](./fotos/Fysiek2.jpg)
 ![Fysiek1](./fotos/Fysiek1.jpg)
 
-
 ### Benodigdheden
 
 - Onderkant "kist" uit bv. hout
 - Speaker
-- Microcontroller 
+- Microcontroller
 - Regeling power (level shifters, spanningsregelaar, ??)
 - Sensor
 - Ledstrip (content addressable)
 - [Acrylen buis](https://www.kunststofshop.nl/acrylaat-plexiglas/acrylaat-buizen/melkwit-opaal/acrylaat-buis-opaal-2000x90x3mm-2000x90x3mm/a-7699-20000036)
 - [Doorzichtige velcro](https://www.conrad.be/nl/p/3m-klittenband-om-vast-te-plakken-l-x-b-1-25-m-x-25-mm-transparant-1-stuk-s-2144908.html?gad_source=1&refresh=true)
-
 
 ### Uitbreiding
 
@@ -33,3 +31,27 @@
 
 ![Idee1](./fotos/idee1.png)
 Hier wordt een microfoon gebruikt om zo alle lichtpalen te bedienen, wat niet de bedoeling is bij ons.
+
+## Uitgewerkt concept
+
+### Uiterlijk
+
+![Device](./fotos/device.jpg)
+
+- Gemaakt uit hout.
+- Stok lengte: 1m20
+- Stroom kan gechained worden.
+- Led strip kan in stukken gedaan worden zodat je bijvoorbeeld in de buis aan 2 kanten een stuk ledstrip hebt, zodat het licht niet op 1 plaatst schijnt.
+
+### Blokje
+
+- Magnetische strook aan binnenkant lichtbuis.
+- Magneet in het blokje.
+- Blokje gemaakt uit licht materiaal.
+
+### Binnenkant
+
+- Raspberry pi
+- Speaker zit aan de houten box vast.
+- Stroom chain werkt met verdeelstekkers. 4 stekkers per box.
+- 3.3V naar 5.0V switch voor data van raspberry pi naar ledstrip.
