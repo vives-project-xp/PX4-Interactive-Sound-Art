@@ -1,6 +1,15 @@
 # Geluid afspelen op de Raspberry Pi 4
 
-Voor het afspelen van geluid op de Raspberry Pi 4 hebben we de volgende tools gebruikt:
+## Verbinden met de Raspberry Pi via SSH (Remote connection)
+
+We hebben op afstand verbinding gemaakt met de Raspberry Pi 4 via SSH met het volgende commando:  
+
+```bash
+ssh pi@<Raspberry_Pi_IP>
+```
+Zo kunnen we vanaf onze eigen PC snel en efficiënt taken uitvoeren.
+
+## Voor het afspelen van geluid op de Raspberry Pi 4 hebben we de volgende tools gebruikt:
 
 - **Audio-uitvoer**: We hebben de juiste audio-uitgang (HDMI of 3,5 mm jack) ingesteld via `raspi-config`.
 - **Software**: We hebben `mpg123` voor MP3-bestanden en `alsa-utils` voor WAV-bestanden geïnstalleerd.
