@@ -1,49 +1,50 @@
-# Geluid afspelen op de Raspberry Pi 4
+# Geluid afspelen en sensor-integratie op de Raspberry Pi 4  
 
-## Verbinden met de Raspberry Pi via SSH (Remote connection)
+## Inleiding  
+In dit project hebben we een Raspberry Pi 4 gebruikt om geluid af te spelen en te reageren op metingen van een ultrasone sensor. We hebben audio-uitvoer ingesteld, software geïnstalleerd en een Python-script geschreven om geluid te laten afspelen op basis van afstandsmetingen.  
 
-We hebben op afstand verbinding gemaakt met de Raspberry Pi 4 via SSH met het volgende commando:  
+## Verbinden met de Raspberry Pi via SSH  
+We hebben de Raspberry Pi 4 op afstand benaderd (remote connection) met:  
 
 ```bash
-ssh pi@<Raspberry_Pi_IP>
+ssh username@<hostname>
 ```
 Zo kunnen we vanaf onze eigen PC snel en efficiënt taken uitvoeren.
 
-## Voor het afspelen van geluid op de Raspberry Pi 4 hebben we de volgende tools gebruikt:
+## Benodigde hardware
+- Raspberry Pi 4
+- Ultrasone afstandssensor (HC-SR04)
+- Speakers of hoofdtelefoon
+- Jumper wires
 
-- **Audio-uitvoer**: We hebben de juiste audio-uitgang (HDMI of 3,5 mm jack) ingesteld via `raspi-config`.
-- **Software**: We hebben `mpg123` voor MP3-bestanden en `alsa-utils` voor WAV-bestanden geïnstalleerd.
-- **Python**: We gebruikten de `pygame` bibliotheek om geluid af te spelen via een Python-script.
+## Software-installatie
+Om audio en sensormetingen te gebruiken, installeerden we:
+```bash
+sudo apt-get install mpg123 alsa-utils python3-pygame
+```
+Daarnaast moeten `RPi.GPIO` en `pygame` correct werken binnen Python.
 
-## Stappen:
+## Eerste geluidstest
+We hebben getest of de Raspberry Pi 4 audio kon afspelen met dit Python-script in Thonny:
+```python
+import pygame
 
-1. Installeer de benodigde software:
-    ```bash
-    sudo apt-get install mpg123 alsa-utils python3-pygame
-    ```
+pygame.mixer.init()
+pygame.mixer.music.load("pad/naar/bestand.mp3")
+pygame.mixer.music.play()
 
-2. Gebruik een Python-script om geluid af te spelen die we hebben gemaakt en getest via thonny die al op de RPI4 stond:
-    ```python
-    import pygame
+while pygame.mixer.music.get_busy():
+    pygame.time.Clock().tick(10)
+```
+Uitvoering via de terminal:
+```bash
+python3 play_audio.py
+```
 
-    pygame.mixer.init()
-    pygame.mixer.music.load("pad/naar/bestand.mp3")
-    pygame.mixer.music.play()
 
-    while pygame.mixer.music.get_busy():
-        pygame.time.Clock().tick(10)
-    ```
+## Geluid afspelen op basis van afstandsmetingen
 
-3. Voer het script uit (wanneer in command promt wordt getest):
-    ```bash
-    python3 play_audio.py 
-    ```
-
-Met deze stappen hebben we ons eerste geluid afspeelt via onze Raspberry Pi 4. 
-
-## Code die word getest op 20/02/2025
-
-Code die het mogelijk maakt om verschillende geluiden aftespelen aan de hand van wat de ultrasone sensor meet
+Dit script meet afstand met een ultrasone sensor en speelt een geluid af afhankelijk van de afstand:
  ```python
 import time
 import RPi.GPIO as GPIO
