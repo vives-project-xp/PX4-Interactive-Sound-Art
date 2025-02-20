@@ -828,3 +828,120 @@ except KeyboardInterrupt:
     strip.show()
     GPIO.cleanup()
 ```
+
+```python
+import time
+import RPi.GPIO as GPIO
+import pygame
+from rpi_ws281x import PixelStrip, Color, ws
+import numpy as np  # For moving average filter
+
+# GPIO-configuratie voor de HC-SR04
+TRIG_PIN = 5  # GPIO 5 - Trigger
+ECHO_PIN = 6  # GPIO 6 - Echo
+
+# LED-strip configuratie voor SK6812 RGBW
+LED_COUNT = 100       # Aantal LEDs
+LED_PIN = 18          # GPIO-pin voor dataverkeer (PWM)
+LED_FREQ_HZ = 800000  # LED signaal frequentie (800kHz)
+LED_DMA = 10          # DMA-kanaal
+LED_BRIGHTNESS = 50   # Start helderheid (0-255)
+LED_INVERT = False    # True als een inverterende schakeling wordt gebruikt
+LED_CHANNEL = 0       # Meestal 0, tenzij alternatieve PWM-kanaal
+
+# LED-strip type (SK6812 RGBW)
+strip_type = ws.SK6812_STRIP_RGBW
+
+# GPIO-instellingen
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(TRIG_PIN, GPIO.OUT)
+GPIO.setup(ECHO_PIN, GPIO.IN)
+
+# Initialiseer pygame voor audio
+pygame.mixer.init()
+
+# Laad de audiobestanden
+short_sound = pygame.mixer.Sound("sample1.wav")  
+medium_sound = pygame.mixer.Sound("sample2.wav")  
+long_sound = pygame.mixer.Sound("sample3.wav")    
+
+# Initialiseer de LED-strip
+strip = PixelStrip(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT,
+                     LED_BRIGHTNESS, LED_CHANNEL, strip_type=strip_type)
+strip.begin()
+
+# Moving average filter for smoothing distance readings
+window_size = 5  # Number of readings to average
+distance_buffer = np.zeros(window_size)
+
+def measure_distance():
+    """ Meet de afstand met de HC-SR04 en retourneert een gefilterde waarde in cm. """
+    GPIO.output(TRIG_PIN, False)
+    time.sleep(0.001)  # Minimal stabilization time
+
+    GPIO.output(TRIG_PIN, True)
+    time.sleep(0.00001)
+    GPIO.output(TRIG_PIN, False)
+
+    start_time, stop_time = time.time(), time.time()
+
+    while GPIO.input(ECHO_PIN) == 0:
+        start_time = time.time()
+
+    while GPIO.input(ECHO_PIN) == 1:
+        stop_time = time.time()
+
+    elapsed_time = stop_time - start_time
+    distance = (elapsed_time * 34300) / 2  # Omrekenen naar cm
+
+    # Store distance in buffer and apply moving average filter
+    global distance_buffer
+    distance_buffer = np.roll(distance_buffer, -1)
+    distance_buffer[-1] = distance
+    filtered_distance = np.mean(distance_buffer)
+
+    return max(5, min(filtered_distance, LED_COUNT * 1.5))  # Limit values to avoid errors
+
+def update_leds(distance):
+    """ Direct update LEDs to match hand level without delay. """
+    leds_to_light = int(distance / 1.5)  # 1.5 cm per LED
+    print(f"Afstand: {distance:.2f} cm -> LEDs aan: {leds_to_light}")
+
+    for i in range(LED_COUNT):
+        if i < leds_to_light:
+            strip.setPixelColor(i, Color(255, 255, 0, 0))  # Geel
+        else:
+            strip.setPixelColor(i, Color(0, 0, 0, 0))  # LED uit
+
+    strip.show()  # Directe update zonder vertraging
+
+def play_sound(distance):
+    """ Speelt het juiste geluid af op basis van de afstand. """
+    if distance < 30:
+        if not pygame.mixer.get_busy():
+            short_sound.play()  # Speel korte sound af bij kleine afstand
+            print("Speelt sample 1 af")
+    elif 30 <= distance < 60:
+        if not pygame.mixer.get_busy():
+            medium_sound.play()  # Speel een ander geluid af bij middellange afstand
+            print("Speelt sample 2 af")
+    elif distance >= 60:
+        if not pygame.mixer.get_busy():
+            long_sound.play()  # Speel lang geluid bij grote afstand
+            print("Speelt sample 3 af")
+
+try:
+    while True:
+        distance = measure_distance()  # Real-time distance measurement
+        play_sound(distance)  # Speel geluid af op basis van afstand
+        update_leds(distance)  # Immediate LED response
+        time.sleep(0.1)  # Kleine pauze om de CPU niet te veel te belasten
+
+except KeyboardInterrupt:
+    print("Programma gestopt")
+    for i in range(LED_COUNT):
+        strip.setPixelColor(i, Color(0, 0, 0, 0))  # Alle LEDs uitzetten
+    strip.show()
+    GPIO.cleanup()
+
+```
