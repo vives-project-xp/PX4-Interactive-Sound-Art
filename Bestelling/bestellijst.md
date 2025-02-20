@@ -10,6 +10,7 @@
 - HC-SR04 Ultrasonische afstandssensor (2x) : Otronic (€4.38)
 - LED strip (SK6812) (2x) : BTF-Lighting (€45.98)
     - https://www.btf-lighting.com/collections/sk6812-rgbw/products/1-sk6812-rgbw-4-in-1-pixels-individual-addressable-led-strip-dc5v
+- Stekkerdoos (4 stopcontacten) (2x) : Brico (€46.42)
 
-Voorlopige totale kostprijs voor 2 SoundBoxes : €233.28 (€116.64 voor 1)  
+Voorlopige totale kostprijs voor 2 SoundBoxes : €279.7 (€139.85 voor 1)  
 Te bespreken op de scrum meeting
