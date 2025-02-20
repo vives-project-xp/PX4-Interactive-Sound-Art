@@ -834,7 +834,7 @@ import time
 import RPi.GPIO as GPIO
 import pygame
 from rpi_ws281x import PixelStrip, Color, ws
-import numpy as np  # For moving average filter
+import numpy as np  # Voor moving average filter
 
 # GPIO-configuratie voor de HC-SR04
 TRIG_PIN = 5  # GPIO 5 - Trigger
@@ -848,9 +848,7 @@ LED_DMA = 10          # DMA-kanaal
 LED_BRIGHTNESS = 50   # Start helderheid (0-255)
 LED_INVERT = False    # True als een inverterende schakeling wordt gebruikt
 LED_CHANNEL = 0       # Meestal 0, tenzij alternatieve PWM-kanaal
-
-# LED-strip type (SK6812 RGBW)
-strip_type = ws.SK6812_STRIP_RGBW
+strip_type = ws.SK6812_STRIP_RGBW  # LED-strip type SK6812 RGBW
 
 # GPIO-instellingen
 GPIO.setmode(GPIO.BCM)
@@ -870,12 +868,12 @@ strip = PixelStrip(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT,
                      LED_BRIGHTNESS, LED_CHANNEL, strip_type=strip_type)
 strip.begin()
 
-# Moving average filter for smoothing distance readings
-window_size = 5  # Number of readings to average
+# Moving average filter voor stabiele metingen
+window_size = 5  
 distance_buffer = np.zeros(window_size)
 
 def measure_distance():
-    """ Meet de afstand met de HC-SR04 en retourneert een gefilterde waarde in cm. """
+    """ Meet de afstand en past een gemiddelde filter toe voor stabiliteit. """
     GPIO.output(TRIG_PIN, False)
     time.sleep(0.001)  # Minimal stabilization time
 
@@ -894,17 +892,17 @@ def measure_distance():
     elapsed_time = stop_time - start_time
     distance = (elapsed_time * 34300) / 2  # Omrekenen naar cm
 
-    # Store distance in buffer and apply moving average filter
+    # Voer bewegingsgemiddelde filter toe
     global distance_buffer
     distance_buffer = np.roll(distance_buffer, -1)
     distance_buffer[-1] = distance
     filtered_distance = np.mean(distance_buffer)
 
-    return max(5, min(filtered_distance, LED_COUNT * 1.5))  # Limit values to avoid errors
+    return max(5, min(filtered_distance, LED_COUNT * 1.5))  # Afstanden beperken voor stabiliteit
 
 def update_leds(distance):
-    """ Direct update LEDs to match hand level without delay. """
-    leds_to_light = int(distance / 1.5)  # 1.5 cm per LED
+    """ Directe LED-updates zodat ze altijd de hand volgen. """
+    leds_to_light = int(distance / 1.5)  
     print(f"Afstand: {distance:.2f} cm -> LEDs aan: {leds_to_light}")
 
     for i in range(LED_COUNT):
@@ -913,34 +911,30 @@ def update_leds(distance):
         else:
             strip.setPixelColor(i, Color(0, 0, 0, 0))  # LED uit
 
-    strip.show()  # Directe update zonder vertraging
+    strip.show()  
 
 def play_sound(distance):
-    """ Speelt het juiste geluid af op basis van de afstand. """
+    """ Speelt een bepaald geluid af op basis van de afstand. """
     if distance < 30:
-        if not pygame.mixer.get_busy():  # Check if sound is already playing
-            short_sound.play()  # Speel korte sound af bij kleine afstand
-            print("Speelt sample 1 af")
+        short_sound.play()
+        print("Speelt sample 1 af")
     elif 30 <= distance < 60:
-        if not pygame.mixer.get_busy():  # Check if sound is already playing
-            medium_sound.play()  # Speel een ander geluid af bij middellange afstand
-            print("Speelt sample 2 af")
+        medium_sound.play()
+        print("Speelt sample 2 af")
     elif distance >= 60:
-        if not pygame.mixer.get_busy():  # Check if sound is already playing
-            long_sound.play()  # Speel lang geluid af bij grote afstand
-            print("Speelt sample 3 af")
+        long_sound.play()
+        print("Speelt sample 3 af")
 
 try:
     while True:
-        distance = measure_distance()  # Real-time distance measurement
-        play_sound(distance)  # Speel geluid af op basis van afstand
-        update_leds(distance)  # Immediate LED response
-        time.sleep(0.1)  # Kleine pauze om de CPU niet te veel te belasten
+        distance = measure_distance()  # Meet real-time afstand
+        update_leds(distance)  # Instant LED-update
+        play_sound(distance)  # Speelt geluid af zonder vertraging
 
 except KeyboardInterrupt:
     print("Programma gestopt")
     for i in range(LED_COUNT):
-        strip.setPixelColor(i, Color(0, 0, 0, 0))  # Alle LEDs uitzetten
+        strip.setPixelColor(i, Color(0, 0, 0, 0))  
     strip.show()
     GPIO.cleanup()
 
