@@ -834,7 +834,7 @@ import time
 import RPi.GPIO as GPIO
 import pygame
 from rpi_ws281x import PixelStrip, Color, ws
-import numpy as np  # Voor bewegingsgemiddelde filter
+import numpy as np  # Voor moving average filter
 
 # GPIO-configuratie voor de HC-SR04
 TRIG_PIN = 5  # GPIO 5 - Trigger
@@ -855,17 +855,17 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(TRIG_PIN, GPIO.OUT)
 GPIO.setup(ECHO_PIN, GPIO.IN)
 
-# Initialiseer pygame voor audio met juiste instellingen
-pygame.mixer.init(frequency=44100, size=-16, channels=1, buffer=512)
+# Initialiseer pygame voor audio
+pygame.mixer.init()
 
 # Laad de audiobestanden
-short_sound = pygame.mixer.Sound("sample1.wav")  
-medium_sound = pygame.mixer.Sound("sample2.wav")  
-long_sound = pygame.mixer.Sound("sample3.wav")    
+short_sound = pygame.mixer.Sound("/home/RPI1/Downloads/a.mp3")  
+medium_sound = pygame.mixer.Sound("/home/RPI1/Downloads/c.mp3")  
+long_sound = pygame.mixer.Sound("/home/RPI1/Downloads/e.mp3")    
 
 # Initialiseer de LED-strip
 strip = PixelStrip(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT,
-                   LED_BRIGHTNESS, LED_CHANNEL, strip_type=strip_type)
+                     LED_BRIGHTNESS, LED_CHANNEL, strip_type=strip_type)
 strip.begin()
 
 # Moving average filter voor stabiele metingen
@@ -915,21 +915,17 @@ def update_leds(distance):
 
 def play_sound(distance):
     """ Speelt een bepaald geluid af op basis van de afstand. """
-    if not pygame.mixer.get_busy():  # Controleer of er al geluid wordt afgespeeld
-        try:
-            if distance < 30:
-                short_sound.play()
-                print("Speelt sample 1 af")
-            elif 30 <= distance < 60:
-                medium_sound.play()
-                print("Speelt sample 2 af")
-            elif distance >= 60:
-                long_sound.play()
-                print("Speelt sample 3 af")
-        except pygame.error as e:
-            print(f"Fout bij afspelen van geluid: {e}")
-
-    time.sleep(1)  # Voorkom te snel achter elkaar afspelen
+    if distance < 30:
+        short_sound.play()
+        print("Speelt sample 1 af")
+    elif 30 <= distance < 60:
+        medium_sound.play()
+        print("Speelt sample 2 af")
+    elif distance >= 60:
+        long_sound.play()
+        print("Speelt sample 3 af")
+        
+        
 
 try:
     while True:
@@ -943,6 +939,7 @@ except KeyboardInterrupt:
         strip.setPixelColor(i, Color(0, 0, 0, 0))  
     strip.show()
     GPIO.cleanup()
+
 
 
 ```
