@@ -583,3 +583,7 @@ except KeyboardInterrupt:
     set_all_leds(Color(0, 0, 0, 0))  # Alle LEDs uitzetten
     GPIO.cleanup()
 ```
+sudo apt update
+sudo apt install python3-pip
+pip3 install rpi-ws281x
+pip3 install adafruit-circuitpython-neopixel
