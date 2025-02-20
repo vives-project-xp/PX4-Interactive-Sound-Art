@@ -353,7 +353,7 @@ HC-SR04 Ultrasone Sensor
 
 
 
-# Audio-samples afspelen op basis van afstandsmetingen van de HC-SR04 ultrasone sensor
+# ZELFDE ALS 2 HIERBOEVN WERKT !!!!!!!!!!!!!!Audio-samples afspelen op basis van afstandsmetingen van de HC-SR04 ultrasone sensor
  
 ```python
 import time
