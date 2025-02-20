@@ -3,7 +3,7 @@
 - Raspberry Pi 4 Model B 4GB RAM (2x) : voorraad (€129.44)
 - Matte doorzichtige buis (2m) : Kunststof Forte BV (€72.6)
     - https://www.kunststofforte.nl/product/transparante-acrylaat-buizen-xt/   
-- Luidspreker (2x) : Conrad (€81.98)
+- Luidspreker (2x) :  Visaton FR 9.15 - 4 Ohm 5.9 inch 15 cm Breedband-luidspreker 15 W 4 Ω Ovaal (€60)
 - Digitale versterker (TPA3116D2) (2x) : HobbyElectronica (€19.9)
     - https://www.hobbyelectronica.nl/product/tpa3116d2-digitale-versterker/?srsltid=AfmBOool9LbRXy4TFt9iCpNoWHqUHUcFYfPy6a36DdolVLKCAyOI_ZfC
 - Level shifter 5V naar 3.3V (2x) : Kiwi electronics (€8.44)
