@@ -1,7 +1,7 @@
 ## Bestellijst
 
 - Raspberry Pi 4 Model B 4GB RAM (2x) : voorraad (€129.44)
-- Matte doorzichtige buis (2m) : Kunststof Forte BV (€87.85)
+- Matte doorzichtige buis (2m) : Kunststof Forte BV (€64.61)
     - https://www.kunststofforte.nl/product/transparante-acrylaat-buizen-xt/   
 - Luidspreker (2x) :  Visaton FR 9.15 - 4 Ohm 5.9 inch 15 cm Breedband-luidspreker 15 W 4 Ω Ovaal (€52)
 - Digitale versterker (TPA3116D2) (2x) : HobbyElectronica (€19.9)
@@ -12,7 +12,7 @@
     - https://www.btf-lighting.com/collections/sk6812-rgbw/products/1-sk6812-rgbw-4-in-1-pixels-individual-addressable-led-strip-dc5v
 - Stekkerdoos (4 stopcontacten) (2x) : Brico (€46.42)
 
-Voorlopige totale kostprijs voor 2 SoundBoxes : €241.98 (€120.99 voor 1)  
+Voorlopige totale kostprijs voor 2 SoundBoxes : €218.74 (€109.37 voor 1)  
 Te bespreken op de scrum meeting
 
 ## Opmerkingen
@@ -20,4 +20,4 @@ Te bespreken op de scrum meeting
 - Hoeveel besparen met kleinere speaker?
 - 2 keer 1 meter buis bestellen? qua kost en ook levering -> 2m bestellen is goedkoper en dan in twee
 - Wat nog bestellen voor fysieke behuizing?
-- Eventueel 100mm breedte ipv 150mm --> bespaart €23.24
+
