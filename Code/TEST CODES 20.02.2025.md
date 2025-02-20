@@ -111,7 +111,7 @@ except KeyboardInterrupt:
 python3 play_samples.py
 ```
 
-# Samples afspelen aan de hand van de ultrasone sensor (hc-sr04)
+# WERKT ( rare interval) Samples afspelen aan de hand van de ultrasone sensor (hc-sr04)
 - Sample 1 speelt af als de afstand kleiner is dan 30 cm.
 - Sample 2 speelt af als de afstand tussen 30 cm en 60 cm ligt.
 - Sample 3 speelt af als de afstand groter is dan 60 cm.
