@@ -696,3 +696,10 @@ sudo systemctl disable pigpiod
 ```bash
 strip.setPixelColor(i, Color(R, G, B, W))
 ```
+Can't open /dev/mem: Permission denied
+Traceback (most recent call last):
+  File "/home/RPI1/Downloads/test sensor", line 30, in <module>
+    strip.begin()
+  File "/home/RPI1/.local/lib/python3.11/site-packages/rpi_ws281x/rpi_ws281x.py", line 143, in begin
+    raise RuntimeError('ws2811_init failed with code {0} ({1})'.format(resp, str_resp))
+RuntimeError: ws2811_init failed with code -5 (mmap() failed)
