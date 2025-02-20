@@ -14,3 +14,9 @@
 
 Voorlopige totale kostprijs voor 2 SoundBoxes : €279.7 (€139.85 voor 1)  
 Te bespreken op de scrum meeting
+
+## Opmerkingen
+
+- Maar 1 LED stip bestellen?
+- Hoeveel besparen met kleinere speaker?
+- 2 keer 1 meter buis bestellen? qua kost en ook levering
