@@ -40,7 +40,29 @@ S
 
 ---
 
-## Conclusie
+# Voordelen van de Monacor SPM-200X/4 voor een Sound Art Systeem SPRINT 2
 
-- **Voor eenvoudige projecten**: USB-speakers zijn een goede keuze vanwege de eenvoud.
-- **Voor betere geluidskwaliteit en maatwerk**: Miniatuur luidsprekers met een versterkingsmodule zijn beter, maar vereisen meer werk en kennis.
+## 1. **Breed frequentiebereik voor een rijk geluid**
+   - Als een breedband-luidspreker bestrijkt de **SPM-200X/4** een groot deel van het hoorbare spectrum zonder de noodzaak van extra tweeters of subwoofers.
+   - Ideaal voor het reproduceren van zowel lage als hoge tonen in een interactieve sound art installatie.
+
+## 2. **Hoge belastbaarheid (60W)**
+   - Kan **hoge volumes aan zonder vervorming**, wat handig is voor een dynamische en meeslepende ervaring.
+   - Werkt goed met de **TPA3116D2 versterker**, die een vergelijkbaar vermogen aankan.
+
+## 3. **Lage impedantie (4Ω)**
+   - Perfect geschikt voor de **TPA3116D2 versterkermodule**, die is ontworpen om efficiënt met 4Ω belastingen te werken.
+   - Zorgt voor een betere stroomtoevoer en geluidskwaliteit.
+
+## 4. **Efficiënte koppeling met de TPA3116D2**
+   - De **TPA3116D2 klasse-D versterker** is efficiënt en genereert weinig warmte.
+   - Door de **lage THD (Total Harmonic Distortion)** blijft het geluid helder, wat belangrijk is voor sound art waarbij nuances in geluid cruciaal zijn.
+
+
+## 6. **Compatibiliteit met Raspberry Pi 4**
+   - De Raspberry Pi 4 kan de **TPA3116D2 aansturen via I2S of via een externe USB-DAC**, wat zorgt voor een hoge kwaliteit digitale audio-uitvoer.
+   - Geschikt voor interactieve toepassingen waarbij de audio real-time gemanipuleerd wordt.
+
+## 7. **Goede prijs-kwaliteitverhouding**
+   - In vergelijking met hi-fi luidsprekers biedt de Monacor SPM-200X/4 een uitstekende balans tussen **prijs en prestaties**.
+   - Geschikt voor een budgetvriendelijk project zonder in te leveren op geluidskwaliteit.
