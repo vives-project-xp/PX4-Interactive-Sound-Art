@@ -703,3 +703,8 @@ Traceback (most recent call last):
   File "/home/RPI1/.local/lib/python3.11/site-packages/rpi_ws281x/rpi_ws281x.py", line 143, in begin
     raise RuntimeError('ws2811_init failed with code {0} ({1})'.format(resp, str_resp))
 RuntimeError: ws2811_init failed with code -5 (mmap() failed)
+
+- sudo systemctl stop pigpiod
+- sudo systemctl disable pigpiod
+- sudo reboot
+
