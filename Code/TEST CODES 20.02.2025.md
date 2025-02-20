@@ -918,16 +918,16 @@ def update_leds(distance):
 def play_sound(distance):
     """ Speelt het juiste geluid af op basis van de afstand. """
     if distance < 30:
-        if not pygame.mixer.get_busy():
+        if not pygame.mixer.get_busy():  # Check if sound is already playing
             short_sound.play()  # Speel korte sound af bij kleine afstand
             print("Speelt sample 1 af")
     elif 30 <= distance < 60:
-        if not pygame.mixer.get_busy():
+        if not pygame.mixer.get_busy():  # Check if sound is already playing
             medium_sound.play()  # Speel een ander geluid af bij middellange afstand
             print("Speelt sample 2 af")
     elif distance >= 60:
-        if not pygame.mixer.get_busy():
-            long_sound.play()  # Speel lang geluid bij grote afstand
+        if not pygame.mixer.get_busy():  # Check if sound is already playing
+            long_sound.play()  # Speel lang geluid af bij grote afstand
             print("Speelt sample 3 af")
 
 try:
@@ -943,5 +943,6 @@ except KeyboardInterrupt:
         strip.setPixelColor(i, Color(0, 0, 0, 0))  # Alle LEDs uitzetten
     strip.show()
     GPIO.cleanup()
+
 
 ```
