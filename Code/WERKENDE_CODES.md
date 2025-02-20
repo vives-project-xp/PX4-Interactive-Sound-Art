@@ -1,4 +1,20 @@
-ultrasone met sample
+
+## ultrasone met sample
+ 
+om de ultrasone te verbinden met RPI4 hebben we een spannngsdelere gebruikt van 1.8kΩ en 3.9kΩ (je kunt ook andere waarden gebruiken zolang de verhouding klopt).
+
+- ECHO van HC-SR04 → 3.9kΩ weerstand → GPIO 6 (Pin 31)
+- ECHO van HC-SR04 → 1.8kΩ weerstand → GND van Raspberry Pi
+
+| **HC-SR04 Pin** | **Raspberry Pi 4 Pin** | **Opmerking** |
+|---------------|------------------|------------|
+| **VCC**       | **5V (Pin 2 of 4)** | Voeding voor de sensor |
+| **GND**       | **GND (Pin 6, 9, 14, etc.)** | Aarde |
+| **TRIG**      | **GPIO 5 (Pin 29)** | Stuur een puls om meting te starten |
+| **ECHO**      | **GPIO 6 (Pin 31) via spanningsdeler** | Meet de afstand, verlagen naar 3.3V! |
+
+
+
 ```python
 import time
 import pygame
@@ -63,7 +79,17 @@ except KeyboardInterrupt:
     print("Programma gestopt")
     GPIO.cleanup()
 ```
-ultrasone met leds
+## ultrasone met leds
+
+**LED**
+| LED pin | RPI4 pin | 
+|----------|----------|
+| VCC  | 5V+   | Data 3   
+| DIN   | GPIO18 (PWM0)
+|  GND | 0V
+
+
+
 ```python
 import time
 import RPi.GPIO as GPIO
