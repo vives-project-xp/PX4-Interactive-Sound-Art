@@ -729,3 +729,122 @@ RuntimeError: ws2811_init failed with code -5 (mmap() failed)
 
 note: If you believe this is a mistake, please contact your Python installation or OS distribution provider. You can override this, at the risk of breaking your Python installation or OS, by passing --break-system-packages.
 hint: See PEP 668 for the detailed specification.
+
+```python
+import time
+import RPi.GPIO as GPIO
+import pygame
+from rpi_ws281x import PixelStrip, Color, ws
+
+# GPIO-configuratie voor de HC-SR04
+TRIG_PIN = 5  # GPIO 5 - Trigger
+ECHO_PIN = 6  # GPIO 6 - Echo
+
+# LED-strip configuratie voor SK6812 RGBW
+LED_COUNT = 100       # Aantal LEDs
+LED_PIN = 18          # GPIO-pin voor dataverkeer (PWM)
+LED_FREQ_HZ = 800000  # LED signaal frequentie (800kHz)
+LED_DMA = 10          # DMA-kanaal
+LED_BRIGHTNESS = 50   # Start helderheid (0-255)
+LED_INVERT = False    # True als een inverterende schakeling wordt gebruikt
+LED_CHANNEL = 0       # Meestal 0, tenzij alternatieve PWM-kanaal
+
+# LED-strip type (SK6812 RGBW)
+strip_type = ws.SK6812_STRIP_RGBW
+
+# GPIO-instellingen
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(TRIG_PIN, GPIO.OUT)
+GPIO.setup(ECHO_PIN, GPIO.IN)
+
+# Initialiseer pygame voor audio
+pygame.mixer.init()
+
+# Laad de audiobestanden
+short_sound = pygame.mixer.Sound("sample1.wav")  
+medium_sound = pygame.mixer.Sound("sample2.wav")  
+long_sound = pygame.mixer.Sound("sample3.wav")    
+
+# Initialiseer de LED-strip
+strip = PixelStrip(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT,
+                     LED_BRIGHTNESS, LED_CHANNEL, strip_type=strip_type)
+strip.begin()
+
+def set_all_leds(color):
+    """ Zet alle LEDs op een bepaalde kleur. """
+    for i in range(LED_COUNT):
+        strip.setPixelColor(i, color)
+    strip.show()
+
+def measure_distance():
+    """ Meet de afstand met de HC-SR04 en retourneert deze in cm. """
+    GPIO.output(TRIG_PIN, False)
+    time.sleep(0.1)
+
+    GPIO.output(TRIG_PIN, True)
+    time.sleep(0.00001)
+    GPIO.output(TRIG_PIN, False)
+
+    start_time, stop_time = time.time(), time.time()
+
+    while GPIO.input(ECHO_PIN) == 0:
+        start_time = time.time()
+
+    while GPIO.input(ECHO_PIN) == 1:
+        stop_time = time.time()
+
+    elapsed_time = stop_time - start_time
+    distance = (elapsed_time * 34300) / 2  # Omrekenen naar cm
+    return distance
+
+def smooth_transition(prev_leds, target_leds, steps=20):
+    """ Laat de LED-overgang soepel verlopen in een aantal stappen. """
+    step_size = (target_leds - prev_leds) / steps  # Hoeveel LEDs per stap veranderen
+    
+    for step in range(steps):
+        current_leds = int(prev_leds + step * step_size)  # Bereken huidige LED-status
+        print(f"Smoothing step {step+1}/{steps} - LEDs: {current_leds}")
+
+        for i in range(LED_COUNT):
+            if i < current_leds:
+                strip.setPixelColor(i, Color(255, 255, 0, 0))  # Geel
+            else:
+                strip.setPixelColor(i, Color(0, 0, 0, 0))  # LED uit
+
+        strip.show()
+        time.sleep(0.02)  # Kleine vertraging voor de fade
+
+try:
+    previous_leds = 0  # Houdt bij hoeveel LEDs eerder aan waren
+
+    while True:
+        distance = measure_distance()
+        print(f"Afstand: {distance:.2f} cm")
+
+        # Geluid afspelen op basis van afstand
+        if distance < 30:
+            short_sound.play()
+            print("Speelt sample 1 af")
+        elif 30 <= distance < 60:
+            medium_sound.play()
+            print("Speelt sample 2 af")
+        elif distance >= 60:
+            long_sound.play()
+            print("Speelt sample 3 af")
+
+        # Bereken het aantal LEDs dat aan moet gaan
+        target_leds = int(distance / 1.5)  # 1.5 cm per LED
+        print(f"Aantal LEDs aan: {target_leds}")
+
+        # Voer een smooth fade uit naar het nieuwe aantal LEDs
+        smooth_transition(previous_leds, target_leds, steps=30)
+
+        previous_leds = target_leds  # Update vorige LED-status
+
+        time.sleep(0.1)  # Vermijd overmatige metingen
+
+except KeyboardInterrupt:
+    print("Programma gestopt")
+    set_all_leds(Color(0, 0, 0, 0))  # Alle LEDs uitzetten
+    GPIO.cleanup()
+```
