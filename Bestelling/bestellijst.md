@@ -6,7 +6,7 @@
 - Luidspreker (2x) :  Visaton FR 9.15 - 4 Ohm 5.9 inch 15 cm Breedband-luidspreker 15 W 4 Ω Ovaal (€52)
 - Digitale versterker (TPA3116D2) (2x) : HobbyElectronica (€19.9)
     - https://www.hobbyelectronica.nl/product/tpa3116d2-digitale-versterker/?srsltid=AfmBOool9LbRXy4TFt9iCpNoWHqUHUcFYfPy6a36DdolVLKCAyOI_ZfC
-- Level shifter 5V naar 3.3V (2x) : Kiwi electronics (€8.44)
+- SparkFun Logic Level Converter - Bi-Directional (2x) : Kiwi electronics (€8.44)
 - HC-SR04 Ultrasonische afstandssensor (2x) : Otronic (€4.38)
 - LED strip (SK6812) (1x) : BTF-Lighting (€22.99)
     - https://www.btf-lighting.com/collections/sk6812-rgbw/products/1-sk6812-rgbw-4-in-1-pixels-individual-addressable-led-strip-dc5v
