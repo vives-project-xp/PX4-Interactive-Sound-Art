@@ -20,3 +20,4 @@ Te bespreken op de scrum meeting
 - Maar 1 LED stip bestellen?
 - Hoeveel besparen met kleinere speaker?
 - 2 keer 1 meter buis bestellen? qua kost en ook levering
+- Wat nog bestellen voor fysieke behuizing?
