@@ -66,7 +66,7 @@ except KeyboardInterrupt:
     GPIO.cleanup()
 ```
  
-# Samples afspelen tussen bepaalde waarden.
+#  WEKRT !!!!!!!!!!!!!! Samples afspelen tussen bepaalde waarden.
 
 ```python
 import pygame
