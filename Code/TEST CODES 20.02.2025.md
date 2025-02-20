@@ -14,8 +14,8 @@ HC-SR04  | Raspberry Pi 4
 ---------|---------
 VCC      | 5V (pin 2)
 GND      | GND (pin 6)
-TRIG     | GPIO 17 (pin 11)
-ECHO     | GPIO 23 (pin 16)
+TRIG     | GPIO 23 
+ECHO     | GPIO 24 
 
 You may need to adjust the TRIG_PIN and ECHO_PIN variables to match your specific setup.
 This program uses the BCM pin numbering scheme. If you're using a different scheme, you'll need to adjust the pin numbers accordingly.
@@ -29,8 +29,8 @@ import time
 GPIO.setmode(GPIO.BCM)
 
 # Define the GPIO pins for the HC-SR04 sensor
-TRIG_PIN = 17
-ECHO_PIN = 23
+TRIG_PIN = 23
+ECHO_PIN = 24
 
 # Set up the TRIG pin as an output and the ECHO pin as an input
 GPIO.setup(TRIG_PIN, GPIO.OUT)
