@@ -55,3 +55,11 @@ Hier wordt een microfoon gebruikt om zo alle lichtpalen te bedienen, wat niet de
 - Speaker zit aan de houten box vast.
 - Stroom chain werkt met verdeelstekkers. 4 stekkers per box.
 - 3.3V naar 5.0V switch voor data van raspberry pi naar ledstrip.
+
+## **📏 Fysieke Specificaties**
+- Houten doos: 50x50 cm MDF 
+- Gat voor luidspreker: Ø 20,5 cm aan de voorkant  
+- Gat voor stroomvoorziening: Achterzijde  
+- Sensor-opening: 2x4,5 cm aan de bovenkant  
+- Acrylaatbuis: 110 cm hoog en 15cm diameter   
+![Device](./fotos/PX4%20ProtoType%20Assembly.png)
