@@ -708,3 +708,7 @@ RuntimeError: ws2811_init failed with code -5 (mmap() failed)
 - sudo systemctl disable pigpiod
 - sudo reboot
 
+- sudo usermod -a -G gpio,i2c $(whoami)
+- sudo reboot
+
+- sudo raspi-config
