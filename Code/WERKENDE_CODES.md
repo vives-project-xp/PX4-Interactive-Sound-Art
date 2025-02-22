@@ -199,8 +199,13 @@ except KeyboardInterrupt:
 Dit project gebruikt een ultrasone sensor (HC-SR04) om afstanden te meten en op basis daarvan zowel een LED-strip als geluiden te activeren.  
 Omdat **pygame** niet als `sudo` kan worden uitgevoerd, hebben we het systeem opgesplitst in twee aparte Python-programma’s die communiceren via een text file.
 
-- **`led_distance_control.py`**: Meet de afstand en bestuurt de LED-strip.  
-- **`sound_player.py`**: Leest de afstand uit een tekstbestand en speelt het juiste geluid af.
+
+| Script                  | Moet met `sudo`? | Functionaliteit                                                  | Reden                                                             |
+|-------------------------|-----------------|-----------------------------------------------------------------|-------------------------------------------------------------------|
+| `led_distance_control.py` | ✅ **Ja**       | Meet de afstand en bestuurt de LED-strip                         | Gebruikt GPIO en bestuurt de LED-strip (vereist rootrechten)      |
+| `sound_player.py`       | ❌ **Nee**        | Leest de afstand uit een tekstbestand en speelt het juiste geluid af | `pygame.mixer` werkt niet onder sudo; audio vereist gebruikersrechten |
+
+
 
 ### Uitleg programma's?  
 1. **`led_distance_control.py`**:
