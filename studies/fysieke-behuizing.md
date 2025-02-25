@@ -61,7 +61,7 @@ Hier wordt een microfoon gebruikt om zo alle lichtpalen te bedienen, wat niet de
 - Gat voor luidspreker: Ø 20,5 cm aan de voorkant  
 - Gat voor stroomvoorziening: Achterzijde  
 - Sensor-opening: 2x4,5 cm aan de bovenkant  
-- Acrylaatbuis: ~~110~~ 100 cm hoog en 15cm diameter
+- Acrylaatbuis: ~~110~~ 100 cm hoog en 10cm diameter
 
 **Opmerkingen**
 - Hoe buis bevestingen aan doos?
