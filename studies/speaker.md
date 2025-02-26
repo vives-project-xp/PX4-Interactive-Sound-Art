@@ -111,4 +111,4 @@ S
 ---
 
 ## 🎯 **Conclusie**  
-De combinatie van de **Visaton FR 9.15 (15W, 4Ω) luidspreker** en de **TDA2030A versterker** is **perfect voor een sound art systeem** dat **helder, krachtig en efficiënt** geluid nodig heeft. De **lage impedantie en BTL-optie** maken deze setup ideaal voor een **Raspberry Pi 4 audio-installatie** met een **goede balans tussen prestaties en kosten**. 🚀🔊  
+De combinatie van de **Visaton FR 9.15 (15W, 4Ω) luidspreker** en de **TDA2030A versterker** is **perfect voor een sound art systeem** dat **helder, krachtig en efficiënt** geluid nodig heeft. De **lage impedantie en BTL-optie** maken deze setup ideaal voor een **Raspberry Pi 4 audio-installatie** met een **goede balans tussen prestaties en kosten**. 
