@@ -66,3 +66,49 @@ S
 ## 7. **Goede prijs-kwaliteitverhouding**
    - In vergelijking met hi-fi luidsprekers biedt de Monacor SPM-200X/4 een uitstekende balans tussen **prijs en prestaties**.
    - Geschikt voor een budgetvriendelijk project zonder in te leveren op geluidskwaliteit.
+
+
+
+# Sprint 3 : besparen op de speaker
+
+## 🔹 **Waarom de Visaton FR 9.15?**  
+
+### **1. Breed frequentiebereik**  
+- Als een **breedband-luidspreker** kan deze speaker zowel **hoge als lage tonen** goed weergeven.  
+- Geschikt voor sound art waarbij **heldere vocalen en omgevingsgeluiden** belangrijk zijn.  
+
+### **2. Compact & veelzijdig ontwerp**  
+- Met een **ovaal ontwerp (5.9 inch / 15 cm)** is deze luidspreker **compact**, maar toch krachtig.  
+- Ideaal voor installaties waar ruimte beperkt en kosten beperkt zijn.  
+
+### **3. Lage impedantie (4Ω) & efficiëntie**  
+- Werkt **efficiënt met versterkers**, zoals de **TDA2030A**.  
+- **Lage impedantie betekent meer vermogen uit een kleinere versterker**.  
+
+### **4. Duurzaam & robuust**  
+- De stevige constructie zorgt ervoor dat de speaker **lang meegaat**, zelfs bij continu gebruik.  
+- Bestand tegen trillingen en lichte mechanische stress, wat handig is in interactieve installaties.  
+
+---
+
+## 🔹 **Waarom de combinatie met de TDA2030A versterker?**  
+
+### **1. Meer vermogen beschikbaar**  
+- De **TDA2030A kan tot 18W leveren bij 4Ω**, wat **beter aansluit bij het maximale vermogen van de Visaton FR 9.15 (15W)**.  
+- Dit betekent **hoger volume zonder vervorming**, ideaal voor sound art.  
+
+### **2. Ondersteunt Bridge-Tied Load (BTL) modus**  
+- **De TDA2030A kan in brugmodus worden geschakeld**, waardoor je **één enkele speaker van hoger vermogen** kunt voorzien.  
+- Perfect als je maar **één luidspreker** gebruikt, omdat je **beide versterkerkanalen combineert zonder extra weerstanden of software-aanpassingen**.  
+
+### **3. Hogere geluidskwaliteit & minder vervorming**  
+- De **TDA2030A heeft een lagere THD (Total Harmonic Distortion)** dan veel andere budgetversterkers, wat betekent dat het geluid **schoner en nauwkeuriger** blijft.  
+
+### **4. Werkt op een eenvoudige voeding (12V – 24V)**  
+- Werkt met **dezelfde spanning als de TDA7266 (9V - 12V)**, maar kan ook tot **24V** aan voor extra vermogen.  
+- Meer flexibiliteit als je een krachtigere voeding wilt gebruiken.  
+
+---
+
+## 🎯 **Conclusie**  
+De combinatie van de **Visaton FR 9.15 (15W, 4Ω) luidspreker** en de **TDA2030A versterker** is **perfect voor een sound art systeem** dat **helder, krachtig en efficiënt** geluid nodig heeft. De **lage impedantie en BTL-optie** maken deze setup ideaal voor een **Raspberry Pi 4 audio-installatie** met een **goede balans tussen prestaties en kosten**. 🚀🔊  
