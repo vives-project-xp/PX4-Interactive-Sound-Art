@@ -72,6 +72,7 @@ S
 # Sprint 3 : besparen op de speaker
 
 ## 🔹 **Waarom de Visaton FR 9.15?**  
+![alt text](./fotos/seaker.png)
 
 ### **1. Breed frequentiebereik**  
 - Als een **breedband-luidspreker** kan deze speaker zowel **hoge als lage tonen** goed weergeven.  
