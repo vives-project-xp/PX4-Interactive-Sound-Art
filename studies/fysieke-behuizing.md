@@ -63,8 +63,8 @@ Hier wordt een microfoon gebruikt om zo alle lichtpalen te bedienen, wat niet de
 - 3.3V naar 5.0V switch voor data van raspberry pi naar ledstrip.
 
 ## **📏 Fysieke Specificaties**
-- Houten doos: ~~50x50~~ cm MDF 
-- Gat voor luidspreker: ~~Ø 20,5 cm~~ aan de voorkant  
+- Houten doos: ~~50x50~~ 40x40 cm MDF 
+- Gat voor luidspreker: ~~Ø 20,5 cm~~ 95 x 155 aan de voorkant  
 - Gat voor stroomvoorziening: Achterzijde Ø 5 cm   
 - Sensor-opening: 2x4,5 cm aan de bovenkant  
 - Acrylaatbuis: ~~110~~ 100 cm hoog en ~~15~~ 10 cm diameter   
