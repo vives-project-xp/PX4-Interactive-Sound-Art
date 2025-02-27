@@ -68,8 +68,11 @@ Hier wordt een microfoon gebruikt om zo alle lichtpalen te bedienen, wat niet de
 ## (Deels) Uitgewerkte doos 27/02
 OPMERKING: BOX op foto is 50x50 prototype
 
-![Voorkant](./fotos/BoxVoor.jpg)
-![Achterkant](./fotos/BoxAchter.jpg)
+<div style="display: flex;">
+    <img src="./fotos/BoxVoor.jpg" alt="Voorkant" width="300">
+    <img src="./fotos/BoxAchter.jpg" alt="Achterkant" width="300">
+</div>
+
 
 TODO:
 - Installeren klep achterkant met scharnieren
