@@ -57,9 +57,21 @@ Hier wordt een microfoon gebruikt om zo alle lichtpalen te bedienen, wat niet de
 - 3.3V naar 5.0V switch voor data van raspberry pi naar ledstrip.
 
 ## **📏 Fysieke Specificaties**
-- Houten doos: 50x50 cm MDF 
-- Gat voor luidspreker: Ø 20,5 cm aan de voorkant  
-- Gat voor stroomvoorziening: Achterzijde  
+- Houten doos: ~~50x50~~ cm MDF 
+- Gat voor luidspreker: ~~Ø 20,5 cm~~ aan de voorkant  
+- Gat voor stroomvoorziening: Achterzijde Ø 5 cm   
 - Sensor-opening: 2x4,5 cm aan de bovenkant  
-- Acrylaatbuis: 110 cm hoog en 15cm diameter   
+- Acrylaatbuis: ~~110~~ 100 cm hoog en ~~15~~ 10 cm diameter   
 ![Device](./fotos/PX4%20ProtoType%20Assembly.png)
+
+
+## (Deels) Uitgewerkte doos 27/02
+![Voorkant](./fotos/BoxVoor.jpg)
+![Achterkant](./fotos/BoxAchter.jpg)
+
+TODO:
+- Installeren klep achterkant met scharnieren
+- Uitzagen speakergat
+- Monteren buis
+- Monteren elektronica
+- Monteren kattenkop
