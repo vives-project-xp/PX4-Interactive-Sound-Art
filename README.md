@@ -17,6 +17,8 @@ Het doel van dit project is om een interactief sound art-systeem te maken. Door 
 
 ## Materialen lijst
 
+Dit is voor 1 unit.
+
 - Raspberry Pi 4
 - 5V Ledstrip (individually addressable)
 - MDF platen
@@ -25,8 +27,9 @@ Het doel van dit project is om een interactief sound art-systeem te maken. Door 
 - Digitale versterker voor speaker
 - 3.3V -> 5.0V switch
 - Verdeelstekker (4 slots per unit)
+- Schroeven
 
-Dit is voor 1 unit.
+Extra info vindt je [hier](./documentatie/Materialen_info.md).
 
 ## Fysieke behuizing
 
