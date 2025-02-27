@@ -16,3 +16,5 @@ Prijzen kunnen variëren. Dit is voor 1 unit.
 | Schroeven | 4,49 per 10 | M4 x 25 mm | / | [Brico](https://www.brico.be/nl/ijzerwaren/technische-bevestigingsmaterialen/bouten/slotbouten/sencys-verzonken-kop-bout-roestvrij-staal-m4-x-25-mm-10-stuks/5367472) | / |
 | Ringen | 10,19 per 50 | breed M4 | / | [Brico](https://www.brico.be/nl/ijzerwaren/technische-bevestigingsmaterialen/ringen-bussen/sluitringen/sencys-carrosseriering-breed-m4-50-st/5368790) | / |
 | Spaanplaatschroeven | 9,69 per 40 | 40x4 mm inox | / | [Hubo](https://www.hubo.be/nl/p/sam-spaanplaatschroeven-pz2-40x4-mm-inox-40-stuks/209609/) | / |
+
+Totaal prijs : +- 285,16 €
