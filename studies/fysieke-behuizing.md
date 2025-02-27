@@ -7,10 +7,16 @@
 - Uitbreidbaar of niet
 - Ongeveer 1m80
 
-![Device](./fotos/device.jpg)
-![Device 3d](./fotos/device3d.jpg)
-![Fysiek2](./fotos/Fysiek2.jpg)
-![Fysiek1](./fotos/Fysiek1.jpg)
+<div style="display: flex; justify-content: center; gap: 20px;">
+    <img src="./fotos/device.jpg" alt="Device" width="300">
+    <img src="./fotos/device3d.jpg" alt="Device 3D" width="300">
+</div>
+
+<div style="display: flex; justify-content: center; gap: 20px; margin-top: 10px;">
+    <img src="./fotos/Fysiek2.jpg" alt="Fysiek2" width="300">
+    <img src="./fotos/Fysiek1.jpg" alt="Fysiek1" width="300">
+</div>
+
 
 ### Benodigdheden
 
@@ -62,7 +68,8 @@ Hier wordt een microfoon gebruikt om zo alle lichtpalen te bedienen, wat niet de
 - Gat voor stroomvoorziening: Achterzijde Ø 5 cm   
 - Sensor-opening: 2x4,5 cm aan de bovenkant  
 - Acrylaatbuis: ~~110~~ 100 cm hoog en ~~15~~ 10 cm diameter   
-![Device](./fotos/PX4%20ProtoType%20Assembly.png)
+<img src="./fotos/PX4%20ProtoType%20Assembly.png" alt="Device" width="300">
+
 
 
 ## (Deels) Uitgewerkte doos 27/02
