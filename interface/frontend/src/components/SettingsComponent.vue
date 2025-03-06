@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
     <div class="settings">
       <h2>Configureer Box: {{ boxId }}</h2>
       <label>
@@ -52,4 +52,4 @@
     margin: 10px 0;
   }
   </style>
-  
+   -->

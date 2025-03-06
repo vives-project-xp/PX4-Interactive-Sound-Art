@@ -123,12 +123,12 @@ export default {
 
 /* Pulsing Effect */
 .pulsing {
-  animation: heartbeat 0.5s infinite ease-in-out;
+  animation: heartbeat 1s infinite ease-in-out;
 }
 
 @keyframes heartbeat {
   0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+  50% { transform: scale(1.05); }
   100% { transform: scale(1); }
 }
 
