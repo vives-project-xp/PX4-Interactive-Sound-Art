@@ -1,9 +1,9 @@
 import express from 'express';
+import cors from 'cors';
 
 const app = express();
-const port = process.env.PORT || 3000;
 
-// Middleware om JSON-data te parsen
+app.use(cors());
 app.use(express.json());
 
 // In-memory opslag voor commando's per box
@@ -25,7 +25,7 @@ app.get('/api/command/:boxId', (req, res) => {
   res.json(command);
 });
 
-// Start de server
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server draait op http://localhost:${port}`);
 });
