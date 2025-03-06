@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <h1>Interactive Sound Art Controller</h1>
+    
     
     <!-- MusicBoxSelector Component -->
     <MusicBoxSelector />

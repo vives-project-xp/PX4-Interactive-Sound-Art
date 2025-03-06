@@ -1,6 +1,7 @@
 <template>
   <div class="container">
-    <h1>Select Your Music Box</h1>
+    <h1>Interactive Sound Art Controller</h1>
+    <h2>Select Your Music Box</h2>
 
     <!-- Music Box Selection -->
     <div class="music-box-list">
@@ -14,6 +15,7 @@
           off: !box.isOn 
         }"
         @click="selectBox(box)"
+        :style="{ boxShadow: box.isOn ? `0 0 20px ${box.color}` : 'none' }"
       >
         <!-- Music Box Image -->
         <img :src="box.image" :alt="box.name" class="music-box-image" />
@@ -73,45 +75,78 @@ export default {
 <style scoped>
 /* Container Styling */
 .container {
-  max-width: 500px;
+  max-width: 800px;
   margin: 0 auto;
   text-align: center;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.8);
   padding: 20px;
   border-radius: 15px;
-  backdrop-filter: blur(10px);
-  color: #fff;
+  backdrop-filter: blur(15px);
+  color: #0ff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+  border: 1px solid rgba(0, 255, 255, 0.5);
+  font-family: 'Orbitron', sans-serif; /* Use a futuristic font */
+}
+
+/* Title Styling */
+h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #0ff;
+  text-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 30px #0ff;
+  width: 100%;
+  text-align: center; /* Ensure it's centered inside the container */
+}
+
+h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #0ff;
+  text-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 30px #0ff;
+  width: 100%;
+  text-align: center; /* Ensure it's centered inside the container */
 }
 
 /* Music Box List */
 .music-box-list {
   display: flex;
   justify-content: space-around;
+  width: 100%;
   margin: 20px 0;
 }
 
 /* Music Box */
 .music-box {
-  padding: 15px;
+  padding: 10px;
   border-radius: 10px;
   transition: 0.3s;
   cursor: pointer;
   text-align: center;
-  width: 120px;
-  height: 180px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  background: white;
+  background: rgba(255, 255, 255, 0.1);
   position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  width: 150px;
+  border: 1px solid rgba(0, 255, 255, 0.5);
+}
+
+.music-box:hover {
+  transform: scale(1.05);
 }
 
 /* Selected Box */
 .music-box.selected {
   transform: scale(1.1);
-  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
 }
 
 /* Greyed Out Effect */
@@ -137,12 +172,13 @@ export default {
   width: 80px;
   height: 80px;
   object-fit: contain;
+  transition: transform 0.3s;
 }
 
 /* Color Display Box */
 .color-display {
-  width: 60px;
-  height: 60px;
+  width: 40px;
+  height: 40px;
   border-radius: 10px;
   margin-top: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
@@ -192,7 +228,7 @@ export default {
 /* Confirm Button */
 button {
   margin-top: 20px;
-  padding: 10px 20px;
+  padding: 12px 20px;
   border: none;
   background: #ff0077;
   color: white;
@@ -200,9 +236,75 @@ button {
   border-radius: 10px;
   font-weight: bold;
   transition: 0.3s;
+  font-size: 1.2em;
+  box-shadow: 0 0 10px #ff0077, 0 0 20px #ff0077, 0 0 30px #ff0077;
 }
 
 button:hover {
   background: #cc0055;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .container {
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 1.5em;
+  }
+
+  h2 {
+    font-size: 1.2em;
+  }
+
+  .music-box-list {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .music-box {
+    width: 100%;
+    height: auto;
+  }
+
+  .music-box-image {
+    width: 60px;
+    height: 60px;
+  }
+
+  button {
+    width: 100%;
+    font-size: 1em;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.2em;
+  }
+
+  h2 {
+    font-size: 1em;
+  }
+
+  .container {
+    padding: 10px;
+  }
+
+  .music-box {
+    width: 100px;
+    height: 150px;
+  }
+
+  .music-box-image {
+    width: 50px;
+    height: 50px;
+  }
+
+  button {
+    padding: 12px 0;
+    font-size: 14px;
+  }
 }
 </style>
