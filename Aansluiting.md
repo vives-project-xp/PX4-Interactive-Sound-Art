@@ -9,12 +9,15 @@
 - **Optioneel: 1kΩ-10kΩ weerstanden** (voor stereo naar mono omzetting)
 
 ## Stap 1: Audio-uitgang van Raspberry Pi verbinden
+### Waarom een stereo kabel?
+1. Er is nu een mogelijkheid om een stereo uitbreiding te maken moest dit ooit gewenst zijn.
+
 ### Optie 1: Mono-aansluiting (eenvoudig)
 1. Verbind **linker audio** van de jackkabel naar **Audio In +** van de versterker.
 2. Verbind **GND** naar **Audio In -** van de versterker.
 
 ### Optie 2: Stereo naar Mono mengen
-1. Verbind de **linker** en **rechter** draad met elkaar via elk met een weerstand.
+1. Verbind de **linker** en **rechter** draad met elkaar met elk nog een weerstand.
 2. Verbind de uitgangen van beide weerstanden samen naar **Audio In +** van de versterker.
 3. Verbind **GND (zwart)** naar **Audio In -**.
 
