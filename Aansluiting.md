@@ -17,6 +17,7 @@
 1. Verbind de **linker** en **rechter** draad met elkaar via elk met een weerstand.
 2. Verbind de uitgangen van beide weerstanden samen naar **Audio In +** van de versterker.
 3. Verbind **GND (zwart)** naar **Audio In -**.
+
 ![poster](./studies/fotos/amplifierMod.jpg)
 
 ## Stap 2: Versterker aansluiten
