@@ -682,7 +682,7 @@ except KeyboardInterrupt:
 
 1. ModuleNotFoundError: No module named 'rpi_ws281x'
 ```bash
-pip3 install --break-system-packages rpi-ws281x
+sudo pip3 install rpi-ws281x --break-system-packages 
 
 ```
 
