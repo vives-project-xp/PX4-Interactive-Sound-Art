@@ -182,9 +182,9 @@ h1, h2 {
 }
 
 @keyframes pulsateGlow {
-  0% { box-shadow: 0 0 25px var(--box-color); }
-  50% { box-shadow: 0 0 35px var(--box-color); }
-  100% { box-shadow: 0 0 25px var(--box-color); }
+  0% { box-shadow: 0 0 15px var(--box-color); }
+  50% { box-shadow: 0 0 75px var(--box-color); }
+  100% { box-shadow: 0 0 15px var(--box-color); }
 }
 
 /* Firework Effect */
@@ -194,7 +194,7 @@ h1, h2 {
 
 @keyframes fireworkEffect {
   0% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.2); opacity: 0.7; box-shadow: 0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px rgba(255, 255, 255, 0.3); }
+  50% { transform: scale(1.1); opacity: 0.7; box-shadow: 0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px rgba(255, 255, 255, 0.3); }
   100% { transform: scale(1); opacity: 1; }
 }
 
