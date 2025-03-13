@@ -4,19 +4,24 @@
   </div>
 </template>
 
-<script setup>
-import MusicBoxSelector from './components/MusicBoxSelector.vue';
+<script>
+import MusicBoxSelector from "./components/MusicBoxSelector.vue";
+
+export default {
+  components: {
+    MusicBoxSelector,
+  },
+};
 </script>
 
 <style>
-/* Global styles for the app */
+/* Dark Mode Background */
 #app {
-  text-align: center;
-  margin: 20px;
-  color: #fff;
-  background-color: #282c34;
-  padding: 20px;
-  border-radius: 10px;
-  backdrop-filter: blur(10px);
+  font-family: "Arial", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #1e1e1e, #3a3a3a);
 }
 </style>
