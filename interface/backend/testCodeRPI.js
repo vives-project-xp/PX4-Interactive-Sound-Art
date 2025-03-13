@@ -1,45 +1,57 @@
-from flask import Flask, request, jsonify
-import board
-import neopixel
+// rpi_server.js
+import express from "express";
+import cors from "cors";
+import ws281x from "rpi-ws281x-native";
 
-app = Flask(__name__)
+const app = express();
+const PORT = 5000;
 
-# Set up LED strip (Change this based on your setup)
-LED_PIN = board.D18
-NUM_LEDS = 30  # Change based on number of LEDs
-pixels = neopixel.NeoPixel(LED_PIN, NUM_LEDS, auto_write=False)
+app.use(cors());
+app.use(express.json());
 
-# Function to update LEDs
-def update_leds(color, effect):
-    r, g, b = int(color[1:3], 16), int(color[3:5], 16), int(color[5:7], 16)
-    
-    if effect == "solid":
-        pixels.fill((r, g, b))
-    elif effect == "strobe":
-        for _ in range(10):
-            pixels.fill((r, g, b))
-            pixels.show()
-            time.sleep(0.1)
-            pixels.fill((0, 0, 0))
-            pixels.show()
-            time.sleep(0.1)
-    elif effect == "fire":
-        for i in range(NUM_LEDS):
-            pixels[i] = (r, g, b) if i % 2 == 0 else (r//2, g//2, b//2)
-    pixels.show()
+const NUM_LEDS = 60; // Change to match your LED strip length
+const pixelData = new Uint32Array(NUM_LEDS);
+ws281x.init(NUM_LEDS);
 
-# Route to update LED and sound settings
-@app.route("/update", methods=["POST"])
-def update():
-    data = request.json
-    color = data.get("color", "#FFFFFF")
-    effect = data.get("effect", "solid")
-    
-    print(f"🎵 Instrument: {data.get('instrument')} | 🎨 Color: {color} | 💡 Effect: {effect}")
-    
-    update_leds(color, effect)
-    return jsonify({"message": "LEDs updated!"})
+// Function to update the LED strip based on color and effect
+function updateLEDs(color, effect) {
+  // Convert hex string (e.g. "#ff0000") to integer (assumes no alpha channel)
+  const hex = color.startsWith("#") ? color.slice(1) : color;
+  const intColor = parseInt(hex, 16);
 
-# Start Flask server
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+  if (effect === "solid") {
+    // Solid color: fill all LEDs
+    for (let i = 0; i < NUM_LEDS; i++) {
+      pixelData[i] = intColor;
+    }
+    ws281x.render(pixelData);
+  } else if (effect === "strobe") {
+    // Strobe effect: flash on/off repeatedly
+    let on = true;
+    let iterations = 10;
+    const interval = setInterval(() => {
+      for (let i = 0; i < NUM_LEDS; i++) {
+        pixelData[i] = on ? intColor : 0;
+      }
+      ws281x.render(pixelData);
+      on = !on;
+      iterations--;
+      if (iterations <= 0) {
+        clearInterval(interval);
+      }
+    }, 100);
+  } else if (effect === "fire") {
+    // Fire effect: alternate full brightness and half brightness on LEDs
+    for (let i = 0; i < NUM_LEDS; i++) {
+      if (i % 2 === 0) {
+        pixelData[i] = intColor;
+      } else {
+        const r = (((intColor >> 16) & 0xff) >> 1);
+        const g = (((intColor >> 8) & 0xff) >> 1);
+        const b = ((intColor & 0xff) >> 1);
+        pixelData[i] = (r << 16) | (g << 8) | b;
+      }
+    }
+    ws281x.render(pixelData);
+  } else {
+    // Default to solid
