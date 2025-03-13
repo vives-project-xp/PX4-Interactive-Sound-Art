@@ -11,15 +11,16 @@
         class="music-box"
         :class="{ 
           selected: selectedBox?.id === box.id, 
-          pulsating: box.isOn && selectedBox?.id === box.id && box.color && box.effect === 'pulsating',
-          firework: box.isOn && selectedBox?.id === box.id && box.effect === 'firework',
-          rainbow: box.isOn && selectedBox?.id === box.id && box.effect === 'rainbow',
+          pulsating: box.effect === 'pulsating' && box.isOn,
+          firework: box.effect === 'firework' && box.isOn,
+          rainbow: box.effect === 'rainbow' && box.isOn,
           off: !box.isOn 
         }"
         @click="selectBox(box)"
-        :style="{ 
+        :style="{
           boxShadow: box.isOn ? `0 0 20px ${box.color}` : 'none',
-          backgroundColor: box.isOn ? box.color : 'transparent'
+          backgroundColor: box.isOn ? box.color : 'transparent',
+          '--box-color': box.color
         }"
       >
         <!-- Music Box Image -->
@@ -177,13 +178,13 @@ h1, h2 {
 
 /* Pulsating Glow Effect */
 .pulsating {
-  animation: pulsateGlow 1.5s infinite ease-in-out;
+  animation: pulsateGlow 1s infinite ease-in-out;
 }
 
 @keyframes pulsateGlow {
-  0% { box-shadow: 0 0 15px var(--box-color); }
-  50% { box-shadow: 0 0 25px var(--box-color); }
-  100% { box-shadow: 0 0 15px var(--box-color); }
+  0% { box-shadow: 0 0 25px var(--box-color); }
+  50% { box-shadow: 0 0 35px var(--box-color); }
+  100% { box-shadow: 0 0 25px var(--box-color); }
 }
 
 /* Firework Effect */
@@ -252,32 +253,18 @@ h1, h2 {
   background: limegreen;
 }
 
-/* Effect Selector Styling */
+/* Effect Selector */
 .effect-selector {
   margin-top: 20px;
-  background: linear-gradient(45deg, #ff0077, #00ffcc);
-  padding: 10px;
-  border-radius: 10px;
-  box-shadow: 0 0 20px rgba(0, 255, 255, 0.7);
 }
 
 .effect-dropdown {
   width: 100%;
   padding: 10px;
-  background: rgba(0, 255, 255, 0.3);
-  border: none;
-  border-radius: 10px;
+  border-radius: 5px;
+  background: #0f0f0f;
   color: #fff;
-  font-size: 1.1rem;
-  font-weight: bold;
-  text-align: center;
-  transition: all 0.3s;
-}
-
-.effect-dropdown:focus {
-  outline: none;
-  background: rgba(0, 255, 255, 0.5);
-  box-shadow: 0 0 10px #ff0077;
+  font-size: 1em;
 }
 
 /* Confirm Button */
@@ -288,11 +275,14 @@ button {
   background: #ff0077;
   color: white;
   cursor: pointer;
-  border-radius: 5px;
+  border-radius: 10px;
+  font-weight: bold;
   transition: 0.3s;
+  font-size: 1.2em;
+  box-shadow: 0 0 10px #ff0077, 0 0 20px #ff0077, 0 0 30px #ff0077;
 }
 
 button:hover {
-  background: #ff3399;
+  background: #cc0055;
 }
 </style>
