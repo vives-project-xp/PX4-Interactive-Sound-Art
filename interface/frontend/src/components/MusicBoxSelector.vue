@@ -50,9 +50,9 @@ export default {
   data() {
     return {
       musicBoxes: [
-        { id: 1, name: "Classic Box", image: "/image/box.png", color: "#ff0000", isOn: false },
-        { id: 2, name: "Modern Box", image: "/image/box.png", color: "#00ff00", isOn: false },
-        { id: 3, name: "Retro Box", image: "/image/box.png", color: "#0000ff", isOn: false },
+        { id: 1, name: "Box 1", image: "/image/box.png", color: "#ff0000", isOn: false },
+        { id: 2, name: "Box 2", image: "/image/box.png", color: "#00ff00", isOn: false },
+        { id: 3, name: "Box 3", image: "/image/box.png", color: "#0000ff", isOn: false },
       ],
       selectedBox: null,
     };
@@ -75,6 +75,9 @@ export default {
 <style scoped>
 /* Container Styling */
 .container {
+  flex-direction: column;
+  align-items: center;
+  
   max-width: 800px;
   margin: 0 auto;
   text-align: center;
@@ -84,8 +87,7 @@ export default {
   backdrop-filter: blur(15px);
   color: #0ff;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  
   justify-content: flex-start;
   box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
   border: 1px solid rgba(0, 255, 255, 0.5);
