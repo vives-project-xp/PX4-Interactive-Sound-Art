@@ -117,16 +117,15 @@ export default {
   max-width: 800px;
   margin: 0 auto;
   text-align: center;
-  background: 	#141428e6;
+  background: 	#000;
   padding: 20px;
   border-radius: 15px;
   backdrop-filter: blur(15px);
-  color: #0ff;
+  color: #2997ff;;
   display: flex;
   justify-content: flex-start;
-  border: 1px solid #00ffff4d;
+  border: 2px solid #2998ff8d;
   font-family: 'Orbitron', sans-serif; 
-  box-shadow: 0 0 15px #00ffff4d;
 }
 
 /* h1, h2 {
@@ -164,23 +163,22 @@ h1, h2 {
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  background: #ffffff1a;
   position: relative;
   overflow: hidden;
   width: 150px;
-  border: 1px solid #ff00ff80;
+  border: 1px solid #a972ff;
   transition: all 0.3s ease;
 }
 
 .music-box:hover {
   transform: scale(1.05);
-  box-shadow: 0 0 15px #ff00ffb3;
+  box-shadow: 0 0 15px #a972ff;
 }
 
 /* Selected Box */
 .music-box.selected {
   transform: scale(1.1);
-  box-shadow: 0 0 20px 5px #ff00ffb3; /* Neon Glow when selected */
+  box-shadow: 0 0 20px 5px #a972ff; /* Neon Glow when selected */
 }
 
 /* Greyed Out Effect */
@@ -275,10 +273,11 @@ h1, h2 {
 .effect-dropdown {
   width: 100%;
   padding: 10px;
-  border-radius: 5px;
-  background: #133e7c;
+  border-radius: 10px;
+  background-color: #2998ff42;
   color: #fff;
   font-size: 1em;
+  border: 5px
 }
 
 /* Confirm Button */
@@ -286,7 +285,7 @@ button {
   margin-top: 20px;
   padding: 12px 20px;
   border: none;
-  background: #ea00d9;
+  background: #2998ff42;
   color: white;
   cursor: pointer;
   border-radius: 10px;
@@ -296,6 +295,6 @@ button {
 }
 
 button:hover {
-  background: #711c91;
+  background: #a872ffcf;;
 }
 </style>
