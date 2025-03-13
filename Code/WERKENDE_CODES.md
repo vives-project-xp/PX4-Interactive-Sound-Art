@@ -202,14 +202,6 @@ Omdat **pygame** niet als `sudo` kan worden uitgevoerd, hebben we het systeem op
 ### Deze werkt met USB en/of met bluetooth
 Het probleem ontstaat omdat de 3.5mm AV-jack van de Raspberry Pi 4 beide PWM-kanalen (PWM0 en PWM1) gebruikt voor audio-uitvoer. Tegelijkertijd gebruikt de LED-strip GPIO18 (PWM0), wat een conflict veroorzaakt. Hierdoor stopt het geluid volledig zodra de LED-strip wordt aangestuurd. Het geluid werkt pas weer na een herstart van de Raspberry Pi.
 
-
-| Script                  | Moet met `sudo`? | Functionaliteit                                                  | Reden                                                             |
-|-------------------------|-----------------|-----------------------------------------------------------------|-------------------------------------------------------------------|
-| `led_distance_control.py` | ✅ **Ja**       | Meet de afstand en bestuurt de LED-strip                         | Gebruikt GPIO en bestuurt de LED-strip (vereist rootrechten)      |
-| `sound_player.py`       | ❌ **Nee**        | Leest de afstand uit een tekstbestand en speelt het juiste geluid af | `pygame.mixer` werkt niet onder sudo; audio vereist gebruikersrechten |
-
-
-
 ### Uitleg programma's?  
 1. **`led_distance_control.py`**:
    - Meet de afstand met de HC-SR04 sensor.
@@ -219,7 +211,11 @@ Het probleem ontstaat omdat de 3.5mm AV-jack van de Raspberry Pi 4 beide PWM-kan
 2. **`sound_player.py`**:
    - Leest de afstand uit `distance.txt`.
    - Speelt het juiste geluid af afhankelijk van de afstand.
-  
+
+  | Script                  | Moet met `sudo`? | Functionaliteit                                                  | Reden                                                             |
+|-------------------------|-----------------|-----------------------------------------------------------------|-------------------------------------------------------------------|
+| `led_distance_control.py` | ✅ **Ja**       | Meet de afstand en bestuurt de LED-strip                         | Gebruikt GPIO en bestuurt de LED-strip (vereist rootrechten)      |
+| `sound_player.py`       | ❌ **Nee**        | Leest de afstand uit een tekstbestand en speelt het juiste geluid af | `pygame.mixer` werkt niet onder sudo; audio vereist gebruikersrechten |
    
 ### Programma's
 1. **`led_distance_control.py`**
