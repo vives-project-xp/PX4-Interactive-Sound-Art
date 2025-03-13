@@ -4,14 +4,14 @@ PX4-Interactive-Sound-Art is een interactief kunstproject dat beweging, geluid e
 
 ## Team
 
--Maxime Coen
--Michiel Geeraert
--William Rogov
--Sam De Wispeleare
--Thorben Andries
--Timo Plets
--Ward Dereeper
--Joren Vandewalle
+- Maxime Coen
+- Michiel Geeraert
+- William Rogov
+- Sam De Wispeleare
+- Thorben Andries
+- Timo Plets
+- Ward Dereeper
+- Joren Vandewalle
 
 ## Doel
 
@@ -19,11 +19,11 @@ Het doel van dit project is om een interactieve sound-art installatie te creëre
 
 ## Hoe werkt het?
 
--Een sensor detecteert handbewegingen boven het apparaat.
+- Een sensor detecteert handbewegingen boven het apparaat.
 
--De afstand van de hand bepaalt de toonhoogte of het type geluid.
+- De afstand van de hand bepaalt de toonhoogte of het type geluid.
 
--Tegelijkertijd reageert een LED-strip met kleur en lichtpatronen.
+- Tegelijkertijd reageert een LED-strip met kleur en lichtpatronen.
 
 
 ## Materialen lijst
