@@ -38,21 +38,24 @@
       </div>
     </div>
 
-    <!-- Color Picker Section -->
-    <div v-if="selectedBox" class="color-picker">
-      <h2>Choose a Color</h2>
-      <input type="color" v-model="selectedBox.color" class="color-slider" @input="updateColor" />
-    </div>
+    
 
     <!-- Effect Selector -->
-    <div v-if="selectedBox" class="effect-selector">
-      <h2>Select Effect</h2>
-      <select v-model="selectedBox.effect" @change="updateEffect" class="effect-dropdown">
-        <option value="pulsating">Pulsating</option>
-        <option value="firework">Firework</option>
-        <option value="rainbow">Rainbow</option>
-      </select>
-    </div>
+<div v-if="selectedBox" class="effect-selector">
+  <h2>Select Effect</h2>
+  <select v-model="selectedBox.effect" @change="updateEffect" class="effect-dropdown">
+    <option value="pulsating">Pulsating</option>
+    <option value="firework">Firework</option>
+    <option value="rainbow">Rainbow</option>
+  </select>
+</div>
+
+<!-- Color Picker Section (Hidden if Rainbow is Selected) -->
+<div v-if="selectedBox && selectedBox.effect !== 'rainbow'" class="color-picker">
+  <h2>Choose a Color</h2>
+  <input type="color" v-model="selectedBox.color" class="color-slider" @input="updateColor" />
+</div>
+
 
     <!-- Confirm Button -->
     <button v-if="selectedBox && selectedBox.color" @click="confirmSelection">
