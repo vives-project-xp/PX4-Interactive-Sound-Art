@@ -89,10 +89,10 @@ export default {
   justify-content: flex-start;
   box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
   border: 1px solid rgba(0, 255, 255, 0.5);
-  font-family: 'Orbitron', sans-serif; /* Use a futuristic font */
+  font-family: 'Orbitron', sans-serif; 
 }
 
-/* Title Styling */
+
 h1 {
   font-size: 2rem;
   font-weight: 700;
@@ -100,7 +100,7 @@ h1 {
   color: #0ff;
   text-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 30px #0ff;
   width: 100%;
-  text-align: center; /* Ensure it's centered inside the container */
+  text-align: center;
 }
 
 h2 {
@@ -110,7 +110,7 @@ h2 {
   color: #0ff;
   text-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 30px #0ff;
   width: 100%;
-  text-align: center; /* Ensure it's centered inside the container */
+  text-align: center; 
 }
 
 /* Music Box List */
