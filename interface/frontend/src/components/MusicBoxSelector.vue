@@ -114,24 +114,34 @@ export default {
   max-width: 800px;
   margin: 0 auto;
   text-align: center;
-  background: rgba(0, 0, 0, 0.8);
+  background: 	#141428e6;
   padding: 20px;
   border-radius: 15px;
   backdrop-filter: blur(15px);
   color: #0ff;
   display: flex;
   justify-content: flex-start;
-  box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
-  border: 1px solid rgba(0, 255, 255, 0.5);
+  border: 1px solid #00ffff4d;
   font-family: 'Orbitron', sans-serif; 
+  box-shadow: 0 0 15px #00ffff4d;
 }
 
-h1, h2 {
+/* h1, h2 {
   font-size: 2rem;
   font-weight: 700;
   color: #0ff;
   text-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 30px #0ff;
+} */
+
+h1, h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(97deg, #0096FF, #BB64FF 42%, #F2416B 74%, #EB7500);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none; /* Verwijder de oude text-shadow om het effect beter te laten werken */
 }
+
 
 /* Music Box List */
 .music-box-list {
@@ -151,22 +161,23 @@ h1, h2 {
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  background: rgba(255, 255, 255, 0.1);
+  background: #ffffff1a;
   position: relative;
   overflow: hidden;
   width: 150px;
-  border: 1px solid rgba(0, 255, 255, 0.5);
+  border: 1px solid #ff00ff80;
   transition: all 0.3s ease;
 }
 
 .music-box:hover {
   transform: scale(1.05);
+  box-shadow: 0 0 15px #ff00ffb3;
 }
 
 /* Selected Box */
 .music-box.selected {
   transform: scale(1.1);
-  box-shadow: 0 0 20px 5px rgba(0, 255, 255, 1); /* Neon Glow when selected */
+  box-shadow: 0 0 20px 5px #ff00ffb3; /* Neon Glow when selected */
 }
 
 /* Greyed Out Effect */
@@ -262,7 +273,7 @@ h1, h2 {
   width: 100%;
   padding: 10px;
   border-radius: 5px;
-  background: #0f0f0f;
+  background: #133e7c;
   color: #fff;
   font-size: 1em;
 }
@@ -272,17 +283,16 @@ button {
   margin-top: 20px;
   padding: 12px 20px;
   border: none;
-  background: #ff0077;
+  background: #ea00d9;
   color: white;
   cursor: pointer;
   border-radius: 10px;
   font-weight: bold;
   transition: 0.3s;
   font-size: 1.2em;
-  box-shadow: 0 0 10px #ff0077, 0 0 20px #ff0077, 0 0 30px #ff0077;
 }
 
 button:hover {
-  background: #cc0055;
+  background: #711c91;
 }
 </style>
