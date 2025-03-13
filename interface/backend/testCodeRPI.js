@@ -54,4 +54,23 @@ function updateLEDs(color, effect) {
     }
     ws281x.render(pixelData);
   } else {
-    // Default to solid
+    // Default to solid if the effect is unrecognized
+    for (let i = 0; i < NUM_LEDS; i++) {
+      pixelData[i] = intColor;
+    }
+    ws281x.render(pixelData);
+  }
+}
+
+// POST endpoint to update the LED strip
+app.post("/update", (req, res) => {
+  const { color, effect, instrument } = req.body;
+  console.log(`🎵 Instrument: ${instrument} | 🎨 Color: ${color} | 💡 Effect: ${effect}`);
+  updateLEDs(color, effect);
+  res.json({ message: "LEDs updated!" });
+});
+
+// Start the Raspberry Pi LED server
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`🚀 Raspberry Pi LED server running on http://0.0.0.0:${PORT}`);
+});
