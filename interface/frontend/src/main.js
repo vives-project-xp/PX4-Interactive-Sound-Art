@@ -14,3 +14,6 @@ app.use(createPinia())
 app.use(router) // Use the router
 
 app.mount('#app')
+
+
+
