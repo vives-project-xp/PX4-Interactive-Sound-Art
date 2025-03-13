@@ -199,6 +199,9 @@ except KeyboardInterrupt:
 Dit project gebruikt een ultrasone sensor (HC-SR04) om afstanden te meten en op basis daarvan zowel een LED-strip als geluiden te activeren.  
 Omdat **pygame** niet als `sudo` kan worden uitgevoerd, hebben we het systeem opgesplitst in twee aparte Python-programma’s die communiceren via een text file.
 
+### Deze werkt alleen met bluetooth (USB nog niet getest)
+Het probleem komt doordat zowel de LED-strip als de audio-uitgang dezelfde hardware van de Raspberry Pi gebruiken (PWM op GPIO18). Hierdoor ontstaat een conflict: zodra de LED-strip wordt aangestuurd, wat er voor zorgt dat de audio volledig stopt. Het geluid werkt pas terug wanneer we de RPI4 rebooten
+
 
 | Script                  | Moet met `sudo`? | Functionaliteit                                                  | Reden                                                             |
 |-------------------------|-----------------|-----------------------------------------------------------------|-------------------------------------------------------------------|
