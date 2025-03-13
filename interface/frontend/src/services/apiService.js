@@ -11,9 +11,30 @@ const apiService = {
       if (!error.response) {
         console.warn('Backend not available. Using mock data.')
         return [
-          { id: 1, name: 'Box 1', image: '/image/box.png', color: '#ff0000', isOn: false },
-          { id: 2, name: 'Box 2', image: '/image/box.png', color: '#00ff00', isOn: false },
-          { id: 3, name: 'Box 3', image: '/image/box.png', color: '#0000ff', isOn: false },
+          {
+            id: 1,
+            name: 'Box 1',
+            image: '/image/box.png',
+            color: '#ff0000', // Box color
+            backgroundColor: '#000000', // Black background
+            isOn: false,
+          },
+          {
+            id: 2,
+            name: 'Box 2',
+            image: '/image/box.png',
+            color: '#00ff00', // Box color
+            backgroundColor: '#000000', // Black background
+            isOn: false,
+          },
+          {
+            id: 3,
+            name: 'Box 3',
+            image: '/image/box.png',
+            color: '#0000ff', // Box color
+            backgroundColor: '#000000', // Black background
+            isOn: false,
+          },
         ]
       } else {
         console.error('An error occurred:', error.message)

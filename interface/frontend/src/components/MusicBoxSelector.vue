@@ -19,7 +19,7 @@
         @click="selectBox(box)"
         :style="{
           boxShadow: box.isOn ? `0 0 20px ${box.color}` : 'none',
-          backgroundColor: box.isOn ? box.color : 'transparent',
+          backgroundColor: box.effect === 'rainbow' && box.isOn ? 'transparent' : (box.isOn ? box.color : box.backgroundColor),
           '--box-color': box.color
         }"
       >
@@ -38,24 +38,21 @@
       </div>
     </div>
 
-    
-
     <!-- Effect Selector -->
-<div v-if="selectedBox" class="effect-selector">
-  <h2>Select Effect</h2>
-  <select v-model="selectedBox.effect" @change="updateEffect" class="effect-dropdown">
-    <option value="pulsating">Pulsating</option>
-    <option value="firework">Firework</option>
-    <option value="rainbow">Rainbow</option>
-  </select>
-</div>
+    <div v-if="selectedBox && selectedBox.color" class="effect-selector">
+      <h2>Select Effect</h2>
+      <select v-model="selectedBox.effect" @change="updateEffect" class="effect-dropdown">
+        <option value="pulsating">Pulsating</option>
+        <option value="firework">Firework</option>
+        <option value="rainbow">Rainbow</option>
+      </select>
+    </div>
 
-<!-- Color Picker Section (Hidden if Rainbow is Selected) -->
-<div v-if="selectedBox && selectedBox.effect !== 'rainbow'" class="color-picker">
-  <h2>Choose a Color</h2>
-  <input type="color" v-model="selectedBox.color" class="color-slider" @input="updateColor" />
-</div>
-
+    <!-- Color Picker Section (Hidden if Rainbow is Selected) -->
+    <div v-if="selectedBox && selectedBox.color && selectedBox.effect !== 'rainbow'" class="color-picker">
+      <h2>Choose a Color</h2>
+      <input type="color" v-model="selectedBox.color" class="color-slider" @input="updateColor" />
+    </div>
 
     <!-- Confirm Button -->
     <button v-if="selectedBox && selectedBox.color" @click="confirmSelection">
@@ -204,6 +201,8 @@ h1, h2 {
 /* Rainbow Effect */
 .rainbow {
   animation: rainbowGlow 1s infinite linear;
+  background: linear-gradient(45deg, red, orange, yellow, green, cyan, blue, violet);
+  background-size: 200% 200%;
 }
 
 @keyframes rainbowGlow {
