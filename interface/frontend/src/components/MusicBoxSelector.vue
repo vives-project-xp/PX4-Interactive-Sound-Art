@@ -11,11 +11,17 @@
         class="music-box"
         :class="{ 
           selected: selectedBox?.id === box.id, 
-          pulsing: box.isOn && selectedBox?.id === box.id && selectedBox.color,
+          pulsating: box.effect === 'pulsating' && box.isOn,
+          firework: box.effect === 'firework' && box.isOn,
+          rainbow: box.effect === 'rainbow' && box.isOn,
           off: !box.isOn 
         }"
         @click="selectBox(box)"
-        :style="{ boxShadow: box.isOn ? `0 0 20px ${box.color}` : 'none' }"
+        :style="{
+          boxShadow: box.isOn ? `0 0 20px ${box.color}` : 'none',
+          backgroundColor: box.isOn ? box.color : 'transparent',
+          '--box-color': box.color
+        }"
       >
         <!-- Music Box Image -->
         <img :src="box.image" :alt="box.name" class="music-box-image" />
@@ -32,11 +38,24 @@
       </div>
     </div>
 
-    <!-- Color Picker Section -->
-    <div v-if="selectedBox" class="color-picker">
-      <h2>Choose a Color</h2>
-      <input type="color" v-model="selectedBox.color" class="color-slider" />
-    </div>
+    
+
+    <!-- Effect Selector -->
+<div v-if="selectedBox" class="effect-selector">
+  <h2>Select Effect</h2>
+  <select v-model="selectedBox.effect" @change="updateEffect" class="effect-dropdown">
+    <option value="pulsating">Pulsating</option>
+    <option value="firework">Firework</option>
+    <option value="rainbow">Rainbow</option>
+  </select>
+</div>
+
+<!-- Color Picker Section (Hidden if Rainbow is Selected) -->
+<div v-if="selectedBox && selectedBox.effect !== 'rainbow'" class="color-picker">
+  <h2>Choose a Color</h2>
+  <input type="color" v-model="selectedBox.color" class="color-slider" @input="updateColor" />
+</div>
+
 
     <!-- Confirm Button -->
     <button v-if="selectedBox && selectedBox.color" @click="confirmSelection">
@@ -46,27 +65,45 @@
 </template>
 
 <script>
+import apiService from '../services/apiService.js';  // Importing the API service
+
 export default {
   data() {
     return {
-      musicBoxes: [
-        { id: 1, name: "Box 1", image: "/image/box.png", color: "#ff0000", isOn: false },
-        { id: 2, name: "Box 2", image: "/image/box.png", color: "#00ff00", isOn: false },
-        { id: 3, name: "Box 3", image: "/image/box.png", color: "#0000ff", isOn: false },
-      ],
-      selectedBox: null,
+      musicBoxes: [],  // To hold the fetched music boxes
+      selectedBox: null,  // To hold the currently selected music box
     };
   },
-    
+
+  async mounted() {
+    // Fetch music boxes from the backend (or mock data if backend is unavailable)
+    this.musicBoxes = await apiService.getMusicBoxes();
+  },
+
   methods: {
     selectBox(box) {
       this.selectedBox = box;
     },
-    togglePower(box) {
+
+    async togglePower(box) {
       box.isOn = !box.isOn;
+      await apiService.togglePower(box.id, box.isOn);
     },
+
+    async updateColor() {
+      if (this.selectedBox) {
+        await apiService.updateColor(this.selectedBox.id, this.selectedBox.color);
+      }
+    },
+
+    async updateEffect() {
+      if (this.selectedBox) {
+        await apiService.updateEffect(this.selectedBox.id, this.selectedBox.effect);
+      }
+    },
+
     confirmSelection() {
-      alert(`You selected ${this.selectedBox.name} with color ${this.selectedBox.color}`);
+      alert(`You selected ${this.selectedBox.name} with color ${this.selectedBox.color} and effect ${this.selectedBox.effect}`);
     },
   },
 };
@@ -77,43 +114,37 @@ export default {
 .container {
   flex-direction: column;
   align-items: center;
-  
   max-width: 800px;
   margin: 0 auto;
   text-align: center;
-  background: rgba(0, 0, 0, 0.8);
+  background: 	#141428e6;
   padding: 20px;
   border-radius: 15px;
   backdrop-filter: blur(15px);
   color: #0ff;
   display: flex;
-  
   justify-content: flex-start;
-  box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
-  border: 1px solid rgba(0, 255, 255, 0.5);
+  border: 1px solid #00ffff4d;
   font-family: 'Orbitron', sans-serif; 
+  box-shadow: 0 0 15px #00ffff4d;
 }
 
-
-h1 {
+/* h1, h2 {
   font-size: 2rem;
   font-weight: 700;
-  margin-bottom: 10px;
   color: #0ff;
   text-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 30px #0ff;
-  width: 100%;
-  text-align: center;
+} */
+
+h1, h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(97deg, #0096FF, #BB64FF 42%, #F2416B 74%, #EB7500);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none; /* Verwijder de oude text-shadow om het effect beter te laten werken */
 }
 
-h2 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 20px;
-  color: #0ff;
-  text-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 30px #0ff;
-  width: 100%;
-  text-align: center; 
-}
 
 /* Music Box List */
 .music-box-list {
@@ -127,28 +158,29 @@ h2 {
 .music-box {
   padding: 10px;
   border-radius: 10px;
-  transition: 0.3s;
   cursor: pointer;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  background: rgba(255, 255, 255, 0.1);
+  background: #ffffff1a;
   position: relative;
   overflow: hidden;
-  transition: all 0.3s ease;
   width: 150px;
-  border: 1px solid rgba(0, 255, 255, 0.5);
+  border: 1px solid #ff00ff80;
+  transition: all 0.3s ease;
 }
 
 .music-box:hover {
   transform: scale(1.05);
+  box-shadow: 0 0 15px #ff00ffb3;
 }
 
 /* Selected Box */
 .music-box.selected {
   transform: scale(1.1);
+  box-shadow: 0 0 20px 5px #ff00ffb3; /* Neon Glow when selected */
 }
 
 /* Greyed Out Effect */
@@ -158,15 +190,36 @@ h2 {
   pointer-events: auto;
 }
 
-/* Pulsing Effect */
-.pulsing {
-  animation: heartbeat 1s infinite ease-in-out;
+/* Pulsating Glow Effect */
+.pulsating {
+  animation: pulsateGlow 1s infinite ease-in-out;
 }
 
-@keyframes heartbeat {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
+@keyframes pulsateGlow {
+  0% { box-shadow: 0 0 15px var(--box-color); }
+  50% { box-shadow: 0 0 75px var(--box-color); }
+  100% { box-shadow: 0 0 15px var(--box-color); }
+}
+
+/* Firework Effect */
+.firework {
+  animation: fireworkEffect 1s infinite;
+}
+
+@keyframes fireworkEffect {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.7; box-shadow: 0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px rgba(255, 255, 255, 0.3); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Rainbow Effect */
+.rainbow {
+  animation: rainbowGlow 1s infinite linear;
+}
+
+@keyframes rainbowGlow {
+  0% { box-shadow: 0 0 10px red, 0 0 20px orange, 0 0 30px yellow, 0 0 40px green, 0 0 50px cyan, 0 0 60px blue, 0 0 70px violet; }
+  100% { box-shadow: 0 0 10px violet, 0 0 20px blue, 0 0 30px cyan, 0 0 40px green, 0 0 50px yellow, 0 0 60px orange, 0 0 70px red; }
 }
 
 /* Music Box Image */
@@ -214,17 +267,18 @@ h2 {
   background: limegreen;
 }
 
-/* Color Picker */
-.color-picker {
+/* Effect Selector */
+.effect-selector {
   margin-top: 20px;
 }
 
-.color-slider {
+.effect-dropdown {
   width: 100%;
-  height: 40px;
-  border: none;
-  cursor: pointer;
-  background: none;
+  padding: 10px;
+  border-radius: 5px;
+  background: #133e7c;
+  color: #fff;
+  font-size: 1em;
 }
 
 /* Confirm Button */
@@ -232,81 +286,16 @@ button {
   margin-top: 20px;
   padding: 12px 20px;
   border: none;
-  background: #ff0077;
+  background: #ea00d9;
   color: white;
   cursor: pointer;
   border-radius: 10px;
   font-weight: bold;
   transition: 0.3s;
   font-size: 1.2em;
-  box-shadow: 0 0 10px #ff0077, 0 0 20px #ff0077, 0 0 30px #ff0077;
 }
 
 button:hover {
-  background: #cc0055;
-}
-
-/* Mobile Responsiveness */
-@media (max-width: 768px) {
-  .container {
-    padding: 20px;
-  }
-
-  h1 {
-    font-size: 1.5em;
-  }
-
-  h2 {
-    font-size: 1.2em;
-  }
-
-  .music-box-list {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .music-box {
-    width: 100%;
-    height: auto;
-  }
-
-  .music-box-image {
-    width: 60px;
-    height: 60px;
-  }
-
-  button {
-    width: 100%;
-    font-size: 1em;
-  }
-}
-
-@media (max-width: 480px) {
-  h1 {
-    font-size: 1.2em;
-  }
-
-  h2 {
-    font-size: 1em;
-  }
-
-  .container {
-    padding: 10px;
-  }
-
-  .music-box {
-    width: 100px;
-    height: 150px;
-  }
-
-  .music-box-image {
-    width: 50px;
-    height: 50px;
-  }
-
-  button {
-    padding: 12px 0;
-    font-size: 14px;
-  }
+  background: #711c91;
 }
 </style>

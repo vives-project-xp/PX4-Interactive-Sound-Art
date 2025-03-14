@@ -83,7 +83,7 @@ OPMERKING: BOX op foto is 50x50 prototype
 
 TODO:
 - Installeren klep achterkant met scharnieren
-- Uitzagen speakergat
+- ~~Uitzagen speakergat~~
 - Monteren buis
 - Monteren elektronica
 - Monteren kattenkop

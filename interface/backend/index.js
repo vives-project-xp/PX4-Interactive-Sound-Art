@@ -41,6 +41,7 @@ app.post("/command/:boxId", async (req, res) => {
   
   // Sla het commando lokaal op
   commands[boxId] = { instrument, color, effect };
+<<<<<<< HEAD
   console.log(`Command updated for ${boxId}:`, commands[boxId]);
   
   // Kijk of de box (Raspberry Pi) geregistreerd is
@@ -55,6 +56,17 @@ app.post("/command/:boxId", async (req, res) => {
     }
   } else {
     console.error(`No registered device for box ${boxId}`);
+=======
+  console.log(` Command updated for ${boxId}:`, commands[boxId]);
+
+  // Replace with your actual Raspberry Pi IP and port (see below)
+  const raspberryPiURL = "http://192.168.1.100:5000"; 
+  try {
+    await axios.post(`${raspberryPiURL}/update`, commands[boxId]);
+    console.log(` Command sent to Raspberry Pi:`, commands[boxId]);
+  } catch (error) {
+    console.error(" Failed to send command to Raspberry Pi:", error.message);
+>>>>>>> 17374f08c70a6afa5620194e4c59b0a843155ce4
   }
   
   res.json({ message: "Command updated successfully", command: commands[boxId] });
@@ -62,5 +74,9 @@ app.post("/command/:boxId", async (req, res) => {
 
 // Start de backend-server
 app.listen(PORT, "0.0.0.0", () => {
+<<<<<<< HEAD
   console.log(`Backend server running on http://0.0.0.0:${PORT}`);
+=======
+  console.log(` Backend server running on http://0.0.0.0:${PORT}`);
+>>>>>>> 17374f08c70a6afa5620194e4c59b0a843155ce4
 });
