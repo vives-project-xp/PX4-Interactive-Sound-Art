@@ -1,4 +1,3 @@
-// rpi_server.js
 import express from "express";
 import cors from "cors";
 import ws281x from "rpi-ws281x-native";
@@ -65,12 +64,12 @@ function updateLEDs(color, effect) {
 // POST endpoint to update the LED strip
 app.post("/update", (req, res) => {
   const { color, effect, instrument } = req.body;
-  console.log(`🎵 Instrument: ${instrument} | 🎨 Color: ${color} | 💡 Effect: ${effect}`);
+  console.log(`Instrument: ${instrument} | Color: ${color} | Effect: ${effect}`);
   updateLEDs(color, effect);
   res.json({ message: "LEDs updated!" });
 });
 
 // Start the Raspberry Pi LED server
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`🚀 Raspberry Pi LED server running on http://0.0.0.0:${PORT}`);
+  console.log(`Raspberry Pi LED server running on http://0.0.0.0:${PORT}`);
 });
