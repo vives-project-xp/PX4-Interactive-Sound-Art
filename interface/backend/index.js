@@ -63,4 +63,5 @@ app.post("/command/:boxId", async (req, res) => {
 // Start de backend-server
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Backend server running on http://0.0.0.0:${PORT}`);
+
 });

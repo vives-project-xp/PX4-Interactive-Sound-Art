@@ -22,7 +22,7 @@
           backgroundColor: box.isOn ? box.color : 'transparent',
           '--box-color': box.color
         }"
-      >
+       >
         <!-- Music Box Image -->
         <img :src="box.image" :alt="box.name" class="music-box-image" />
 
