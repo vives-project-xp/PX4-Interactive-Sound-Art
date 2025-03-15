@@ -124,7 +124,7 @@ export default {
   color: #2997ff;;
   display: flex;
   justify-content: flex-start;
-  border: 2px solid #2998ff8d;
+  /* border: 2px solid #2998ff8d; */
   font-family: 'Orbitron', sans-serif; 
 }
 
@@ -165,8 +165,8 @@ h1, h2 {
   justify-content: space-between;
   position: relative;
   overflow: hidden;
-  width: 150px;
-  border: 1px solid #a972ff;
+  width: 120px;
+  border: 5px solid #ffffff70;
   transition: all 0.3s ease;
 }
 
@@ -274,7 +274,7 @@ h1, h2 {
   width: 100%;
   padding: 10px;
   border-radius: 10px;
-  background-color: #2998ff42;
+  background-color: #0d2a46;
   color: #fff;
   font-size: 1em;
   border: 5px
@@ -285,7 +285,7 @@ button {
   margin-top: 20px;
   padding: 12px 20px;
   border: none;
-  background: #2998ff42;
+  background: #0d2a46;
   color: white;
   cursor: pointer;
   border-radius: 10px;
