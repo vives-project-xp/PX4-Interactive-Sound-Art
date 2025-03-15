@@ -121,7 +121,7 @@ export default {
   padding: 20px;
   border-radius: 15px;
   backdrop-filter: blur(15px);
-  color: #2997ff;;
+  color: #fffffffb;
   display: flex;
   justify-content: flex-start;
   /* border: 2px solid #2998ff8d; */
