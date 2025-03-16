@@ -22,7 +22,7 @@
           backgroundColor: box.isOn && box.effect !== 'rainbow' ? box.color : 'transparent',
           '--box-color': box.color
         }"
-      >
+       >
         <!-- Music Box Image -->
         <img :src="box.image" :alt="box.name" class="music-box-image" />
 
@@ -127,12 +127,24 @@ export default {
   max-width: 1200px;
   margin: auto;
   text-align: center;
+<<<<<<< HEAD
   background: rgba(255, 255, 255, 0.1);
   padding: 20px;
   border-radius: 15px;
   backdrop-filter: blur(15px);
   color: white;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+=======
+  background: 	#000;
+  padding: 20px;
+  border-radius: 15px;
+  backdrop-filter: blur(15px);
+  color: #fffffffb;
+  display: flex;
+  justify-content: flex-start;
+  /* border: 2px solid #2998ff8d; */
+  font-family: 'Orbitron', sans-serif; 
+>>>>>>> d664b0913e5873b85206b61fe2b6fb988575e07c
 }
 
 h1, h2 {
@@ -156,12 +168,35 @@ h1, h2 {
   border-radius: 10px;
   cursor: pointer;
   text-align: center;
+<<<<<<< HEAD
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(0, 255, 255, 0.5);
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
   width: 200px;
+=======
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  width: 120px;
+  border: 5px solid #ffffff70;
+  transition: all 0.3s ease;
+}
+
+.music-box:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px #a972ff;
+}
+
+/* Selected Box */
+.music-box.selected {
+  transform: scale(1.1);
+  box-shadow: 0 0 20px 5px #a972ff; /* Neon Glow when selected */
+>>>>>>> d664b0913e5873b85206b61fe2b6fb988575e07c
 }
 
 .music-box-image {
@@ -245,17 +280,29 @@ h1, h2 {
 .effect-dropdown, .sound-dropdown, .color-slider {
   width: 100%;
   padding: 10px;
+<<<<<<< HEAD
   border-radius: 5px;
   background: #0f0f0f;
+=======
+  border-radius: 10px;
+  background-color: #0d2a46;
+>>>>>>> d664b0913e5873b85206b61fe2b6fb988575e07c
   color: #fff;
   font-size: 1em;
+  border: 5px
 }
 
 .confirm-button {
   margin-top: 20px;
+<<<<<<< HEAD
   padding: 10px 20px;
   border-radius: 5px;
   background: linear-gradient(97deg, #0096FF, #BB64FF 42%, #F2416B 74%, #EB7500);
+=======
+  padding: 12px 20px;
+  border: none;
+  background: #0d2a46;
+>>>>>>> d664b0913e5873b85206b61fe2b6fb988575e07c
   color: white;
   border: none;
   cursor: pointer;
@@ -298,10 +345,15 @@ h1, h2 {
   }
 }
 
+<<<<<<< HEAD
 @media (max-width: 768px) {
   .music-box-list {
     flex-direction: column;
     align-items: center;
   }
+=======
+button:hover {
+  background: #a872ffcf;;
+>>>>>>> d664b0913e5873b85206b61fe2b6fb988575e07c
 }
 </style>

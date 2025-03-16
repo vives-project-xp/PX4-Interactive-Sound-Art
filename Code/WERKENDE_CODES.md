@@ -363,4 +363,54 @@ python3 sound_player.py
 ```
 
 - led_distance_control.py moet als sudo draaien, omdat het de GPIO en LED-strip bestuurt.
+
+
 - sound_player.py mag niet als sudo draaien, omdat pygame anders niet werkt.
+
+- Op RPI2 moest de code beetje verandert worden voor het geluid te doen werken, het sound_player.py bestand staat hieronder
+```python
+import pygame
+import time
+import os
+
+# Initialiseer pygame
+pygame.mixer.init()
+
+# Zet de juiste pad naar de bestanden
+base_path = "/home/RPI2/Sounds/piano/"  # Update het pad naar de nieuwe locatie
+short_sound = pygame.mixer.Sound(os.path.join(base_path, "A.mp3"))
+medium_sound = pygame.mixer.Sound(os.path.join(base_path, "B.mp3"))
+long_sound = pygame.mixer.Sound(os.path.join(base_path, "C.mp3"))
+
+distance_file = "/home/RPI2/distance.txt"
+
+def read_distance():
+    """Leest de afstand uit het tekstbestand en retourneert de waarde."""
+    try:
+        with open(distance_file, "r") as file:
+            return float(file.read().strip())
+    except:
+        return None  # Retourneer None als er een fout optreedt
+
+def play_sound(distance):
+    """Speelt een geluid af op basis van de afstand."""
+    if distance < 30:
+        short_sound.play()
+        print("Speelt sample 1 af")
+    elif 30 <= distance < 60:
+        medium_sound.play()
+        print("Speelt sample 2 af")
+    elif distance >= 60:
+        long_sound.play()
+        print("Speelt sample 3 af")
+
+try:
+    while True:
+        distance = read_distance()
+        if distance is not None:
+            play_sound(distance)
+        time.sleep(0.5)
+
+except KeyboardInterrupt:
+    print("Sound player gestopt")
+```

@@ -21,6 +21,8 @@ Hiervan zou je geen errors moeten krijgen.
 Run file:
 ```
 sudo python3 /home/RPI2/Documents/test1.py
+
+python3 /home/RPI2/Documents/sound_player.py
 ```
 
 
