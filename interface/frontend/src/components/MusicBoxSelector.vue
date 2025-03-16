@@ -1,7 +1,7 @@
 <template>
   <div class="container">
-    <h1>Interactive Sound Art Controller</h1>
-    <h2>Select Your Music Box</h2>
+    <h1 class="title">Interactive Sound Art Controller</h1>
+    <h2 class="subtitle">Select Your Music Box</h2>
 
     <!-- Music Box Selection -->
     <div class="music-box-list">
@@ -18,65 +18,74 @@
         }"
         @click="selectBox(box)"
         :style="{
-          boxShadow: box.isOn ? `0 0 20px ${box.color}` : 'none',
-          backgroundColor: box.isOn ? box.color : 'transparent',
+          boxShadow: box.isOn && box.effect !== 'rainbow' ? `0 0 20px ${box.color}` : 'none',
+          backgroundColor: box.isOn && box.effect !== 'rainbow' ? box.color : 'transparent',
           '--box-color': box.color
         }"
       >
         <!-- Music Box Image -->
         <img :src="box.image" :alt="box.name" class="music-box-image" />
 
-        <!-- Color Display Box -->
-        <div class="color-display" :style="{ backgroundColor: box.color, opacity: box.isOn ? 1 : 0.3 }"></div>
-
-        <p>{{ box.name }}</p>
+        <!-- Box Name with Grey Background -->
+        <p class="box-name">{{ box.name }}</p>
 
         <!-- On/Off Switch -->
         <div class="switch" @click.stop="togglePower(box)">
-          <div :class="['slider', { on: box.isOn }]"></div>
+          <div :class="['slider', { on: box.isOn }]" />
         </div>
       </div>
     </div>
 
-    
+    <!-- Effect, Sound, and Color Selector -->
+    <div v-if="selectedBox" class="settings-section">
+      <h2>Settings for {{ selectedBox.name }}</h2>
+      <div class="settings-grid">
+        <!-- Effect Selector -->
+        <div class="setting">
+          <label>Effect:</label>
+          <select v-model="selectedBox.effect" @change="updateEffect" class="effect-dropdown">
+            <option value="pulsating">Pulsating</option>
+            <option value="firework">Firework</option>
+            <option value="rainbow">Rainbow</option>
+          </select>
+        </div>
 
-    <!-- Effect Selector -->
-<div v-if="selectedBox" class="effect-selector">
-  <h2>Select Effect</h2>
-  <select v-model="selectedBox.effect" @change="updateEffect" class="effect-dropdown">
-    <option value="pulsating">Pulsating</option>
-    <option value="firework">Firework</option>
-    <option value="rainbow">Rainbow</option>
-  </select>
-</div>
+        <!-- Sound Selector -->
+        <div class="setting">
+          <label>Sound:</label>
+          <select v-model="selectedBox.sound" @change="updateSound(selectedBox)" class="sound-dropdown">
+            <option v-for="sound in availableSounds" :key="sound" :value="sound">{{ sound }}</option>
+          </select>
+        </div>
 
-<!-- Color Picker Section (Hidden if Rainbow is Selected) -->
-<div v-if="selectedBox && selectedBox.effect !== 'rainbow'" class="color-picker">
-  <h2>Choose a Color</h2>
-  <input type="color" v-model="selectedBox.color" class="color-slider" @input="updateColor" />
-</div>
-
+        <!-- Color Picker (Hidden for Rainbow Effect) -->
+        <div v-if="selectedBox.effect !== 'rainbow'" class="setting">
+          <label>Color:</label>
+          <input type="color" v-model="selectedBox.color" class="color-slider" @input="updateColor" />
+        </div>
+      </div>
+    </div>
 
     <!-- Confirm Button -->
-    <button v-if="selectedBox && selectedBox.color" @click="confirmSelection">
+    <button v-if="selectedBox && selectedBox.color" @click="confirmSelection" class="confirm-button">
       Confirm Selection
     </button>
   </div>
 </template>
 
 <script>
-import apiService from '../services/apiService.js';  // Importing the API service
+import apiService from '../services/apiService.js';
 
 export default {
   data() {
     return {
-      musicBoxes: [],  // To hold the fetched music boxes
-      selectedBox: null,  // To hold the currently selected music box
+      musicBoxes: [],
+      selectedBox: null,
+      availableSounds: ['Piano', 'Guitar', 'Violin', 'Flute', 'Drums'],
     };
   },
 
   async mounted() {
-    // Fetch music boxes from the backend (or mock data if backend is unavailable)
     this.musicBoxes = await apiService.getMusicBoxes();
   },
 
@@ -102,39 +111,29 @@ export default {
       }
     },
 
+    async updateSound(box) {
+      await apiService.updateSound(box.id, box.sound);
+    },
+
     confirmSelection() {
-      alert(`You selected ${this.selectedBox.name} with color ${this.selectedBox.color} and effect ${this.selectedBox.effect}`);
+      alert(`You selected ${this.selectedBox.name} with color ${this.selectedBox.color}, effect ${this.selectedBox.effect}, and sound ${this.selectedBox.sound}`);
     },
   },
 };
 </script>
 
 <style scoped>
-/* Container Styling */
 .container {
-  flex-direction: column;
-  align-items: center;
-  max-width: 800px;
-  margin: 0 auto;
+  max-width: 1200px;
+  margin: auto;
   text-align: center;
-  background: 	#141428e6;
+  background: rgba(255, 255, 255, 0.1);
   padding: 20px;
   border-radius: 15px;
   backdrop-filter: blur(15px);
-  color: #0ff;
-  display: flex;
-  justify-content: flex-start;
-  border: 1px solid #00ffff4d;
-  font-family: 'Orbitron', sans-serif; 
-  box-shadow: 0 0 15px #00ffff4d;
+  color: white;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
-
-/* h1, h2 {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #0ff;
-  text-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 30px #0ff;
-} */
 
 h1, h2 {
   font-size: 2rem;
@@ -142,160 +141,167 @@ h1, h2 {
   background: linear-gradient(97deg, #0096FF, #BB64FF 42%, #F2416B 74%, #EB7500);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: none; /* Verwijder de oude text-shadow om het effect beter te laten werken */
 }
 
-
-/* Music Box List */
 .music-box-list {
   display: flex;
-  justify-content: space-around;
-  width: 100%;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
   margin: 20px 0;
 }
 
-/* Music Box */
 .music-box {
-  padding: 10px;
+  padding: 15px;
   border-radius: 10px;
   cursor: pointer;
   text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  background: #ffffff1a;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 255, 255, 0.5);
+  transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
-  width: 150px;
-  border: 1px solid #ff00ff80;
-  transition: all 0.3s ease;
+  width: 200px;
 }
 
-.music-box:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 15px #ff00ffb3;
-}
-
-/* Selected Box */
-.music-box.selected {
-  transform: scale(1.1);
-  box-shadow: 0 0 20px 5px #ff00ffb3; /* Neon Glow when selected */
-}
-
-/* Greyed Out Effect */
-.music-box.off {
-  filter: grayscale(100%);
-  opacity: 0.5;
-  pointer-events: auto;
-}
-
-/* Pulsating Glow Effect */
-.pulsating {
-  animation: pulsateGlow 1s infinite ease-in-out;
-}
-
-@keyframes pulsateGlow {
-  0% { box-shadow: 0 0 15px var(--box-color); }
-  50% { box-shadow: 0 0 75px var(--box-color); }
-  100% { box-shadow: 0 0 15px var(--box-color); }
-}
-
-/* Firework Effect */
-.firework {
-  animation: fireworkEffect 1s infinite;
-}
-
-@keyframes fireworkEffect {
-  0% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.1); opacity: 0.7; box-shadow: 0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px rgba(255, 255, 255, 0.3); }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-/* Rainbow Effect */
-.rainbow {
-  animation: rainbowGlow 1s infinite linear;
-}
-
-@keyframes rainbowGlow {
-  0% { box-shadow: 0 0 10px red, 0 0 20px orange, 0 0 30px yellow, 0 0 40px green, 0 0 50px cyan, 0 0 60px blue, 0 0 70px violet; }
-  100% { box-shadow: 0 0 10px violet, 0 0 20px blue, 0 0 30px cyan, 0 0 40px green, 0 0 50px yellow, 0 0 60px orange, 0 0 70px red; }
-}
-
-/* Music Box Image */
 .music-box-image {
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
   object-fit: contain;
-  transition: transform 0.3s;
 }
 
-/* Color Display Box */
-.color-display {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  margin-top: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  transition: background 0.3s;
+.box-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  background: rgba(0, 0, 0, 0.6); /* Grey-ish background for readability */
+  padding: 5px 10px;
+  border-radius: 5px;
+  margin: 10px 0;
+  color: white;
 }
 
-/* Power Switch */
 .switch {
-  width: 40px;
-  height: 20px;
-  background: #ccc;
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  padding: 2px;
-  cursor: pointer;
-  transition: 0.3s;
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+  margin-top: 10px;
 }
 
 .slider {
-  width: 16px;
-  height: 16px;
-  background: white;
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 34px;
+}
+
+.slider.on {
+  background-color: #2196F3;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: 0.4s;
   border-radius: 50%;
-  transition: 0.3s;
-  transform: translateX(0);
 }
 
-.on {
-  transform: translateX(20px);
-  background: limegreen;
+.slider.on:before {
+  transform: translateX(26px);
 }
 
-/* Effect Selector */
-.effect-selector {
+.settings-section {
   margin-top: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 255, 255, 0.5);
 }
 
-.effect-dropdown {
+.settings-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+}
+
+.setting {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.effect-dropdown, .sound-dropdown, .color-slider {
   width: 100%;
   padding: 10px;
   border-radius: 5px;
-  background: #133e7c;
+  background: #0f0f0f;
   color: #fff;
   font-size: 1em;
 }
 
-/* Confirm Button */
-button {
+.confirm-button {
   margin-top: 20px;
-  padding: 12px 20px;
-  border: none;
-  background: #ea00d9;
+  padding: 10px 20px;
+  border-radius: 5px;
+  background: linear-gradient(97deg, #0096FF, #BB64FF 42%, #F2416B 74%, #EB7500);
   color: white;
+  border: none;
   cursor: pointer;
-  border-radius: 10px;
-  font-weight: bold;
-  transition: 0.3s;
-  font-size: 1.2em;
+  font-size: 1em;
 }
 
-button:hover {
-  background: #711c91;
+/* Rainbow Effect */
+.rainbow {
+  background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet);
+  background-size: 400% 400%;
+  animation: rainbow-animation 5s linear infinite;
+}
+
+@keyframes rainbow-animation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Pulsating Effect */
+.pulsating {
+  animation: pulsate 1.5s infinite;
+}
+
+@keyframes pulsate {
+  0% {
+    box-shadow: 0 0 0 0 var(--box-color);
+  }
+  50% {
+    box-shadow: 0 0 20px 10px var(--box-color);
+  }
+  100% {
+    box-shadow: 0 0 0 0 var(--box-color);
+  }
+}
+
+@media (max-width: 768px) {
+  .music-box-list {
+    flex-direction: column;
+    align-items: center;
+  }
 }
 </style>
