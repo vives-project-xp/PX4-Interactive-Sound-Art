@@ -366,7 +366,9 @@ python3 sound_player.py
 
 
 - sound_player.py mag niet als sudo draaien, omdat pygame anders niet werkt.
-```bash
+
+- Op RPI2 moest de code beetje verandert worden voor het geluid te doen werken, het sound_player.py bestand staat hieronder
+```python
 import pygame
 import time
 import os
