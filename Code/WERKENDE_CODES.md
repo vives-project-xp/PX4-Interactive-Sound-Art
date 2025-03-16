@@ -378,9 +378,9 @@ pygame.mixer.init()
 
 # Zet de juiste pad naar de bestanden
 base_path = "/home/RPI2/Sounds/piano/"  # Update het pad naar de nieuwe locatie
-short_sound = pygame.mixer.Sound(os.path.join(base_path, "sample1.wav"))
-medium_sound = pygame.mixer.Sound(os.path.join(base_path, "sample2.wav"))
-long_sound = pygame.mixer.Sound(os.path.join(base_path, "sample3.wav"))
+short_sound = pygame.mixer.Sound(os.path.join(base_path, "A.mp3"))
+medium_sound = pygame.mixer.Sound(os.path.join(base_path, "B.mp3"))
+long_sound = pygame.mixer.Sound(os.path.join(base_path, "C.mp3"))
 
 distance_file = "/home/RPI2/distance.txt"
 
