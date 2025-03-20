@@ -56,3 +56,21 @@ def effect_rainbow(strip, leds_to_light):
     for i in range(leds_to_light, strip.numPixels()):
         strip.setPixelColor(i, Color(0, 0, 0, 0))
     strip.show()
+
+def effect_idle(strip):
+    """
+    Idle-effect: Laat de LEDs één voor één oplichten en weer uitgaan over de volledige LED-strip.
+    Dit effect werkt onafhankelijk van de afstand.
+    """
+    num_leds = strip.numPixels()
+    delay = 0.05  # Tijd in seconden tussen elke LED
+    
+    for i in range(num_leds):
+        strip.setPixelColor(i, Color(255, 100, 0, 0))  # Oranje kleur
+        strip.show()
+        time.sleep(delay)
+
+    for i in range(num_leds):
+        strip.setPixelColor(i, Color(0, 0, 0, 0))  # LED uitzetten
+        strip.show()
+        time.sleep(delay)

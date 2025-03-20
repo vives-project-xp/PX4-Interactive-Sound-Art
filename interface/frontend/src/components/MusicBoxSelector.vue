@@ -53,6 +53,11 @@
           <label>Color:</label>
           <input type="color" v-model="selectedBox.color" class="color-slider" @input="updateColor" />
         </div>
+
+        <div class="setting">
+          <label>LED State:</label>
+          <input type="checkbox" v-model="selectedBox.led" @change="updateLED" />
+        </div>
       </div>
     </div>
 
@@ -116,6 +121,12 @@ export default {
       }
     },
 
+    async updateLED() {
+      if (this.selectedBox) {
+        await apiService.updateLED(this.selectedBox.id, this.selectedBox.led);
+      }
+    },
+
     async updateSound(box) {
       box.image = this.soundImages[box.sound];
       await apiService.updateSound(box.id, box.sound);
@@ -127,6 +138,10 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+/* Add your styles here */
+</style>
 
 <style scoped>
 .container {
