@@ -11,20 +11,15 @@ SOUNDS_BASE_PATH = "/home/RPI2/Documents/Sounds"
 
 def load_instrument_sounds(instrument_name):
     """
-    Laadt 8 geluiden voor het gegeven instrument uit de bijbehorende map.
-    We verwachten bestanden niveau 1.mp3 , niveau 2.mp3 , niveau 3.mp3 .... niveau 8.mp3
+    Laadt drie geluiden voor het gegeven instrument uit de bijbehorende map.
+    We verwachten bestanden A.mp3, B.mp3 en C.mp3.
     """
     instrument_path = os.path.join(SOUNDS_BASE_PATH, instrument_name)
     try:
         sounds = {
-            "niv1": pygame.mixer.Sound(os.path.join(instrument_path, "niveau 1.mp3")),
-            "niv2": pygame.mixer.Sound(os.path.join(instrument_path, "niveau 2.mp3")),
-            "niv3": pygame.mixer.Sound(os.path.join(instrument_path, "niveau 3.mp3")),
-            "niv4": pygame.mixer.Sound(os.path.join(instrument_path, "niveau 4.mp3")),
-            "niv5": pygame.mixer.Sound(os.path.join(instrument_path, "niveau 5.mp3")),
-            "niv6": pygame.mixer.Sound(os.path.join(instrument_path, "niveau 6.mp3")),
-            "niv7": pygame.mixer.Sound(os.path.join(instrument_path, "niveau 7.mp3")),
-            "niv8": pygame.mixer.Sound(os.path.join(instrument_path, "niveau 8.mp3"))
+            "short": pygame.mixer.Sound(os.path.join(instrument_path, "A.mp3")),
+            "medium": pygame.mixer.Sound(os.path.join(instrument_path, "B.mp3")),
+            "long": pygame.mixer.Sound(os.path.join(instrument_path, "C.mp3"))
         }
         return sounds
     except Exception as e:
@@ -33,16 +28,14 @@ def load_instrument_sounds(instrument_name):
 
 # Laad de geluiden voor de instrumenten
 instruments = {
-    "gitaar": load_instrument_sounds("gitaar"),
-    "drum": load_instrument_sounds("drum"),
-    "bass jumpy": load_instrument_sounds("bass jumpy"),
-    "bell": load_instrument_sounds("bell"),
-    "synth Sci-Fi": load_instrument_sounds("synth Sci-Fi"),
-    "synth sharp": load_instrument_sounds("synth sharp"),
-    "bassline": load_instrument_sounds("bassline")
+    "guitar": load_instrument_sounds("guitar"),
+    "piano": load_instrument_sounds("piano"),
+    # Voeg hier extra instrumenten toe, bijvoorbeeld:
+    # "synth": load_instrument_sounds("synth")
 }
 
-default_instrument = instruments.get("gitaar")  #als het ontvangen instrument niet herkent word
+# Indien het ontvangen instrument niet herkend wordt, gebruik een standaard instrument.
+default_instrument = instruments.get("guitar")  # Of kies een ander standaard instrument
 
 # Pad voor statusbestand waarin afstand en instrument worden opgeslagen
 status_file = "/home/RPI2/Documents/txtFile/status.json"
@@ -68,36 +61,20 @@ def play_sound(distance, instrument):
         print(f"Geen geluiden gevonden voor instrument: {instrument}")
         return
 
-    if distance < 10:
-        sounds["niv1"].play()
-        print(f"Speelt {instrument} sample niveau 1 af (afstand < 10)")
-    elif 10 <= distance < 20:
-        sounds["niv2"].play()
-        print(f"Speelt {instrument} sample niveau 2 af (afstand 10-20)")
-    elif 20 <= distance < 30:
-        sounds["niv3"].play()
-        print(f"Speelt {instrument} sample niveau 3 af (afstand 20-30)")
-    elif 30 <= distance < 40:
-        sounds["niv4"].play()
-        print(f"Speelt {instrument} sample niveau 4 af (afstand 30-40)")
-    elif 40 <= distance < 50:
-        sounds["niv5"].play()
-        print(f"Speelt {instrument} sample niveau 5 af (afstand 40-50)")
-    elif 50 <= distance < 60:
-        sounds["niv6"].play()
-        print(f"Speelt {instrument} sample niveau 6 af (afstand 50-60)")
-    elif 60 <= distance < 70:
-        sounds["niv7"].play()
-        print(f"Speelt {instrument} sample niveau 7 af (afstand 60-70)")
-    elif distance >= 70:
-        sounds["niv8"].play()
-        print(f"Speelt {instrument} sample niveau 8 af (afstand >= 70)")
+    if distance < 30:
+        sounds["short"].play()
+        print(f"Speelt {instrument} sample short af (afstand < 30)")
+    elif 30 <= distance < 60:
+        sounds["medium"].play()
+        print(f"Speelt {instrument} sample medium af (afstand 30-60)")
+    elif distance >= 60:
+        sounds["long"].play()
+        print(f"Speelt {instrument} sample long af (afstand >= 60)")
 
 try:
     while True:
         distance, instrument = read_status()
         if distance is not None and instrument is not None:
             play_sound(distance, instrument)
-        time.sleep(0.5)
+        time.sleep(0.5)  # Voorkom overbelasting van het systeem
 except KeyboardInterrupt:
-    print("Programma gestopt")

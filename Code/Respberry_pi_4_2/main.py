@@ -7,7 +7,7 @@ import json
 import RPi.GPIO as GPIO
 from rpi_ws281x import PixelStrip, Color, ws
 import numpy as np
-from led_effects import effect_solid, effect_puls, effect_rainbow, effect_chase, effect_fire, effect_sparkle
+from led_effects import effect_solid, effect_puls, effect_rainbow
 
 app = Flask(__name__)
 CORS(app)
@@ -18,10 +18,10 @@ ECHO_PIN = 6
 
 # LED-strip instellingen
 LED_COUNT = 100
-LED_PIN = 18
+LED_PIN = 12
 LED_FREQ_HZ = 800000
 LED_DMA = 10
-LED_BRIGHTNESS = 200
+LED_BRIGHTNESS = 50
 LED_INVERT = False
 LED_CHANNEL = 0
 strip_type = ws.SK6812_STRIP_RGBW
@@ -85,19 +85,12 @@ def write_status_to_file(distance):
 
 def update_leds(distance):
     leds_to_light = int(distance / 1.5)
-    
     if current_effect == "solid":
         effect_solid(strip, leds_to_light, current_color)
     elif current_effect == "puls":
         effect_puls(strip, leds_to_light, current_color)
     elif current_effect == "rainbow":
         effect_rainbow(strip, leds_to_light)
-    elif current_effect == "chase":
-        effect_chase(strip, leds_to_light, current_color)
-    elif current_effect == "fire":
-        effect_fire(strip, leds_to_light)
-    elif current_effect == "sparkle":
-        effect_sparkle(strip, leds_to_light, current_color)
     else:
         effect_solid(strip, leds_to_light, current_color)
 
