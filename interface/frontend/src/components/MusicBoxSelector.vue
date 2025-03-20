@@ -84,7 +84,7 @@ export default {
       availableSounds: ['Piano', 'Guitar', 'Violin', 'Flute', 'Drums'],
       soundImages: {
       'Piano': '/image/piano.png',
-      'Guitar': '/image/box.png',
+      'Guitar': '/image/guitar.png',
       'Violin': '/image/violin.png',
       'Flute': '/image/flute.png',
       'Drums': '/image/drums.png',
