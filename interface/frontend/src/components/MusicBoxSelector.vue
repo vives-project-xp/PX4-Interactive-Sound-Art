@@ -95,7 +95,7 @@ export default {
   async mounted() {
     try {
     this.musicBoxes = await apiService.getMusicBoxes();
-  } catch (error) {
+  } catch {
     console.warn('Backend niet bereikbaar, fallback naar mockdata');
     this.musicBoxes = [
       { id: 1, name: 'Box 1', image: this.soundImages['Piano'], color: '#ff0000', isOn: false, sound: 'Piano' },
