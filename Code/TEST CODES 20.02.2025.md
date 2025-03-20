@@ -682,7 +682,7 @@ except KeyboardInterrupt:
 
 1. ModuleNotFoundError: No module named 'rpi_ws281x'
 ```bash
-pip3 install --break-system-packages rpi-ws281x
+sudo pip3 install rpi-ws281x --break-system-packages 
 
 ```
 
@@ -859,9 +859,9 @@ GPIO.setup(ECHO_PIN, GPIO.IN)
 pygame.mixer.init()
 
 # Laad de audiobestanden
-short_sound = pygame.mixer.Sound("sample1.wav")  
-medium_sound = pygame.mixer.Sound("sample2.wav")  
-long_sound = pygame.mixer.Sound("sample3.wav")    
+short_sound = pygame.mixer.Sound("/home/RPI1/Downloads/a.mp3")  
+medium_sound = pygame.mixer.Sound("/home/RPI1/Downloads/c.mp3")  
+long_sound = pygame.mixer.Sound("/home/RPI1/Downloads/e.mp3")    
 
 # Initialiseer de LED-strip
 strip = PixelStrip(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT,
@@ -924,6 +924,8 @@ def play_sound(distance):
     elif distance >= 60:
         long_sound.play()
         print("Speelt sample 3 af")
+        
+        
 
 try:
     while True:
@@ -938,5 +940,123 @@ except KeyboardInterrupt:
     strip.show()
     GPIO.cleanup()
 
+
+
+```
+
+```
+import time
+import RPi.GPIO as GPIO
+import pygame
+from rpi_ws281x import PixelStrip, Color, ws
+import numpy as np  # Voor moving average filter
+
+# GPIO-configuratie voor de HC-SR04
+TRIG_PIN = 5  # GPIO 5 - Trigger
+ECHO_PIN = 6  # GPIO 6 - Echo
+
+# LED-strip configuratie voor SK6812 RGBW
+LED_COUNT = 100       # Aantal LEDs
+LED_PIN = 18          # GPIO-pin voor dataverkeer (PWM)
+LED_FREQ_HZ = 800000  # LED signaal frequentie (800kHz)
+LED_DMA = 10          # DMA-kanaal
+LED_BRIGHTNESS = 50   # Start helderheid (0-255)
+LED_INVERT = False    # True als een inverterende schakeling wordt gebruikt
+LED_CHANNEL = 0       # Meestal 0, tenzij alternatieve PWM-kanaal
+strip_type = ws.SK6812_STRIP_RGBW  # LED-strip type SK6812 RGBW
+
+# GPIO-instellingen
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(TRIG_PIN, GPIO.OUT)
+GPIO.setup(ECHO_PIN, GPIO.IN)
+
+# Initialiseer pygame voor audio
+pygame.mixer.init(frequency=44100, size=-16, channels=1, buffer=512)
+
+# Bestanden correct laden voor pygame.mixer.music
+sound_files = {
+    "short": "/home/RPI1/Downloads/a.mp3",
+    "medium": "/home/RPI1/Downloads/c.mp3",
+    "long": "/home/RPI1/Downloads/e.mp3",
+}
+
+def play_sound(file_path):
+    """ Speelt een geluid af zonder overlap. """
+    if not pygame.mixer.music.get_busy():  # Speel alleen af als er geen geluid bezig is
+        pygame.mixer.music.load(file_path)
+        pygame.mixer.music.play()
+        print(f"Speelt {file_path} af")
+
+# Initialiseer de LED-strip
+strip = PixelStrip(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT,
+                     LED_BRIGHTNESS, LED_CHANNEL, strip_type=strip_type)
+strip.begin()
+
+# Moving average filter voor stabiele metingen
+window_size = 5  
+distance_buffer = np.zeros(window_size)
+
+def measure_distance():
+    """ Meet de afstand en past een gemiddelde filter toe voor stabiliteit. """
+    GPIO.output(TRIG_PIN, False)
+    time.sleep(0.001)  # Minimal stabilization time
+
+    GPIO.output(TRIG_PIN, True)
+    time.sleep(0.00001)
+    GPIO.output(TRIG_PIN, False)
+
+    start_time, stop_time = time.time(), time.time()
+
+    while GPIO.input(ECHO_PIN) == 0:
+        start_time = time.time()
+
+    while GPIO.input(ECHO_PIN) == 1:
+        stop_time = time.time()
+
+    elapsed_time = stop_time - start_time
+    distance = (elapsed_time * 34300) / 2  # Omrekenen naar cm
+
+    # Voer bewegingsgemiddelde filter toe
+    global distance_buffer
+    distance_buffer = np.roll(distance_buffer, -1)
+    distance_buffer[-1] = distance
+    filtered_distance = np.mean(distance_buffer)
+
+    return max(5, min(filtered_distance, LED_COUNT * 1.5))  # Afstanden beperken voor stabiliteit
+
+def update_leds(distance):
+    """ Directe LED-updates zodat ze altijd de hand volgen. """
+    leds_to_light = int(distance / 1.5)  
+    print(f"Afstand: {distance:.2f} cm -> LEDs aan: {leds_to_light}")
+
+    for i in range(LED_COUNT):
+        if i < leds_to_light:
+            strip.setPixelColor(i, Color(255, 255, 0, 0))  # Geel
+        else:
+            strip.setPixelColor(i, Color(0, 0, 0, 0))  # LED uit
+
+    strip.show()  
+
+def check_and_play_sound(distance):
+    """ Bepaalt welk geluid afgespeeld moet worden. """
+    if distance < 30:
+        play_sound(sound_files["short"])
+    elif 30 <= distance < 60:
+        play_sound(sound_files["medium"])
+    elif distance >= 60:
+        play_sound(sound_files["long"])
+
+try:
+    while True:
+        distance = measure_distance()  # Meet real-time afstand
+        update_leds(distance)  # Instant LED-update
+        check_and_play_sound(distance)  # Geluid afspelen zonder overlap
+
+except KeyboardInterrupt:
+    print("Programma gestopt")
+    for i in range(LED_COUNT):
+        strip.setPixelColor(i, Color(0, 0, 0, 0))  
+    strip.show()
+    GPIO.cleanup()
 
 ```
