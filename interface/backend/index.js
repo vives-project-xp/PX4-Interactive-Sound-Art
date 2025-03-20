@@ -14,10 +14,10 @@ app.use(cors());
 app.use(express.json());
 
 // In-memory storage for devices and commands
-const devices = {};
-const commands = {};
+const devices = {}; // e.g., { box1: { ip: "100.98.149.108", socketId: "abc123", lastSeen: 1680000000000 } }
+const commands = {}; // e.g., { box1: { instrument: "guitar", color: "#0000FF", effect: "rainbow", isOn: true } }
 
-// HTTP registration for devices
+// HTTP registration endpoint for devices
 app.post("/register", (req, res) => {
   const { boxId, ip } = req.body;
   if (!boxId || !ip) {
@@ -28,9 +28,17 @@ app.post("/register", (req, res) => {
   res.json({ message: "Registered successfully" });
 });
 
-// GET endpoint to fetch devices (needed by the frontend)
+// GET endpoint to fetch devices with their settings
 app.get("/devices", (req, res) => {
-  res.json(devices); 
+  // Combine device data with command settings
+  const combined = {};
+  for (const boxId in devices) {
+    combined[boxId] = {
+      ...devices[boxId],
+      settings: commands[boxId] || { instrument: "", color: "", effect: "", isOn: false }
+    };
+  }
+  res.json(combined);
 });
 
 // Endpoint to receive commands from the frontend
@@ -40,7 +48,7 @@ app.post("/command/:boxId", (req, res) => {
   commands[boxId] = { instrument, color, effect, isOn };
   console.log(`Command updated for ${boxId}:`, commands[boxId]);
 
-  // If the device is connected via WebSocket, send the command
+  // If a device is connected via WebSocket, send the command
   if (devices[boxId] && devices[boxId].socketId) {
     io.to(devices[boxId].socketId).emit("command", commands[boxId]);
     console.log(`Command sent via WebSocket to ${boxId}`);
@@ -54,7 +62,7 @@ app.post("/command/:boxId", (req, res) => {
 io.on("connection", (socket) => {
   console.log("New socket connection:", socket.id);
 
-  // Device registers via WebSocket
+  // Device registers via a "register" event with boxId
   socket.on("register", (data) => {
     const { boxId, ip } = data;
     if (boxId) {
@@ -64,7 +72,7 @@ io.on("connection", (socket) => {
     }
   });
 
-  // Remove device on disconnect
+  // Remove device registration on disconnect
   socket.on("disconnect", () => {
     console.log("Socket disconnected:", socket.id);
     for (const boxId in devices) {
