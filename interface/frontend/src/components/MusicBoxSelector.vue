@@ -61,7 +61,13 @@
         <!-- Color Picker (Hidden for Rainbow Effect) -->
         <div v-if="selectedBox.effect !== 'rainbow'" class="setting">
           <label>Color:</label>
-          <input type="color" v-model="selectedBox.color" class="color-slider" @input="updateColor" />
+          <input 
+            type="color" 
+            v-model="selectedBox.color" 
+            class="color-slider" 
+            @input="updateColor"
+            :style="{ backgroundColor: selectedBox.color }"
+          />
         </div>
       </div>
     </div>
@@ -249,6 +255,9 @@ h1, h2 {
   background: #0f0f0f;
   color: #fff;
   font-size: 1em;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .confirm-button {
