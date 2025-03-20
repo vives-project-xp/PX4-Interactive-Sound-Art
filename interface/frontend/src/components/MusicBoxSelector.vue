@@ -10,6 +10,7 @@
         class="music-box"
         :class="{ 
           selected: selectedBox?.id === box.id, 
+          solid: box.effect === 'solid' && box.isOn,
           pulsating: box.effect === 'pulsating' && box.isOn,
           firework: box.effect === 'firework' && box.isOn,
           rainbow: box.effect === 'rainbow' && box.isOn,
@@ -36,6 +37,7 @@
         <div class="setting">
           <label>Effect:</label>
           <select v-model="selectedBox.effect" @change="updateEffect" class="effect-dropdown">
+            <option value="solid">Solid</option>
             <option value="pulsating">Pulsating</option>
             <option value="firework">Firework</option>
             <option value="rainbow">Rainbow</option>
