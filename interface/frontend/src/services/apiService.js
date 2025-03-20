@@ -88,15 +88,7 @@ const apiService = {
     }
   },
 
-  async updateLED(id, ledState) {
-    try {
-      const response = await axios.post(`${API_URL}/${id}/command`, { led: ledState });
-      return response.data;
-    } catch (error) {
-      console.warn(`Failed to update LED for Box ${id}:`, error.message);
-      throw error;
-    }
-  },
+  
 
   async updateSound(id, sound) {
     try {
