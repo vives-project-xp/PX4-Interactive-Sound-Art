@@ -4,7 +4,7 @@ from flask_cors import CORS
 from flask_socketio import SocketIO  # (Not used for server here but needed if you want to add SocketIO events later)
 import time, threading, json, numpy as np, RPi.GPIO as GPIO
 from rpi_ws281x import PixelStrip, ws, Color
-from led_effects import effect_solid, effect_puls, effect_rainbow
+from led_effects import effect_solid, effect_puls, effect_rainbow, effect_chase, effect_fire, effect_sparkle
 import socketio  # Socket.IO client
 import requests
 
@@ -19,7 +19,7 @@ ECHO_PIN = 6
 
 # LED-strip settings
 LED_COUNT = 100
-LED_PIN = 12
+LED_PIN = 18
 LED_FREQ_HZ = 800000
 LED_DMA = 10
 LED_BRIGHTNESS = 50
@@ -82,12 +82,19 @@ def write_status_to_file(distance):
 
 def update_leds(distance):
     leds_to_light = int(distance / 1.5)
+    
     if current_effect == "solid":
         effect_solid(strip, leds_to_light, current_color)
     elif current_effect == "puls":
         effect_puls(strip, leds_to_light, current_color)
     elif current_effect == "rainbow":
         effect_rainbow(strip, leds_to_light)
+    elif current_effect == "chase":
+        effect_chase(strip, leds_to_light, current_color)
+    elif current_effect == "fire":
+        effect_fire(strip, leds_to_light)
+    elif current_effect == "sparkle":
+        effect_sparkle(strip, leds_to_light, current_color)
     else:
         effect_solid(strip, leds_to_light, current_color)
 
@@ -113,7 +120,7 @@ def connect():
     print("Connected to backend via WebSocket")
     # Register with the backend using your boxId and Tailscale IP.
     box_id = "box1"
-    tailscale_ip = "100.98.149.108"  # Replace with your Pi's actual Tailscale IP
+    tailscale_ip = "100.65.86.118"  # Replace with your Pi's actual Tailscale IP
     sio.emit("register", {"boxId": box_id, "ip": tailscale_ip})
 
 @sio.event
@@ -130,7 +137,7 @@ def command_handler(data):
 
 def connect_to_backend():
     # Replace <BACKEND_TAILSCALE_IP> with your backend's Tailscale IP or hostname.
-    backend_ws_url = "http://<BACKEND_TAILSCALE_IP>:4000"
+    backend_ws_url = "http://sound-art:4000"
     try:
         sio.connect(backend_ws_url)
     except Exception as e:
