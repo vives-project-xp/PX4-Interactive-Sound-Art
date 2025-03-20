@@ -41,6 +41,16 @@ const apiService = {
       throw error
     }
   },
+
+  async updateSound(id, sound) {
+    try {
+      const response = await axios.put(`${API_URL}/${id}/sound`, { sound });
+      return response.data;
+    } catch (error) {
+      console.warn(`Failed to update sound for Box ${id}:`, error.message);
+      throw error;
+    }
+  },
 }
 
 export default apiService

@@ -88,12 +88,28 @@ export default {
       musicBoxes: [],
       selectedBox: null,
       availableSounds: ['Piano', 'Guitar', 'Violin', 'Flute', 'Drums'],
+      soundImages: {
+      'Piano': '/image/piano.png',
+      'Guitar': '/image/box.png',
+      'Violin': '/image/violin.png',
+      'Flute': '/image/flute.png',
+      'Drums': '/image/drums.png',
+    },
     };
   },
 
   async mounted() {
+    try {
     this.musicBoxes = await apiService.getMusicBoxes();
-  },
+  } catch (error) {
+    console.warn('Backend niet bereikbaar, fallback naar mockdata');
+    this.musicBoxes = [
+      { id: 1, name: 'Box 1', image: this.soundImages['Piano'], color: '#ff0000', isOn: false, sound: 'Piano' },
+      { id: 2, name: 'Box 2', image: this.soundImages['Guitar'], color: '#00ff00', isOn: false, sound: 'Guitar' },
+      { id: 3, name: 'Box 3', image: this.soundImages['Violin'], color: '#0000ff', isOn: false, sound: 'Violin' },
+    ];
+  }
+},
 
   methods: {
     selectBox(box) {
@@ -118,6 +134,7 @@ export default {
     },
 
     async updateSound(box) {
+      box.image = this.soundImages[box.sound];
       await apiService.updateSound(box.id, box.sound);
     },
 
