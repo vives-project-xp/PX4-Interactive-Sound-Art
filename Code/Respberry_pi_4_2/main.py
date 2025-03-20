@@ -1,22 +1,23 @@
+#!/usr/bin/env python3
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import time
-import threading
-import math
-import json
-import RPi.GPIO as GPIO
-from rpi_ws281x import PixelStrip, Color, ws
-import numpy as np
+from flask_socketio import SocketIO  # (Not used for server here but needed if you want to add SocketIO events later)
+import time, threading, json, numpy as np, RPi.GPIO as GPIO
+from rpi_ws281x import PixelStrip, ws, Color
 from led_effects import effect_solid, effect_puls, effect_rainbow
+import socketio  # Socket.IO client
+import requests
 
+# --- Flask App Setup ---
 app = Flask(__name__)
 CORS(app)
 
-# Instellingen afstandssensor
+# --- LED/Sensor Settings ---
+# Ultrasonic sensor pins
 TRIG_PIN = 5
 ECHO_PIN = 6
 
-# LED-strip instellingen
+# LED-strip settings
 LED_COUNT = 100
 LED_PIN = 12
 LED_FREQ_HZ = 800000
@@ -26,28 +27,29 @@ LED_INVERT = False
 LED_CHANNEL = 0
 strip_type = ws.SK6812_STRIP_RGBW
 
-# GPIO-instellingen
+# Setup GPIO for sensor
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(TRIG_PIN, GPIO.OUT)
 GPIO.setup(ECHO_PIN, GPIO.IN)
 
-# Initialiseer de LED-strip
+# Initialize the LED strip
 strip = PixelStrip(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT,
                    LED_BRIGHTNESS, LED_CHANNEL, strip_type=strip_type)
 strip.begin()
 
-# Moving average filter
+# Moving average filter for distance
 window_size = 5
 distance_buffer = np.zeros(window_size)
 
-# Globale instellingen
-current_color = "#FFFF00"       # Standaard kleur: geel
-current_effect = "solid"        # Mogelijke waarden: "solid", "puls", "rainbow"
-current_instrument = "guitar"  # Wordt meegegeven via POST
+# Global LED settings
+current_color = "#FFFF00"      # Default yellow
+current_effect = "solid"       # Options: "solid", "puls", "rainbow"
+current_instrument = "guitar"  # Default instrument
 
-# Pad voor statusbestand (afstand en instrument)
+# (Optional) Status file path
 status_file = "/home/RPI2/Documents/txtFile/status.json"
 
+# --- Functions for Sensor and LED Control ---
 def measure_distance():
     GPIO.output(TRIG_PIN, False)
     time.sleep(0.001)
@@ -56,7 +58,6 @@ def measure_distance():
     GPIO.output(TRIG_PIN, False)
 
     start_time, stop_time = time.time(), time.time()
-
     while GPIO.input(ECHO_PIN) == 0:
         start_time = time.time()
     while GPIO.input(ECHO_PIN) == 1:
@@ -69,19 +70,15 @@ def measure_distance():
     distance_buffer = np.roll(distance_buffer, -1)
     distance_buffer[-1] = distance
     filtered_distance = np.mean(distance_buffer)
-
     return max(5, min(filtered_distance, LED_COUNT * 1.5))
 
 def write_status_to_file(distance):
-    status = {
-        "distance": distance,
-        "instrument": current_instrument
-    }
+    status = {"distance": distance, "instrument": current_instrument}
     try:
         with open(status_file, "w") as file:
             file.write(json.dumps(status))
     except Exception as e:
-        print("Fout bij schrijven status:", e)
+        print("Error writing status:", e)
 
 def update_leds(distance):
     leds_to_light = int(distance / 1.5)
@@ -94,16 +91,6 @@ def update_leds(distance):
     else:
         effect_solid(strip, leds_to_light, current_color)
 
-@app.route("/update", methods=["POST"])
-def update():
-    global current_color, current_effect, current_instrument
-    data = request.json
-    current_color = data.get("color", "#FFFFFF")
-    current_effect = data.get("effect", "solid")
-    current_instrument = data.get("instrument", "unknown")
-    print(f"Instrument: {current_instrument} | Nieuwe kleur: {current_color} | Nieuw effect: {current_effect}")
-    return jsonify({"message": "LED instellingen updated!"})
-
 def distance_monitor():
     try:
         while True:
@@ -112,13 +99,62 @@ def distance_monitor():
             write_status_to_file(distance)
             time.sleep(0.1)
     except KeyboardInterrupt:
-        print("Programma gestopt")
+        print("Program stopped")
         for i in range(strip.numPixels()):
             strip.setPixelColor(i, Color(0, 0, 0, 0))
         strip.show()
         GPIO.cleanup()
 
+# --- HTTP Endpoint for Updating LED Settings ---
+@app.route("/update", methods=["POST"])
+def update():
+    global current_color, current_effect, current_instrument
+    data = request.json
+    current_color = data.get("color", "#FFFFFF")
+    current_effect = data.get("effect", "solid")
+    current_instrument = data.get("instrument", "unknown")
+    print(f"HTTP Update -> Instrument: {current_instrument} | Color: {current_color} | Effect: {current_effect}")
+    return jsonify({"message": "LED settings updated!"})
+
+# --- Socket.IO Client for WebSocket Registration & Command Receiving ---
+sio = socketio.Client()
+
+@sio.event
+def connect():
+    print("Connected to backend via WebSocket")
+    # Register with the backend using your boxId and Tailscale IP.
+    box_id = "box1"
+    tailscale_ip = "100.98.149.108"  # Replace with your Pi's actual Tailscale IP
+    sio.emit("register", {"boxId": box_id, "ip": tailscale_ip})
+
+@sio.event
+def disconnect():
+    print("Disconnected from backend")
+
+@sio.on("command")
+def command_handler(data):
+    global current_color, current_effect, current_instrument
+    current_color = data.get("color", "#FFFFFF")
+    current_effect = data.get("effect", "solid")
+    current_instrument = data.get("instrument", "unknown")
+    print(f"WebSocket Command -> Instrument: {current_instrument} | Color: {current_color} | Effect: {current_effect}")
+
+def connect_to_backend():
+    # Replace <BACKEND_TAILSCALE_IP> with your backend's Tailscale IP or hostname.
+    backend_ws_url = "http://<BACKEND_TAILSCALE_IP>:4000"
+    try:
+        sio.connect(backend_ws_url)
+    except Exception as e:
+        print("Error connecting to backend via WebSocket:", e)
+
+# --- Main Execution ---
 if __name__ == "__main__":
+    # Start the distance monitor in a background thread
     thread = threading.Thread(target=distance_monitor, daemon=True)
     thread.start()
+    
+    # Connect to the backend via WebSocket for real-time commands
+    connect_to_backend()
+    
+    # Start the Flask HTTP server on port 5000
     app.run(host="0.0.0.0", port=5000, debug=True, use_reloader=False)

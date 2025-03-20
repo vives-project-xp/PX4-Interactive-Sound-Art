@@ -1,18 +1,20 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from flask_socketio import SocketIO, emit
 import time, threading, numpy as np, RPi.GPIO as GPIO
 from rpi_ws281x import PixelStrip, ws, Color
 from led_effects import effect_solid, effect_puls, effect_rainbow
-import requests  # nodig voor de registratie
+import socketio  # Client for Socket.IO
+import requests
 
+# Flask app voor eventuele HTTP endpoints (optioneel)
 app = Flask(__name__)
 CORS(app)
+socketio_server = SocketIO(app, cors_allowed_origins="*")
 
-# Instellingen afstandssensor
+# LED en sensor instellingen (zoals eerder)
 TRIG_PIN = 5
 ECHO_PIN = 6
-
-# LED-strip instellingen
 LED_COUNT = 100
 LED_PIN = 12
 LED_FREQ_HZ = 800000
@@ -32,8 +34,6 @@ strip.begin()
 
 window_size = 5
 distance_buffer = np.zeros(window_size)
-
-# Globale instellingen voor LED's
 current_color = "#FFFF00"
 current_effect = "solid"  # opties: "solid", "puls", "rainbow"
 
@@ -67,16 +67,6 @@ def update_leds(distance):
     else:
         effect_solid(strip, leds_to_light, current_color)
 
-@app.route("/update", methods=["POST"])
-def update():
-    global current_color, current_effect
-    data = request.json
-    current_color = data.get("color", "#FFFFFF")
-    current_effect = data.get("effect", "solid")
-    instrument = data.get("instrument", "unknown")
-    print(f"Instrument: {instrument} | Nieuwe kleur: {current_color} | Nieuw effect: {current_effect}")
-    return jsonify({"message": "LED instellingen updated!"})
-
 def distance_monitor():
     try:
         while True:
@@ -89,29 +79,48 @@ def distance_monitor():
         strip.show()
         GPIO.cleanup()
 
-def register_device():
-    """
-    Registreer de Raspberry Pi bij de centrale backend.
-    Zorg ervoor dat Tailscale actief is en dat je het correcte Tailscale-IP gebruikt.
-    """
-    box_id = "box1"  # Unieke identificatie van deze box
-    tailscale_ip = "10.10.2.48"  # Vervang dit met het daadwerkelijke Tailscale-IP van deze Pi
-    backend_url = "http://<BACKEND_IP>:4000/register"  # Vervang <BACKEND_IP> met het IP/domein van de backend
-    data = {
-        "boxId": box_id,
-        "ip": tailscale_ip
-    }
+# Handle incoming WebSocket command events from the backend
+def on_command(data):
+    global current_color, current_effect
+    current_color = data.get("color", "#FFFFFF")
+    current_effect = data.get("effect", "solid")
+    instrument = data.get("instrument", "unknown")
+    print(f"WebSocket command received -> Instrument: {instrument} | Color: {current_color} | Effect: {current_effect}")
+
+# Create a Socket.IO client and connect to the central backend
+sio = socketio.Client()
+
+@sio.event
+def connect():
+    print("Connected to backend via WebSocket")
+    # Register this device with the backend via WebSocket
+    box_id = "box1"
+    tailscale_ip = "100.98.149.108"  # Your Pi's Tailscale IP
+    sio.emit("register", {"boxId": box_id, "ip": tailscale_ip})
+
+@sio.event
+def disconnect():
+    print("Disconnected from backend")
+
+@sio.on("command")
+def command_handler(data):
+    on_command(data)
+
+def connect_to_backend():
+    # Replace <BACKEND_TAILSCALE_IP> with the Tailscale IP or hostname of your backend server
+    backend_ws_url = "http://<BACKEND_TAILSCALE_IP>:4000"
     try:
-        response = requests.post(backend_url, json=data)
-        print("Registratie succesvol:", response.text)
+        sio.connect(backend_ws_url)
     except Exception as e:
-        print("Registratie mislukt:", e)
+        print("Error connecting to backend:", e)
 
 if __name__ == "__main__":
-    # Registreer de Pi bij de backend
-    register_device()
-    # Start de afstandsmeting in een aparte thread
+    # Start the distance monitor in a thread
     thread = threading.Thread(target=distance_monitor, daemon=True)
     thread.start()
-    # Start de Flask-server op poort 5000
+    
+    # Connect to the backend via WebSocket
+    connect_to_backend()
+    
+    # Start Flask server for HTTP endpoints (if needed)
     app.run(host="0.0.0.0", port=5000, debug=True, use_reloader=False)
