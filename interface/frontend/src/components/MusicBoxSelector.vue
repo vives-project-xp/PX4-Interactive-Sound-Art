@@ -3,7 +3,6 @@
     <h1 class="title">Interactive Sound Art Controller</h1>
     <h2 class="subtitle">Select Your Music Box</h2>
 
-    <!-- Music Box Selection -->
     <div class="music-box-list">
       <div
         v-for="box in musicBoxes"
@@ -23,24 +22,17 @@
           '--box-color': box.color
         }"
       >
-        <!-- Music Box Image -->
         <img :src="box.image" :alt="box.name" class="music-box-image" />
-
-        <!-- Box Name with Grey Background -->
         <p class="box-name">{{ box.name }}</p>
-
-        <!-- On/Off Switch -->
         <div class="switch" @click.stop="togglePower(box)">
           <div :class="['slider', { on: box.isOn }]" />
         </div>
       </div>
     </div>
 
-    <!-- Effect, Sound, and Color Selector -->
     <div v-if="selectedBox" class="settings-section">
       <h2>Settings for {{ selectedBox.name }}</h2>
       <div class="settings-grid">
-        <!-- Effect Selector -->
         <div class="setting">
           <label>Effect:</label>
           <select v-model="selectedBox.effect" @change="updateEffect" class="effect-dropdown">
@@ -50,7 +42,6 @@
           </select>
         </div>
 
-        <!-- Sound Selector -->
         <div class="setting">
           <label>Sound:</label>
           <select v-model="selectedBox.sound" @change="updateSound(selectedBox)" class="sound-dropdown">
@@ -58,7 +49,6 @@
           </select>
         </div>
 
-        <!-- Color Picker (Hidden for Rainbow Effect) -->
         <div v-if="selectedBox.effect !== 'rainbow'" class="setting">
           <label>Color:</label>
           <input type="color" v-model="selectedBox.color" class="color-slider" @input="updateColor" />
@@ -66,7 +56,6 @@
       </div>
     </div>
 
-    <!-- Confirm Button -->
     <button v-if="selectedBox && selectedBox.color" @click="confirmSelection" class="confirm-button">
       Confirm Selection
     </button>
@@ -83,27 +72,27 @@ export default {
       selectedBox: null,
       availableSounds: ['Piano', 'Guitar', 'Violin', 'Flute', 'Drums'],
       soundImages: {
-      'Piano': '/image/piano.png',
-      'Guitar': '/image/guitar.png',
-      'Violin': '/image/violin.png',
-      'Flute': '/image/flute.png',
-      'Drums': '/image/drums.png',
-    },
+        'Piano': '/image/piano.png',
+        'Guitar': '/image/guitar.png',
+        'Violin': '/image/violin.png',
+        'Flute': '/image/flute.png',
+        'Drums': '/image/drums.png',
+      },
     };
   },
 
   async mounted() {
     try {
-    this.musicBoxes = await apiService.getMusicBoxes();
-  } catch {
-    console.warn('Backend niet bereikbaar, fallback naar mockdata');
-    this.musicBoxes = [
-      { id: 1, name: 'Box 1', image: this.soundImages['Piano'], color: '#ff0000', isOn: false, sound: 'Piano' },
-      { id: 2, name: 'Box 2', image: this.soundImages['Guitar'], color: '#00ff00', isOn: false, sound: 'Guitar' },
-      { id: 3, name: 'Box 3', image: this.soundImages['Violin'], color: '#0000ff', isOn: false, sound: 'Violin' },
-    ];
-  }
-},
+      this.musicBoxes = await apiService.getMusicBoxes();
+    } catch {
+      console.warn('Backend not available, using mock data');
+      this.musicBoxes = [
+        { id: 1, name: 'Box 1', image: this.soundImages['Piano'], color: '#ff0000', isOn: false, sound: 'Piano', effect: 'pulsating', led: false },
+        { id: 2, name: 'Box 2', image: this.soundImages['Guitar'], color: '#00ff00', isOn: false, sound: 'Guitar', effect: 'firework', led: false },
+        { id: 3, name: 'Box 3', image: this.soundImages['Violin'], color: '#0000ff', isOn: false, sound: 'Violin', effect: 'rainbow', led: false },
+      ];
+    }
+  },
 
   methods: {
     selectBox(box) {
@@ -133,7 +122,7 @@ export default {
     },
 
     confirmSelection() {
-      alert(`You selected ${this.selectedBox.name} with color ${this.selectedBox.color}, effect ${this.selectedBox.effect}, and sound ${this.selectedBox.sound}`);
+      alert(`You selected ${this.selectedBox.name} with color ${this.selectedBox.color}, effect ${this.selectedBox.effect}, sound ${this.selectedBox.sound}, and LED ${this.selectedBox.led ? 'On' : 'Off'}`);
     },
   },
 };
@@ -190,7 +179,7 @@ h1, h2 {
 .box-name {
   font-size: 1.2rem;
   font-weight: bold;
-  background: rgba(0, 0, 0, 0.6); /* Grey-ish background for readability */
+  background: rgba(0, 0, 0, 0.6);
   padding: 5px 10px;
   border-radius: 5px;
   margin: 10px 0;
@@ -279,7 +268,6 @@ h1, h2 {
   font-size: 1em;
 }
 
-/* Rainbow Effect */
 .rainbow {
   background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet);
   background-size: 400% 400%;
@@ -298,7 +286,6 @@ h1, h2 {
   }
 }
 
-/* Pulsating Effect */
 .pulsating {
   animation: pulsate 1.5s infinite;
 }
@@ -314,7 +301,7 @@ h1, h2 {
     box-shadow: 0 0 0 0 var(--box-color);
   }
 }
-/* mobile support added */
+
 @media (max-width: 768px) {
   .music-box-list {
     flex-direction: column;

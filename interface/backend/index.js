@@ -13,11 +13,11 @@ const PORT = 4000;
 app.use(cors());
 app.use(express.json());
 
-// In-memory opslag voor apparaten en sockets
-const devices = {}; // Bijvoorbeeld: { box1: { ip: "100.98.149.108", socketId: "abc123", lastSeen: 1680000000000 } }
+// In-memory storage for devices and commands
+const devices = {};
 const commands = {};
 
-// Registratie via HTTP (optioneel) om apparaten ook te kunnen registreren via POST
+// HTTP registration for devices
 app.post("/register", (req, res) => {
   const { boxId, ip } = req.body;
   if (!boxId || !ip) {
@@ -28,14 +28,19 @@ app.post("/register", (req, res) => {
   res.json({ message: "Registered successfully" });
 });
 
-// Endpoint om een commando te ontvangen (van bijvoorbeeld een Vue frontend)
+// GET endpoint to fetch devices (needed by the frontend)
+app.get("/devices", (req, res) => {
+  res.json(devices); 
+});
+
+// Endpoint to receive commands from the frontend
 app.post("/command/:boxId", (req, res) => {
   const { boxId } = req.params;
-  const { instrument, color, effect } = req.body;
-  commands[boxId] = { instrument, color, effect };
+  const { instrument, color, effect, isOn } = req.body;
+  commands[boxId] = { instrument, color, effect, isOn };
   console.log(`Command updated for ${boxId}:`, commands[boxId]);
-  
-  // Als er een socket verbonden is voor deze box, stuur het commando via websockets
+
+  // If the device is connected via WebSocket, send the command
   if (devices[boxId] && devices[boxId].socketId) {
     io.to(devices[boxId].socketId).emit("command", commands[boxId]);
     console.log(`Command sent via WebSocket to ${boxId}`);
@@ -47,9 +52,9 @@ app.post("/command/:boxId", (req, res) => {
 
 // Socket.IO connection handling
 io.on("connection", (socket) => {
-  console.log("New socket connection: ", socket.id);
-  
-  // Het apparaat registreert zich via een "register" event met de boxId
+  console.log("New socket connection:", socket.id);
+
+  // Device registers via WebSocket
   socket.on("register", (data) => {
     const { boxId, ip } = data;
     if (boxId) {
@@ -58,10 +63,10 @@ io.on("connection", (socket) => {
       socket.emit("register_ack", { message: "Registered via WebSocket successfully" });
     }
   });
-  
-  // Als een socket disconnect, verwijder dan de registratie
+
+  // Remove device on disconnect
   socket.on("disconnect", () => {
-    console.log("Socket disconnected: ", socket.id);
+    console.log("Socket disconnected:", socket.id);
     for (const boxId in devices) {
       if (devices[boxId].socketId === socket.id) {
         delete devices[boxId];
