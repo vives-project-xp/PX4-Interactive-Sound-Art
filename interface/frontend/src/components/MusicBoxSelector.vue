@@ -325,9 +325,47 @@ h1, h2 {
 }
 
 @media (max-width: 768px) {
+  h1 {
+    font-size: 1.5rem; /* Reduced from 2rem to 24px for better proportion */
+  }
+  h2 {
+    font-size: 1.2rem; /* Slightly smaller than h1 to maintain hierarchy */
+  }
+  .container {
+    padding: 10px; /* Reduced from 20px to give more content space */
+  }
   .music-box-list {
     flex-direction: column;
     align-items: center;
+    gap: 10px; /* Reduced from 20px for a tighter layout */
+  }
+  .music-box {
+    width: 100%;
+    padding: 10px; /* Reduced from 15px to save space */
+  }
+  .settings-section {
+    padding: 10px; /* Reduced padding for compactness */
+  }
+  .confirm-button {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.2em; /* Larger text for better tap usability */
+  }
+  .box-name {
+    font-size: 1rem; /* Consistent sizing for music box names */
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.2rem; /* Further reduced to 19.2px for very small screens */
+  }
+  h2 {
+    font-size: 1rem; /* Adjusted to 16px for readability */
+  }
+  .music-box-image {
+    width: 80px; /* Reduced from 100px to fit better */
+    height: 80px;
   }
 }
 </style>
