@@ -11,9 +11,9 @@ const apiService = {
       if (!error.response) {
         console.warn('Backend not available. Using mock data.')
         return [
-          { id: 1, name: 'Box 1', image: '/image/piano.png', color: '#ff0000', isOn: false },
-          { id: 2, name: 'Box 2', image: '/image/piano.png', color: '#00ff00', isOn: false },
-          { id: 3, name: 'Box 3', image: '/image/piano.png', color: '#0000ff', isOn: false },
+          { id: 1, name: 'Box 1', image: '/image/notenottransparent.png', color: '#ff0000', isOn: false },
+          { id: 2, name: 'Box 2', image: '/image/notenottransparent.png', color: '#00ff00', isOn: false },
+          { id: 3, name: 'Box 3', image: '/image/notenottransparent.png', color: '#0000ff', isOn: false },
         ]
       } else {
         console.error('An error occurred:', error.message)
@@ -39,6 +39,16 @@ const apiService = {
     } catch (error) {
       console.warn(`Failed to update color for Box ${id}:`, error.message)
       throw error
+    }
+  },
+
+  async updateSound(id, sound) {
+    try {
+      const response = await axios.put(`${API_URL}/${id}/sound`, { sound });
+      return response.data;
+    } catch (error) {
+      console.warn(`Failed to update sound for Box ${id}:`, error.message);
+      throw error;
     }
   },
 }
