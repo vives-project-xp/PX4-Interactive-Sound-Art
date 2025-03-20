@@ -306,7 +306,7 @@ h1, h2 {
     box-shadow: 0 0 0 0 var(--box-color);
   }
 }
-
+/* mobile support added */
 @media (max-width: 768px) {
   .music-box-list {
     flex-direction: column;
