@@ -53,11 +53,6 @@
           <label>Color:</label>
           <input type="color" v-model="selectedBox.color" class="color-slider" @input="updateColor" />
         </div>
-
-        <div class="setting">
-          <label>LED State:</label>
-          <input type="checkbox" v-model="selectedBox.led" @change="updateLED" />
-        </div>
       </div>
     </div>
 
@@ -87,6 +82,7 @@ export default {
   },
 
   async mounted() {
+    // Get initial devices
     try {
       this.musicBoxes = await apiService.getMusicBoxes();
     } catch {
@@ -97,6 +93,23 @@ export default {
         { id: 3, name: 'Box 3', image: this.soundImages['Violin'], color: '#0000ff', isOn: false, sound: 'Violin', effect: 'rainbow', led: false },
       ];
     }
+
+    // Listen for real-time updates from the backend
+    this.$socket.on('command', (data) => {
+      console.log('Received command via WebSocket:', data);
+      // Optionally, match device by id and update properties.
+      // For example, if your backend sends the boxId, update that box:
+      const index = this.musicBoxes.findIndex(box => box.id === data.boxId);
+      if (index !== -1) {
+        this.musicBoxes[index] = {
+          ...this.musicBoxes[index],
+          ...data,
+        };
+      }
+    });
+
+    // Optional: register this client if needed (depends on your backend flow)
+    // this.$socket.emit('register', { boxId: 'someUniqueId', ip: 'your-ip-here' });
   },
 
   methods: {
@@ -118,12 +131,6 @@ export default {
     async updateEffect() {
       if (this.selectedBox) {
         await apiService.updateEffect(this.selectedBox.id, this.selectedBox.effect);
-      }
-    },
-
-    async updateLED() {
-      if (this.selectedBox) {
-        await apiService.updateLED(this.selectedBox.id, this.selectedBox.led);
       }
     },
 
