@@ -1,4 +1,6 @@
 # How to add extra sounds?
+In this part u wil learn how to add extra Sounds to ur Project.
+
 ## Add the code in the Pi4
 **Step 1 : Put the sound in the right folder**
 

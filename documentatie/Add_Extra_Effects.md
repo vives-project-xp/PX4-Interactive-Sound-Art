@@ -1,4 +1,6 @@
 # How to add extra light effects?
+In this part u wil learn how to add light effects to ur project.
+
 ## Add the code in the Pi4
 **Step 1 : make ur effect in the library**
 
