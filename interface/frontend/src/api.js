@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3000/api"; // Zorg dat dit klopt met jouw backend
+const API_URL = "http://localhost:4000/api"; // Zorg dat dit klopt met jouw backend
 
 export async function fetchCommand(boxId) {
   const response = await fetch(`${API_URL}/command/${boxId}`);
