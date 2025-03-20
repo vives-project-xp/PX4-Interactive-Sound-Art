@@ -53,11 +53,6 @@
           <label>Color:</label>
           <input type="color" v-model="selectedBox.color" class="color-slider" @input="updateColor" />
         </div>
-
-        <div class="setting">
-          <label>LED State:</label>
-          <input type="checkbox" v-model="selectedBox.led" @change="updateLED" />
-        </div>
       </div>
     </div>
 
@@ -87,6 +82,7 @@ export default {
   },
 
   async mounted() {
+    // Get initial devices
     try {
       this.musicBoxes = await apiService.getMusicBoxes();
     } catch {
@@ -97,6 +93,23 @@ export default {
         { id: 3, name: 'Box 3', image: this.soundImages['Violin'], color: '#0000ff', isOn: false, sound: 'Violin', effect: 'rainbow', led: false },
       ];
     }
+
+    // Listen for real-time updates from the backend
+    this.$socket.on('command', (data) => {
+      console.log('Received command via WebSocket:', data);
+      // Optionally, match device by id and update properties.
+      // For example, if your backend sends the boxId, update that box:
+      const index = this.musicBoxes.findIndex(box => box.id === data.boxId);
+      if (index !== -1) {
+        this.musicBoxes[index] = {
+          ...this.musicBoxes[index],
+          ...data,
+        };
+      }
+    });
+
+    // Optional: register this client if needed (depends on your backend flow)
+    // this.$socket.emit('register', { boxId: 'someUniqueId', ip: 'your-ip-here' });
   },
 
   methods: {
@@ -118,12 +131,6 @@ export default {
     async updateEffect() {
       if (this.selectedBox) {
         await apiService.updateEffect(this.selectedBox.id, this.selectedBox.effect);
-      }
-    },
-
-    async updateLED() {
-      if (this.selectedBox) {
-        await apiService.updateLED(this.selectedBox.id, this.selectedBox.led);
       }
     },
 
@@ -194,7 +201,7 @@ h1, h2 {
 .box-name {
   font-size: 1.2rem;
   font-weight: bold;
-  background: rgba(0, 0, 0, 0.6); /* Grey-ish background for readability */
+  background: rgba(0, 0, 0, 0.6);
   padding: 5px 10px;
   border-radius: 5px;
   margin: 10px 0;
@@ -283,7 +290,6 @@ h1, h2 {
   font-size: 1em;
 }
 
-/* Rainbow Effect */
 .rainbow {
   background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet);
   background-size: 400% 400%;
@@ -302,7 +308,6 @@ h1, h2 {
   }
 }
 
-/* Pulsating Effect */
 .pulsating {
   animation: pulsate 1.5s infinite;
 }
@@ -318,11 +323,49 @@ h1, h2 {
     box-shadow: 0 0 0 0 var(--box-color);
   }
 }
-/* mobile support added */
+
 @media (max-width: 768px) {
+  h1 {
+    font-size: 1.5rem; /* Reduced from 2rem to 24px for better proportion */
+  }
+  h2 {
+    font-size: 1.2rem; /* Slightly smaller than h1 to maintain hierarchy */
+  }
+  .container {
+    padding: 10px; /* Reduced from 20px to give more content space */
+  }
   .music-box-list {
     flex-direction: column;
     align-items: center;
+    gap: 10px; /* Reduced from 20px for a tighter layout */
+  }
+  .music-box {
+    width: 100%;
+    padding: 10px; /* Reduced from 15px to save space */
+  }
+  .settings-section {
+    padding: 10px; /* Reduced padding for compactness */
+  }
+  .confirm-button {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.2em; /* Larger text for better tap usability */
+  }
+  .box-name {
+    font-size: 1rem; /* Consistent sizing for music box names */
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.2rem; /* Further reduced to 19.2px for very small screens */
+  }
+  h2 {
+    font-size: 1rem; /* Adjusted to 16px for readability */
+  }
+  .music-box-image {
+    width: 80px; /* Reduced from 100px to fit better */
+    height: 80px;
   }
 }
 </style>
