@@ -105,17 +105,6 @@ def distance_monitor():
         strip.show()
         GPIO.cleanup()
 
-# --- HTTP Endpoint for Updating LED Settings ---
-@app.route("/update", methods=["POST"])
-def update():
-    global current_color, current_effect, current_instrument
-    data = request.json
-    current_color = data.get("color", "#FFFFFF")
-    current_effect = data.get("effect", "solid")
-    current_instrument = data.get("instrument", "unknown")
-    print(f"HTTP Update -> Instrument: {current_instrument} | Color: {current_color} | Effect: {current_effect}")
-    return jsonify({"message": "LED settings updated!"})
-
 # --- Socket.IO Client for WebSocket Registration & Command Receiving ---
 sio = socketio.Client()
 
