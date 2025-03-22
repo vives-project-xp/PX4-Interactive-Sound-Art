@@ -1,15 +1,12 @@
 #!/usr/bin/env python3
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from flask_socketio import SocketIO
 import time, threading, json, numpy as np, RPi.GPIO as GPIO
 from rpi_ws281x import PixelStrip, ws, Color
 from led_effects import (effect_solid, effect_puls, effect_rainbow, effect_chase, 
                          effect_fire, effect_sparkle, IdleEffect)
 import socketio  # Socket.IO client
-import requests
 
-# --- Flask App Setup ---
 app = Flask(__name__)
 CORS(app)
 
@@ -37,12 +34,24 @@ strip.begin()
 window_size = 5
 distance_buffer = np.zeros(window_size)
 
-# Global LED settings
-current_color = "#FFFF00"      # Default yellow
+# Globale LED-instellingen met standaardwaarden
+current_color = "#FFFF00"      # Default geel
 current_effect = "solid"       # Options: "solid", "puls", "rainbow", "chase", "fire", "sparkle", etc.
 current_instrument = "guitar"  # Default instrument
 
 status_file = "/home/RPI2/Documents/txtFile/status.json"
+
+def load_status():
+    global current_instrument, current_color, current_effect
+    try:
+        with open(status_file, "r") as file:
+            status = json.load(file)
+            current_instrument = status.get("instrument", "guitar")
+            current_color = status.get("color", "#FFFF00")
+            current_effect = status.get("effect", "solid")
+            print("Loaded status from file:", status)
+    except Exception as e:
+        print("Geen status gevonden, gebruik default settings", e)
 
 def measure_distance():
     GPIO.output(TRIG_PIN, False)
@@ -64,7 +73,12 @@ def measure_distance():
     return max(5, min(filtered_distance, LED_COUNT * 1.5))
 
 def write_status_to_file(distance):
-    status = {"distance": distance, "instrument": current_instrument}
+    status = {
+        "distance": distance,
+        "instrument": current_instrument,
+        "color": current_color,
+        "effect": current_effect
+    }
     try:
         with open(status_file, "w") as file:
             file.write(json.dumps(status))
@@ -96,8 +110,6 @@ def distance_monitor():
         while True:
             distance = measure_distance()
             leds_to_light = int(distance / 1.5)
-            print(leds_to_light)
-            # Controleer of het aantal actieve LED's boven 149 ligt
             if leds_to_light > 99:
                 if idle_start is None:
                     idle_start = time.time()
@@ -121,7 +133,16 @@ def distance_monitor():
         strip.show()
         GPIO.cleanup()
 
-# --- Socket.IO Client for WebSocket Registration & Command Receiving ---
+# Flask endpoint om de huidige instellingen op te halen
+@app.route("/status", methods=["GET"])
+def get_status():
+    return jsonify({
+        "instrument": current_instrument,
+        "color": current_color,
+        "effect": current_effect
+    })
+
+# Socket.IO Client voor WebSocket-registratie en commando-ontvangst
 sio = socketio.Client()
 
 @sio.event
@@ -130,6 +151,12 @@ def connect():
     box_id = "box1"
     tailscale_ip = "100.65.86.118"
     sio.emit("register", {"boxId": box_id, "ip": tailscale_ip})
+    # Start een thread om periodiek een heartbeat te sturen
+    def send_heartbeat():
+        while True:
+            sio.emit("heartbeat", {"boxId": box_id})
+            time.sleep(15)
+    threading.Thread(target=send_heartbeat, daemon=True).start()
 
 @sio.event
 def disconnect():
@@ -151,7 +178,10 @@ def connect_to_backend():
         print("Error connecting to backend via WebSocket:", e)
 
 if __name__ == "__main__":
+    load_status()
+    # Start de afstandsmonitor op een aparte thread
     thread = threading.Thread(target=distance_monitor, daemon=True)
     thread.start()
     connect_to_backend()
+    # Start de Flask server (beschikbaar op poort 5000)
     app.run(host="0.0.0.0", port=5000, debug=True, use_reloader=False)
