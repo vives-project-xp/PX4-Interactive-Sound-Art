@@ -11,9 +11,11 @@
         :class="{ 
           selected: selectedBox?.id === box.id, 
           solid: box.effect === 'solid' && box.isOn,
-          pulsating: box.effect === 'pulsating' && box.isOn,
-          firework: box.effect === 'firework' && box.isOn,
+          pulse: box.effect === 'pulse' && box.isOn,
+          chase: box.effect === 'chase' && box.isOn,
           rainbow: box.effect === 'rainbow' && box.isOn,
+          fire: box.effect === 'fire' && box.isOn,
+          sparkle: box.effect === 'sparkle' && box.isOn,
           off: !box.isOn 
         }"
         @click="selectBox(box)"
@@ -35,19 +37,22 @@
       <h2>Settings for {{ selectedBox.name }}</h2>
       <div class="settings-grid">
         <div class="setting">
-          <label>Sound:</label>
-          <select v-model="selectedBox.sound" @change="updateSound(selectedBox)" class="sound-dropdown">
-            <option v-for="sound in availableSounds" :key="sound" :value="sound">{{ sound }}</option>
+          <label>Effect:</label>
+          <select v-model="selectedBox.effect" @change="updateEffect" class="effect-dropdown">
+            <option value="solid">Solid</option>
+            <option value="pulse">Pulse</option>
+            <option value="chase">Chase</option>
+            <option value="fire">Fire</option>
+            <option value="sparkle">Sparkle</option>
+            <option value="firework">Firework</option>
+            <option value="rainbow">Rainbow</option>
           </select>
         </div>
 
         <div class="setting">
-          <label>Effect:</label>
-          <select v-model="selectedBox.effect" @change="updateEffect" class="effect-dropdown">
-            <option value="solid">Solid</option>
-            <option value="pulsating">Pulsating</option>
-            <option value="firework">Firework</option>
-            <option value="rainbow">Rainbow</option>
+          <label>Sound:</label>
+          <select v-model="selectedBox.sound" @change="updateSound(selectedBox)" class="sound-dropdown">
+            <option v-for="sound in availableSounds" :key="sound" :value="sound">{{ sound }}</option>
           </select>
         </div>
 
@@ -99,6 +104,8 @@ export default {
     // Listen for real-time updates from the backend
     this.$socket.on('command', (data) => {
       console.log('Received command via WebSocket:', data);
+      // Optionally, match device by id and update properties.
+      // For example, if your backend sends the boxId, update that box:
       const index = this.musicBoxes.findIndex(box => box.id === data.boxId);
       if (index !== -1) {
         this.musicBoxes[index] = {
@@ -107,6 +114,9 @@ export default {
         };
       }
     });
+
+    // Optional: register this client if needed (depends on your backend flow)
+    // this.$socket.emit('register', { boxId: 'someUniqueId', ip: 'your-ip-here' });
   },
 
   methods: {
@@ -145,6 +155,9 @@ export default {
 
 <style scoped>
 /* Add your styles here */
+</style>
+
+<style scoped>
 .container {
   max-width: 1200px;
   margin: auto;
@@ -320,45 +333,45 @@ h1, h2 {
 
 @media (max-width: 768px) {
   h1 {
-    font-size: 1.5rem;
+    font-size: 1.5rem; /* Reduced from 2rem to 24px for better proportion */
   }
   h2 {
-    font-size: 1.2rem;
+    font-size: 1.2rem; /* Slightly smaller than h1 to maintain hierarchy */
   }
   .container {
-    padding: 10px;
+    padding: 10px; /* Reduced from 20px to give more content space */
   }
   .music-box-list {
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 10px; /* Reduced from 20px for a tighter layout */
   }
   .music-box {
     width: 100%;
-    padding: 10px;
+    padding: 10px; /* Reduced from 15px to save space */
   }
   .settings-section {
-    padding: 10px;
+    padding: 10px; /* Reduced padding for compactness */
   }
   .confirm-button {
     width: 100%;
     padding: 15px;
-    font-size: 1.2em;
+    font-size: 1.2em; /* Larger text for better tap usability */
   }
   .box-name {
-    font-size: 1rem;
+    font-size: 1rem; /* Consistent sizing for music box names */
   }
 }
 
 @media (max-width: 480px) {
   h1 {
-    font-size: 1.2rem;
+    font-size: 1.2rem; /* Further reduced to 19.2px for very small screens */
   }
   h2 {
-    font-size: 1rem;
+    font-size: 1rem; /* Adjusted to 16px for readability */
   }
   .music-box-image {
-    width: 80px;
+    width: 80px; /* Reduced from 100px to fit better */
     height: 80px;
   }
 }
