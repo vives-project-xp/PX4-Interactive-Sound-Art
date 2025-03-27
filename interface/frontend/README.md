@@ -1,35 +1,20 @@
-# interface-ui
+# Interactive Sound Art Controller - Frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+Welcome to the frontend for the Interactive Sound Art Controller. This guide will walk you through the process to get your project up and running quickly.
 
-## Recommended IDE Setup
+## Prerequisites
+- [Node.js](https://nodejs.org/) (v12+ recommended)
+- npm (bundled with Node.js)
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## Installation Steps
 
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+1. **Clone the Repository:**
+   ```bash
+   git clone https://github.com/vives-project-xp/PX4-Interactive-Sound-Art.git
+   cd vives-project-xp PX4-Interactive-Sound-Art
+2. **Install packages:**
+    ```bash
+    npm install
+3. **Run the Frontend:**
+    ```bash
+    npm run dev
