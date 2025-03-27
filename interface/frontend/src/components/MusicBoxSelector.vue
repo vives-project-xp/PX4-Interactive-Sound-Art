@@ -110,6 +110,17 @@ export default {
         };
       }
     });
+
+    this.$socket.on('update-settings', (data) => {
+      console.log('Received settings update via WebSocket:', data);
+      const index = this.musicBoxes.findIndex(box => box.id === data.boxId);
+      if (index !== -1) {
+        this.musicBoxes[index] = {
+          ...this.musicBoxes[index],
+          ...data.settings,
+        };
+      }
+    });
   },
 
   methods: {
@@ -120,29 +131,42 @@ export default {
     async togglePower(box) {
       box.isOn = !box.isOn;
       await apiService.togglePower(box.id, box.isOn);
+      this.$socket.emit('update-settings', { boxId: box.id, settings: { isOn: box.isOn } });
     },
 
     async updateColor() {
       if (this.selectedBox) {
         await apiService.updateColor(this.selectedBox.id, this.selectedBox.color);
+        this.$socket.emit('update-settings', { boxId: this.selectedBox.id, settings: { color: this.selectedBox.color } });
       }
     },
 
     async updateEffect() {
       if (this.selectedBox) {
         await apiService.updateEffect(this.selectedBox.id, this.selectedBox.effect);
+        this.$socket.emit('update-settings', { boxId: this.selectedBox.id, settings: { effect: this.selectedBox.effect } });
       }
     },
 
     async updateSound(box) {
       box.image = this.soundImages[box.sound];
       await apiService.updateSound(box.id, box.sound);
+      this.$socket.emit('update-settings', { boxId: box.id, settings: { sound: box.sound, image: box.image } });
     },
 
     async confirmSelection() {
       // Also update the instrument (sound) selection when confirming.
       await apiService.updateSound(this.selectedBox.id, this.selectedBox.sound);
       alert(`You selected ${this.selectedBox.name} with color ${this.selectedBox.color}, effect ${this.selectedBox.effect}, instrument ${this.selectedBox.sound}, and LED ${this.selectedBox.led ? 'On' : 'Off'}`);
+      this.$socket.emit('update-settings', {
+        boxId: this.selectedBox.id,
+        settings: {
+          color: this.selectedBox.color,
+          effect: this.selectedBox.effect,
+          sound: this.selectedBox.sound,
+          led: this.selectedBox.led,
+        },
+      });
     },
   },
 };
