@@ -11,9 +11,11 @@
         :class="{ 
           selected: selectedBox?.id === box.id, 
           solid: box.effect === 'solid' && box.isOn,
-          pulsating: box.effect === 'pulsating' && box.isOn,
-          firework: box.effect === 'firework' && box.isOn,
+          puls: box.effect === 'puls' && box.isOn,
+          chase: box.effect === 'chase' && box.isOn,
           rainbow: box.effect === 'rainbow' && box.isOn,
+          fire: box.effect === 'fire' && box.isOn,
+          sparkle: box.effect === 'sparkle' && box.isOn,
           off: !box.isOn 
         }"
         @click="selectBox(box)"
@@ -35,19 +37,22 @@
       <h2>Settings for {{ selectedBox.name }}</h2>
       <div class="settings-grid">
         <div class="setting">
-          <label>Sound:</label>
-          <select v-model="selectedBox.sound" @change="updateSound(selectedBox)" class="sound-dropdown">
-            <option v-for="sound in availableSounds" :key="sound" :value="sound">{{ sound }}</option>
+          <label>Effect:</label>
+          <select v-model="selectedBox.effect" @change="updateEffect" class="effect-dropdown">
+            <option value="solid">Solid</option>
+            <option value="puls">Puls</option>
+            <option value="chase">Chase</option>
+            <option value="fire">Fire</option>
+            <option value="sparkle">Sparkle</option>
+            <option value="firework">Firework</option>
+            <option value="rainbow">Rainbow</option>
           </select>
         </div>
 
         <div class="setting">
-          <label>Effect:</label>
-          <select v-model="selectedBox.effect" @change="updateEffect" class="effect-dropdown">
-            <option value="solid">Solid</option>
-            <option value="pulsating">Pulsating</option>
-            <option value="firework">Firework</option>
-            <option value="rainbow">Rainbow</option>
+          <label>Instrument:</label>
+          <select v-model="selectedBox.sound" @change="updateSound(selectedBox)" class="sound-dropdown">
+            <option v-for="sound in availableSounds" :key="sound" :value="sound">{{ sound }}</option>
           </select>
         </div>
 
@@ -58,9 +63,7 @@
       </div>
     </div>
 
-    <button v-if="selectedBox && selectedBox.color" @click="confirmSelection" class="confirm-button">
-      Confirm Selection
-    </button>
+    
   </div>
 </template>
 
@@ -72,7 +75,7 @@ export default {
     return {
       musicBoxes: [],
       selectedBox: null,
-      availableSounds: ['Piano', 'Guitar', 'Violin', 'Flute', 'Drums'],
+      availableSounds: ['gitaar', 'drum', 'bass jumpy', 'bell', 'synth Sci-Fi','synth sharp', 'bassline'],
       soundImages: {
         'Piano': '/image/piano.png',
         'Guitar': '/image/guitar.png',
@@ -136,8 +139,10 @@ export default {
       await apiService.updateSound(box.id, box.sound);
     },
 
-    confirmSelection() {
-      alert(`You selected ${this.selectedBox.name} with color ${this.selectedBox.color}, effect ${this.selectedBox.effect}, sound ${this.selectedBox.sound}, and LED ${this.selectedBox.led ? 'On' : 'Off'}`);
+    async confirmSelection() {
+      // Also update the instrument (sound) selection when confirming.
+      await apiService.updateSound(this.selectedBox.id, this.selectedBox.sound);
+      alert(`You selected ${this.selectedBox.name} with color ${this.selectedBox.color}, effect ${this.selectedBox.effect}, instrument ${this.selectedBox.sound}, and LED ${this.selectedBox.led ? 'On' : 'Off'}`);
     },
   },
 };
@@ -145,6 +150,9 @@ export default {
 
 <style scoped>
 /* Add your styles here */
+</style>
+
+<style scoped>
 .container {
   max-width: 1200px;
   margin: auto;
@@ -273,16 +281,7 @@ h1, h2 {
   font-size: 1em;
 }
 
-.confirm-button {
-  margin-top: 20px;
-  padding: 10px 20px;
-  border-radius: 5px;
-  background: linear-gradient(97deg, #0096FF, #BB64FF 42%, #F2416B 74%, #EB7500);
-  color: white;
-  border: none;
-  cursor: pointer;
-  font-size: 1em;
-}
+
 
 .rainbow {
   background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet);
@@ -340,11 +339,7 @@ h1, h2 {
   .settings-section {
     padding: 10px;
   }
-  .confirm-button {
-    width: 100%;
-    padding: 15px;
-    font-size: 1.2em;
-  }
+  
   .box-name {
     font-size: 1rem;
   }
