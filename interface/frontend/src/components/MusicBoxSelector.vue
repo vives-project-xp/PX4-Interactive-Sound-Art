@@ -63,9 +63,7 @@
       </div>
     </div>
 
-    <button v-if="selectedBox && selectedBox.color" @click="confirmSelection" class="confirm-button">
-      Confirm Selection
-    </button>
+    
   </div>
 </template>
 
@@ -283,16 +281,7 @@ h1, h2 {
   font-size: 1em;
 }
 
-.confirm-button {
-  margin-top: 20px;
-  padding: 10px 20px;
-  border-radius: 5px;
-  background: linear-gradient(97deg, #0096FF, #BB64FF 42%, #F2416B 74%, #EB7500);
-  color: white;
-  border: none;
-  cursor: pointer;
-  font-size: 1em;
-}
+
 
 .rainbow {
   background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet);
@@ -350,11 +339,7 @@ h1, h2 {
   .settings-section {
     padding: 10px;
   }
-  .confirm-button {
-    width: 100%;
-    padding: 15px;
-    font-size: 1.2em;
-  }
+  
   .box-name {
     font-size: 1rem;
   }
