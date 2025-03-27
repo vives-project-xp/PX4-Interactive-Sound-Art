@@ -124,35 +124,29 @@ def update_leds(distance):
 
 def distance_monitor():
     idle_start = None
-    idle_mode = False
-    idle_effect = None
+    idle_effect = IdleEffect(strip, idle_color=(255, 255, 0))
     threshold = 100  # Als leds_to_light >= threshold, dan wordt er geen hand gedetecteerd.
     try:
         while True:
             distance = measure_distance()
             leds_to_light = int(distance / 1.5)
-
-            # Bereken de idle-mode status zonder al te veel extra overhead
+            
             if leds_to_light >= threshold:
+                # Als er lange tijd (60 sec) geen hand is, activeer idle mode
                 if idle_start is None:
                     idle_start = time.time()
                 if time.time() - idle_start >= 60:
                     idle_mode = True
-                    if idle_effect is None:
-                        idle_effect = IdleEffect(strip, idle_color=(255, 255, 0))
-                else:
-                    idle_mode = False
             else:
+                # Hand gedetecteerd: reset idle start en mode, en voer normale update uit
                 idle_start = None
                 idle_mode = False
-                idle_effect = None
-
-            # Voer de LED-update uit:
-            if idle_mode and idle_effect is not None:
+            
+            if idle_mode == True:
                 idle_effect.update()
             else:
                 update_leds(distance)
-
+            
             write_status_to_file(distance)
             time.sleep(0.005)
     
@@ -162,7 +156,6 @@ def distance_monitor():
             strip.setPixelColor(i, Color(0, 0, 0, 0))
         strip.show()
         GPIO.cleanup()
-
 
 # --- Socket.IO Client for WebSocket Registration, Heartbeat & Command Receiving ---
 sio = socketio.Client()
