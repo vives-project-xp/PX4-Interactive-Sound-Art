@@ -77,7 +77,7 @@ def effect_fire(strip, leds_to_light):
             red = random.randint(200, 255)
             green = random.randint(40, 100)
             blue = random.randint(0, 20)
-            strip.setPixelColor(i, Color(red, green, blue, 0))
+            strip.setPixelColor(i, Color(green, red, blue, 0))
         else:
             strip.setPixelColor(i, Color(0, 0, 0, 0))
     strip.show()

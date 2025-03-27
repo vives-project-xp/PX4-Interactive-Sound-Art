@@ -72,7 +72,7 @@ def measure_distance():
     return max(5, min(filtered_distance, LED_COUNT * 1.5))
 
 def write_status_to_file(distance):
-    status = {"distance": distance, "instrument": current_instrument , "sound_level": get_level(distance)}
+    status = {"instrument": current_instrument , "sound_level": get_level(distance)}
     try:
         with open(status_file, "w") as file:
             file.write(json.dumps(status))
@@ -81,28 +81,28 @@ def write_status_to_file(distance):
 
 def get_level(distance):
     if distance < 10:
-        print(f"Speelt sample niveau 1 af (afstand < 10)")
+        #print(f"Speelt sample niveau 1 af (afstand < 10)")
         return 1
     elif 10 <= distance < 20:
-        print(f"Speelt sample niveau 2 af (afstand 10-20)")
+        #print(f"Speelt sample niveau 2 af (afstand 10-20)")
         return 2
     elif 20 <= distance < 30:
-        print(f"Speelt sample niveau 3 af (afstand 20-30)")
+        #print(f"Speelt sample niveau 3 af (afstand 20-30)")
         return 3
     elif 30 <= distance < 40:
-        print(f"Speelt sample niveau 4 af (afstand 30-40)")
+        #print(f"Speelt sample niveau 4 af (afstand 30-40)")
         return 4
     elif 40 <= distance < 50:
-        print(f"Speelt sample niveau 5 af (afstand 40-50)")
+        #print(f"Speelt sample niveau 5 af (afstand 40-50)")
         return 5
     elif 50 <= distance < 60:
-        print(f"Speelt sample niveau 6 af (afstand 50-60)")
+        #print(f"Speelt sample niveau 6 af (afstand 50-60)")
         return 6
     elif 60 <= distance < 70:
-        print(f"Speelt sample niveau 7 af (afstand 60-70)")
+        #print(f"Speelt sample niveau 7 af (afstand 60-70)")
         return 7
     elif distance >= 70:
-        print(f"Speelt sample niveau 8 af (afstand >= 70)")
+        #print(f"Speelt sample niveau 8 af (afstand >= 70)")
         return 8
 
 def update_leds(distance):
@@ -123,28 +123,36 @@ def update_leds(distance):
         effect_solid(strip, leds_to_light, current_color)
 
 def distance_monitor():
-    idle_mode = False
     idle_start = None
+    idle_mode = False
     idle_effect = None
+    threshold = 100  # Als leds_to_light >= threshold, dan wordt er geen hand gedetecteerd.
     try:
         while True:
             distance = measure_distance()
             leds_to_light = int(distance / 1.5)
-            # If the number of active LEDs exceeds 99 for over 60 seconds, trigger idle mode
-            if leds_to_light > 99:
+            
+            if leds_to_light >= threshold:
+                # Als er lange tijd (60 sec) geen hand is, activeer idle mode
                 if idle_start is None:
                     idle_start = time.time()
-                elif time.time() - idle_start >= 60:
+                if time.time() - idle_start >= 60:
                     idle_mode = True
                     if idle_effect is None:
                         idle_effect = IdleEffect(strip, idle_color=(255, 255, 0))
+                else:
+                    # Nog niet 60 sec: roep de normale effect-update continu aan
+                    update_leds(distance)
             else:
+                # Hand gedetecteerd: reset idle start en mode, en voer normale update uit
                 idle_start = None
                 idle_mode = False
                 idle_effect = None
                 update_leds(distance)
+            
             if idle_mode and idle_effect is not None:
                 idle_effect.update()
+            
             write_status_to_file(distance)
             time.sleep(0.005)
     except KeyboardInterrupt:
@@ -153,6 +161,7 @@ def distance_monitor():
             strip.setPixelColor(i, Color(0, 0, 0, 0))
         strip.show()
         GPIO.cleanup()
+
 
 # --- Socket.IO Client for WebSocket Registration, Heartbeat & Command Receiving ---
 sio = socketio.Client()
