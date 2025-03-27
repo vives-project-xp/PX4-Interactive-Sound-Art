@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3#!/usr/bin/env python3
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit
@@ -24,11 +24,11 @@ def handle_test_event(data):
 TRIG_PIN = 5
 ECHO_PIN = 6
 
-LED_COUNT = 100
+LED_COUNT = 63
 LED_PIN = 18
 LED_FREQ_HZ = 800000
 LED_DMA = 10
-LED_BRIGHTNESS = 50
+LED_BRIGHTNESS = 100
 LED_INVERT = False
 LED_CHANNEL = 0
 strip_type = ws.SK6812_STRIP_RGBW
@@ -45,12 +45,12 @@ window_size = 5
 distance_buffer = np.zeros(window_size)
 
 # Global LED settings
-current_color = "#FFFF00"      # Default yellow
+current_color = "#FFFFFF"      # Default yellow
 current_effect = "solid"       # Options: "solid", "puls", "rainbow", "chase", "fire", "sparkle", etc.
 current_instrument = "guitar"  # Default instrument
 
 status_file = "/home/RPI2/Documents/txtFile/status.json"
-box_id = "box1"  # Global box identifier
+box_id = "1"  # Global box identifier
 
 def measure_distance():
     GPIO.output(TRIG_PIN, False)
@@ -69,44 +69,17 @@ def measure_distance():
     distance_buffer = np.roll(distance_buffer, -1)
     distance_buffer[-1] = distance
     filtered_distance = np.mean(distance_buffer)
-    return max(5, min(filtered_distance, LED_COUNT * 1.5))
+    return max(5, min(filtered_distance, LED_COUNT * 1.6))
 
 def write_status_to_file(distance):
-    status = {"instrument": current_instrument , "sound_level": get_level(distance)}
+    status = {"distance": distance, "instrument": current_instrument}
     try:
         with open(status_file, "w") as file:
             file.write(json.dumps(status))
     except Exception as e:
         print("Error writing status:", e)
 
-def get_level(distance):
-    if distance < 10:
-        #print(f"Speelt sample niveau 1 af (afstand < 10)")
-        return 1
-    elif 10 <= distance < 20:
-        #print(f"Speelt sample niveau 2 af (afstand 10-20)")
-        return 2
-    elif 20 <= distance < 30:
-        #print(f"Speelt sample niveau 3 af (afstand 20-30)")
-        return 3
-    elif 30 <= distance < 40:
-        #print(f"Speelt sample niveau 4 af (afstand 30-40)")
-        return 4
-    elif 40 <= distance < 50:
-        #print(f"Speelt sample niveau 5 af (afstand 40-50)")
-        return 5
-    elif 50 <= distance < 60:
-        #print(f"Speelt sample niveau 6 af (afstand 50-60)")
-        return 6
-    elif 60 <= distance < 70:
-        #print(f"Speelt sample niveau 7 af (afstand 60-70)")
-        return 7
-    elif distance >= 70:
-        #print(f"Speelt sample niveau 8 af (afstand >= 70)")
-        return 8
-
-def update_leds(distance):
-    leds_to_light = int(distance / 1.5)
+def update_leds(leds_to_light):
     if current_effect == "solid":
         effect_solid(strip, leds_to_light, current_color)
     elif current_effect == "puls":
@@ -124,18 +97,20 @@ def update_leds(distance):
 
 def distance_monitor():
     idle_start = None
+    idle_mode = None
     idle_effect = IdleEffect(strip, idle_color=(255, 255, 0))
-    threshold = 100  # Als leds_to_light >= threshold, dan wordt er geen hand gedetecteerd.
+    threshold = 63  # Als leds_to_light >= threshold, dan wordt er geen hand gedetecteerd.
+
     try:
         while True:
             distance = measure_distance()
-            leds_to_light = int(distance / 1.5)
+            leds_to_light = int(distance / 1.6)
             
             if leds_to_light >= threshold:
                 # Als er lange tijd (60 sec) geen hand is, activeer idle mode
                 if idle_start is None:
                     idle_start = time.time()
-                if time.time() - idle_start >= 60:
+                if time.time() - idle_start >= 10:
                     idle_mode = True
             else:
                 # Hand gedetecteerd: reset idle start en mode, en voer normale update uit
@@ -145,11 +120,11 @@ def distance_monitor():
             if idle_mode == True:
                 idle_effect.update()
             else:
-                update_leds(distance)
+                update_leds(leds_to_light)
             
             write_status_to_file(distance)
             time.sleep(0.005)
-    
+            
     except KeyboardInterrupt:
         print("Program stopped")
         for i in range(strip.numPixels()):
