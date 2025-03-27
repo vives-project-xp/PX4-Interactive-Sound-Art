@@ -52,12 +52,12 @@ def read_status():
     try:
         with open(status_file, "r") as file:
             status = json.load(file)
-            return status.get("distance"), status.get("instrument"), status.get("sound_level")
+            return status.get("instrument"), status.get("sound_level")
     except Exception as e:
         print("Error reading status file:", e)
         return None, None
 
-def play_sound(distance, instrument):
+def play_sound(sound_level, instrument):
     """
     Speelt een geluid af op basis van de afstand.
     Er wordt gekeken naar het instrument dat in het statusbestand staat en
@@ -97,9 +97,9 @@ def play_sound(distance, instrument):
             print("Ongeldig geluidsniveau")
 try:
     while True:
-        distance, instrument, sound_level = read_status()
-        if distance is not None and instrument is not None:
-            play_sound(distance, instrument)
+        instrument, sound_level = read_status()
+        if sound_level is not None and instrument is not None:
+            play_sound(sound_level, instrument)
         time.sleep(0.5)
 except KeyboardInterrupt:
     print("Programma gestopt")
