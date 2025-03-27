@@ -50,7 +50,7 @@
         </div>
 
         <div class="setting">
-          <label>Sound:</label>
+          <label>Instrument:</label>
           <select v-model="selectedBox.sound" @change="updateSound(selectedBox)" class="sound-dropdown">
             <option v-for="sound in availableSounds" :key="sound" :value="sound">{{ sound }}</option>
           </select>
@@ -77,7 +77,7 @@ export default {
     return {
       musicBoxes: [],
       selectedBox: null,
-      availableSounds: ['Piano', 'Guitar', 'Violin', 'Flute', 'Drums'],
+      availableSounds: ['gitaar', 'drum', 'bass jumpy', 'bell', 'synth Sci-Fi','synth sharp', 'bassline'],
       soundImages: {
         'Piano': '/image/piano.png',
         'Guitar': '/image/guitar.png',
@@ -104,8 +104,6 @@ export default {
     // Listen for real-time updates from the backend
     this.$socket.on('command', (data) => {
       console.log('Received command via WebSocket:', data);
-      // Optionally, match device by id and update properties.
-      // For example, if your backend sends the boxId, update that box:
       const index = this.musicBoxes.findIndex(box => box.id === data.boxId);
       if (index !== -1) {
         this.musicBoxes[index] = {
@@ -114,9 +112,6 @@ export default {
         };
       }
     });
-
-    // Optional: register this client if needed (depends on your backend flow)
-    // this.$socket.emit('register', { boxId: 'someUniqueId', ip: 'your-ip-here' });
   },
 
   methods: {
@@ -146,8 +141,10 @@ export default {
       await apiService.updateSound(box.id, box.sound);
     },
 
-    confirmSelection() {
-      alert(`You selected ${this.selectedBox.name} with color ${this.selectedBox.color}, effect ${this.selectedBox.effect}, sound ${this.selectedBox.sound}, and LED ${this.selectedBox.led ? 'On' : 'Off'}`);
+    async confirmSelection() {
+      // Also update the instrument (sound) selection when confirming.
+      await apiService.updateSound(this.selectedBox.id, this.selectedBox.sound);
+      alert(`You selected ${this.selectedBox.name} with color ${this.selectedBox.color}, effect ${this.selectedBox.effect}, instrument ${this.selectedBox.sound}, and LED ${this.selectedBox.led ? 'On' : 'Off'}`);
     },
   },
 };
@@ -333,45 +330,45 @@ h1, h2 {
 
 @media (max-width: 768px) {
   h1 {
-    font-size: 1.5rem; /* Reduced from 2rem to 24px for better proportion */
+    font-size: 1.5rem;
   }
   h2 {
-    font-size: 1.2rem; /* Slightly smaller than h1 to maintain hierarchy */
+    font-size: 1.2rem;
   }
   .container {
-    padding: 10px; /* Reduced from 20px to give more content space */
+    padding: 10px;
   }
   .music-box-list {
     flex-direction: column;
     align-items: center;
-    gap: 10px; /* Reduced from 20px for a tighter layout */
+    gap: 10px;
   }
   .music-box {
     width: 100%;
-    padding: 10px; /* Reduced from 15px to save space */
+    padding: 10px;
   }
   .settings-section {
-    padding: 10px; /* Reduced padding for compactness */
+    padding: 10px;
   }
   .confirm-button {
     width: 100%;
     padding: 15px;
-    font-size: 1.2em; /* Larger text for better tap usability */
+    font-size: 1.2em;
   }
   .box-name {
-    font-size: 1rem; /* Consistent sizing for music box names */
+    font-size: 1rem;
   }
 }
 
 @media (max-width: 480px) {
   h1 {
-    font-size: 1.2rem; /* Further reduced to 19.2px for very small screens */
+    font-size: 1.2rem;
   }
   h2 {
-    font-size: 1rem; /* Adjusted to 16px for readability */
+    font-size: 1rem;
   }
   .music-box-image {
-    width: 80px; /* Reduced from 100px to fit better */
+    width: 80px;
     height: 80px;
   }
 }
