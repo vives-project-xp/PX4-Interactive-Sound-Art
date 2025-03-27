@@ -52,7 +52,7 @@ def read_status():
     try:
         with open(status_file, "r") as file:
             status = json.load(file)
-            return status.get("distance"), status.get("instrument")
+            return status.get("distance"), status.get("instrument"), status.get("sound_level")
     except Exception as e:
         print("Error reading status file:", e)
         return None, None
@@ -68,34 +68,36 @@ def play_sound(distance, instrument):
         print(f"Geen geluiden gevonden voor instrument: {instrument}")
         return
 
-    if distance < 10:
-        sounds["niv1"].play()
-        print(f"Speelt {instrument} sample niveau 1 af (afstand < 10)")
-    elif 10 <= distance < 20:
-        sounds["niv2"].play()
-        print(f"Speelt {instrument} sample niveau 2 af (afstand 10-20)")
-    elif 20 <= distance < 30:
-        sounds["niv3"].play()
-        print(f"Speelt {instrument} sample niveau 3 af (afstand 20-30)")
-    elif 30 <= distance < 40:
-        sounds["niv4"].play()
-        print(f"Speelt {instrument} sample niveau 4 af (afstand 30-40)")
-    elif 40 <= distance < 50:
-        sounds["niv5"].play()
-        print(f"Speelt {instrument} sample niveau 5 af (afstand 40-50)")
-    elif 50 <= distance < 60:
-        sounds["niv6"].play()
-        print(f"Speelt {instrument} sample niveau 6 af (afstand 50-60)")
-    elif 60 <= distance < 70:
-        sounds["niv7"].play()
-        print(f"Speelt {instrument} sample niveau 7 af (afstand 60-70)")
-    elif distance >= 70:
-        sounds["niv8"].play()
-        print(f"Speelt {instrument} sample niveau 8 af (afstand >= 70)")
-
+    match sound_level:
+        case 1:
+            sounds["niv1"].play()
+            print(f"Speelt {instrument} sample niveau 1 af (afstand < 10)")
+        case 2:
+            sounds["niv2"].play()
+            print(f"Speelt {instrument} sample niveau 2 af (afstand 10-20)")
+        case 3:
+            sounds["niv3"].play()
+            print(f"Speelt {instrument} sample niveau 3 af (afstand 20-30)")
+        case 4:
+            sounds["niv4"].play()
+            print(f"Speelt {instrument} sample niveau 4 af (afstand 30-40)")
+        case 5:
+            sounds["niv5"].play()
+            print(f"Speelt {instrument} sample niveau 5 af (afstand 40-50)")
+        case 6:
+            sounds["niv6"].play()
+            print(f"Speelt {instrument} sample niveau 6 af (afstand 50-60)")
+        case 7:
+            sounds["niv7"].play()
+            print(f"Speelt {instrument} sample niveau 7 af (afstand 60-70)")
+        case 8:
+            sounds["niv8"].play()
+            print(f"Speelt {instrument} sample niveau 8 af (afstand >= 70)")
+        case _:
+            print("Ongeldig geluidsniveau")
 try:
     while True:
-        distance, instrument = read_status()
+        distance, instrument, sound_level = read_status()
         if distance is not None and instrument is not None:
             play_sound(distance, instrument)
         time.sleep(0.5)
