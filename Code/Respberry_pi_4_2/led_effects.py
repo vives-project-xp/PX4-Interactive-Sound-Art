@@ -3,19 +3,21 @@ from rpi_ws281x import Color
 
 def normalize_hex(hex_color):
     """
-    Zorgt ervoor dat de hex kleurstring altijd 6 tekens heeft (zonder de '#' prefix).
-    Als de shorthand notatie (3 tekens) wordt gebruikt, wordt deze omgezet naar 6 tekens.
+    Zet een hex kleurstring (bijv. "#F00" of "#FF0000") om in een tuple (r, g, b).
+    De shorthand notatie (3 tekens) wordt automatisch uitgebreid naar 6 tekens.
     """
     hex_color = hex_color.lstrip("#")
     if len(hex_color) == 3:
         hex_color = ''.join([c*2 for c in hex_color])
     if len(hex_color) != 6:
         raise ValueError(f"Ongeldige hex kleur: {hex_color}")
-    return hex_color
+    r = int(hex_color[0:2], 16)
+    g = int(hex_color[2:4], 16)
+    b = int(hex_color[4:6], 16)
+    return (g, r, b)
 
 def effect_solid(strip, leds_to_light, hex_color):
-    hex_color = normalize_hex(hex_color)
-    rgb_color = tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+    rgb_color = normalize_hex(hex_color)
     for i in range(strip.numPixels()):
         if i < leds_to_light:
             strip.setPixelColor(i, Color(rgb_color[0], rgb_color[1], rgb_color[2], 0))
@@ -26,9 +28,10 @@ def effect_solid(strip, leds_to_light, hex_color):
 def effect_puls(strip, leds_to_light, hex_color):
     period = 2.0  # Puls-periode in seconden
     brightness_factor = 0.35 * (math.sin(2 * math.pi * time.time() / period) + 1) + 0.3
-    hex_color = normalize_hex(hex_color)
-    rgb_color = tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
-    puls_color = tuple(min(255, int(c * brightness_factor)) for c in rgb_color)
+    rgb_color = normalize_hex(hex_color)
+    puls_color = (min(255, int(rgb_color[0] * brightness_factor)),
+                  min(255, int(rgb_color[1] * brightness_factor)),
+                  min(255, int(rgb_color[2] * brightness_factor)))
     for i in range(strip.numPixels()):
         if i < leds_to_light:
             strip.setPixelColor(i, Color(puls_color[0], puls_color[1], puls_color[2], 0))
@@ -37,6 +40,7 @@ def effect_puls(strip, leds_to_light, hex_color):
     strip.show()
 
 def color_wheel(pos):
+    # Retourneert een Color gebaseerd op een positie 0-255
     if pos < 85:
         return Color(pos * 3, 255 - pos * 3, 0, 0)
     elif pos < 170:
@@ -56,11 +60,10 @@ def effect_rainbow(strip, leds_to_light):
     strip.show()
 
 def effect_chase(strip, leds_to_light, hex_color):
-    hex_color = normalize_hex(hex_color)
-    rgb_color = tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+    rgb_color = normalize_hex(hex_color)
     chase_speed = 10  # Aantal keren per seconde
     offset = int(time.time() * chase_speed) % (leds_to_light if leds_to_light > 0 else 1)
-    group_size = 4  # Vier LEDs in een groep
+    group_size = 4  # Vier LED's in een groep
     for i in range(strip.numPixels()):
         if i < leds_to_light and offset <= i < offset + group_size:
             strip.setPixelColor(i, Color(rgb_color[0], rgb_color[1], rgb_color[2], 0))
@@ -80,8 +83,7 @@ def effect_fire(strip, leds_to_light):
     strip.show()
 
 def effect_sparkle(strip, leds_to_light, hex_color):
-    hex_color = normalize_hex(hex_color)
-    rgb_color = tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+    rgb_color = normalize_hex(hex_color)
     for i in range(strip.numPixels()):
         strip.setPixelColor(i, Color(0, 0, 0, 0))
     for i in range(leds_to_light):
@@ -89,12 +91,12 @@ def effect_sparkle(strip, leds_to_light, hex_color):
             strip.setPixelColor(i, Color(rgb_color[0], rgb_color[1], rgb_color[2], 0))
     strip.show()
 
-# Nieuwe IdleEffect class die alle LED's één voor één aanzet en daarna weer uitzet.
+# IdleEffect: Adem/idle effect waarbij alle LED's één voor één opgaan en weer uitgaan.
 class IdleEffect:
     def __init__(self, strip, idle_color=(255, 255, 0), delay=0.05):
         """
-        IdleEffect bouwt de volledige LED-strip op door alle LED's een voor een aan te zetten en daarna weer uit te schakelen.
-        Na een volledige cyclus wordt de idle_color willekeurig vernieuwd.
+        IdleEffect bouwt de volledige LED-strip op door alle LED's één voor één aan te zetten 
+        en vervolgens weer uit te schakelen. Na een volledige cyclus wordt de idle_color willekeurig vernieuwd.
         
         Parameters:
         - strip: Het LED-strip object.
@@ -104,32 +106,32 @@ class IdleEffect:
         self.strip = strip
         self.idle_color = idle_color
         self.num_leds = strip.numPixels()
-        self.state = "build_on"  # Twee toestanden: "build_on" en "build_off"
+        self.state = "build_on"  # "build_on" of "build_off"
         self.current_index = 0
         self.delay = delay
         self.last_update = time.time()
 
     def update(self):
-        """Voert één stap uit van het idle-effect als de vertraging verstreken is."""
+        """Voert één stap uit van het idle-effect als de ingestelde vertraging is verstreken."""
         now = time.time()
         if now - self.last_update < self.delay:
             return
         self.last_update = now
         if self.state == "build_on":
-            # Zet LED's aan: alle voorgaande blijven aan, dus er ontstaat een opeenvolgend opbouw-effect
+            # Zet de LED op current_index aan
             self.strip.setPixelColor(self.current_index, Color(self.idle_color[0], self.idle_color[1], self.idle_color[2], 0))
             self.strip.show()
             self.current_index += 1
             if self.current_index >= self.num_leds:
                 self.state = "build_off"
-                self.current_index = 0
+                self.current_index = self.num_leds - 1
         elif self.state == "build_off":
-            # Zet LED's uit: één voor één gaan de LED's uit, van het begin van de strip
+            # Zet de LED op current_index uit
             self.strip.setPixelColor(self.current_index, Color(0, 0, 0, 0))
             self.strip.show()
-            self.current_index += 1
-            if self.current_index >= self.num_leds:
-                # Voltooide cyclus: reset de toestand en vernieuw de kleur
+            self.current_index -= 1
+            if self.current_index < 0:
                 self.state = "build_on"
                 self.current_index = 0
+                # Vernieuw de idle kleur na een volledige cyclus
                 self.idle_color = (random.randint(0,255), random.randint(0,255), random.randint(0,255))
