@@ -11,7 +11,7 @@
         :class="{ 
           selected: selectedBox?.id === box.id, 
           solid: box.effect === 'solid' && box.isOn,
-          pulse: box.effect === 'pulse' && box.isOn,
+          puls: box.effect === 'puls' && box.isOn,
           chase: box.effect === 'chase' && box.isOn,
           rainbow: box.effect === 'rainbow' && box.isOn,
           fire: box.effect === 'fire' && box.isOn,
@@ -40,7 +40,7 @@
           <label>Effect:</label>
           <select v-model="selectedBox.effect" @change="updateEffect" class="effect-dropdown">
             <option value="solid">Solid</option>
-            <option value="pulse">Pulse</option>
+            <option value="puls">Puls</option>
             <option value="chase">Chase</option>
             <option value="fire">Fire</option>
             <option value="sparkle">Sparkle</option>
