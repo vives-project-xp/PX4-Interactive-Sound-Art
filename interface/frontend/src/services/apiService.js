@@ -16,7 +16,7 @@ const apiService = {
         sound: device.instrument || 'Piano',
         led: device.led || false
       }));
-    } catch (error) {
+    } catch {
       console.warn('Backend not available. Using mock data.');
       return [
         {
