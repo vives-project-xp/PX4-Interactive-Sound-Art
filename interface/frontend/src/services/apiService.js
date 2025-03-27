@@ -22,7 +22,7 @@ const apiService = {
         {
           id: 1,
           name: 'Box 1',
-          image: '/image/piano.png',
+          image: '/image/st.png',
           color: '#ff0000',
           isOn: false,
           effect: 'pulsating',
@@ -32,7 +32,7 @@ const apiService = {
         {
           id: 2,
           name: 'Box 2',
-          image: '/image/guitar.png',
+          image: '/image/st.png',
           color: '#00ff00',
           isOn: false,
           effect: 'firework',
@@ -42,7 +42,7 @@ const apiService = {
         {
           id: 3,
           name: 'Box 3',
-          image: '/image/violin.png',
+          image: '/image/st.png',
           color: '#0000ff',
           isOn: false,
           effect: 'rainbow',

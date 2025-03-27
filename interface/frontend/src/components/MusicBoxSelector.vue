@@ -77,11 +77,14 @@ export default {
       selectedBox: null,
       availableSounds: ['gitaar', 'drum', 'bass jumpy', 'bell', 'synth Sci-Fi','synth sharp', 'bassline'],
       soundImages: {
-        'Piano': '/image/piano.png',
-        'Guitar': '/image/guitar.png',
-        'Violin': '/image/violin.png',
-        'Flute': '/image/flute.png',
-        'Drums': '/image/drums.png',
+        'gitaar': '/image/gitaar.png',
+        'drum': '/image/drum.png',
+        'bass jumpy': '/image/bassjumpy.png',
+        'bell': '/image/bel.png',
+        'synth Sci-Fi': '/image/synthscifi.png',
+        'synth sharp': '/image/synthsharp.png',
+        'bassline': '/image/bassline.png',
+        
       },
     };
   },
