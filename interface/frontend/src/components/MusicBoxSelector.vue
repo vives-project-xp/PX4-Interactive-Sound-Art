@@ -62,6 +62,8 @@
         </div>
       </div>
     </div>
+
+    
   </div>
 </template>
 
@@ -82,16 +84,17 @@ export default {
         'synth Sci-Fi': '/image/synthscifi.png',
         'synth sharp': '/image/synthsharp.png',
         'bassline': '/image/bassline.png',
+        
       },
     };
   },
 
   async mounted() {
-    // Haal de initiële devices op
+    // Get initial devices
     try {
       this.musicBoxes = await apiService.getMusicBoxes();
     } catch {
-      console.warn('Backend niet beschikbaar, gebruik mock data');
+      console.warn('Backend not available, using mock data');
       this.musicBoxes = [
         { id: 1, name: 'Box 1', image: this.soundImages['Piano'], color: '#ff0000', isOn: false, sound: 'Piano', effect: 'pulsating', led: false },
         { id: 2, name: 'Box 2', image: this.soundImages['Guitar'], color: '#00ff00', isOn: false, sound: 'Guitar', effect: 'firework', led: false },
@@ -99,24 +102,24 @@ export default {
       ];
     }
 
-    // Luister naar realtime updates van de backend via WebSocket
+    // Listen for real-time updates from the backend
     this.$socket.on('command', (data) => {
-      console.log('Ontvangen command via WebSocket:', data);
+      console.log('Received command via WebSocket:', data);
       const index = this.musicBoxes.findIndex(box => box.id === data.boxId);
       if (index !== -1) {
-        this.musicBoxes[index] = { ...this.musicBoxes[index], ...data };
+        this.musicBoxes[index] = {
+          ...this.musicBoxes[index],
+          ...data,
+        };
       }
     });
 
     this.$socket.on('update-settings', (data) => {
-      console.log('Ontvangen settings update via WebSocket:', data);
+      console.log('Received settings update via WebSocket:', data);
       const index = this.musicBoxes.findIndex(box => box.id === data.boxId);
       if (index !== -1) {
-        this.musicBoxes[index] = { ...this.musicBoxes[index], ...data.settings };
-      }
-      if (this.selectedBox && this.selectedBox.id === data.boxId) {
-        this.selectedBox = {
-          ...this.selectedBox,
+        this.musicBoxes[index] = {
+          ...this.musicBoxes[index],
           ...data.settings,
         };
       }
@@ -155,8 +158,9 @@ export default {
     },
 
     async confirmSelection() {
+      // Also update the instrument (sound) selection when confirming.
       await apiService.updateSound(this.selectedBox.id, this.selectedBox.sound);
-      alert(`Je hebt ${this.selectedBox.name} geselecteerd met kleur ${this.selectedBox.color}, effect ${this.selectedBox.effect}, instrument ${this.selectedBox.sound}, en LED ${this.selectedBox.led ? 'Aan' : 'Uit'}`);
+      alert(`You selected ${this.selectedBox.name} with color ${this.selectedBox.color}, effect ${this.selectedBox.effect}, instrument ${this.selectedBox.sound}, and LED ${this.selectedBox.led ? 'On' : 'Off'}`);
       this.$socket.emit('update-settings', {
         boxId: this.selectedBox.id,
         settings: {
@@ -171,6 +175,9 @@ export default {
 };
 </script>
 
+<style scoped>
+/* Add your styles here */
+</style>
 
 <style scoped>
 .container {

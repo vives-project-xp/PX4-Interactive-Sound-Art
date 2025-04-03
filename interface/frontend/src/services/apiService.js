@@ -17,11 +17,38 @@ const apiService = {
         led: device.led || false
       }));
     } catch {
-      console.warn('Backend niet beschikbaar. Gebruik mock data.');
+      console.warn('Backend not available. Using mock data.');
       return [
-        { id: 1, name: 'Box 1', image: '/image/st.png', color: '#ff0000', isOn: false, effect: 'pulsating', sound: 'Piano', led: false },
-        { id: 2, name: 'Box 2', image: '/image/st.png', color: '#00ff00', isOn: false, effect: 'firework', sound: 'Guitar', led: false },
-        { id: 3, name: 'Box 3', image: '/image/st.png', color: '#0000ff', isOn: false, effect: 'rainbow', sound: 'Violin', led: false }
+        {
+          id: 1,
+          name: 'Box 1',
+          image: '/image/st.png',
+          color: '#ff0000',
+          isOn: false,
+          effect: 'pulsating',
+          sound: 'Piano',
+          led: false
+        },
+        {
+          id: 2,
+          name: 'Box 2',
+          image: '/image/st.png',
+          color: '#00ff00',
+          isOn: false,
+          effect: 'firework',
+          sound: 'Guitar',
+          led: false
+        },
+        {
+          id: 3,
+          name: 'Box 3',
+          image: '/image/st.png',
+          color: '#0000ff',
+          isOn: false,
+          effect: 'rainbow',
+          sound: 'Violin',
+          led: false
+        }
       ];
     }
   },
@@ -31,7 +58,7 @@ const apiService = {
       const response = await axios.post(`${API_URL}/command/${id}`, { isOn });
       return response.data;
     } catch (error) {
-      console.warn(`Fout bij togglen van Box ${id}:`, error.message);
+      console.warn(`Failed to toggle power for Box ${id}:`, error.message);
       throw error;
     }
   },
@@ -41,7 +68,7 @@ const apiService = {
       const response = await axios.post(`${API_URL}/command/${id}`, { color });
       return response.data;
     } catch (error) {
-      console.warn(`Fout bij updaten van kleur voor Box ${id}:`, error.message);
+      console.warn(`Failed to update color for Box ${id}:`, error.message);
       throw error;
     }
   },
@@ -51,7 +78,7 @@ const apiService = {
       const response = await axios.post(`${API_URL}/command/${id}`, { effect });
       return response.data;
     } catch (error) {
-      console.warn(`Fout bij updaten van effect voor Box ${id}:`, error.message);
+      console.warn(`Failed to update effect for Box ${id}:`, error.message);
       throw error;
     }
   },
@@ -61,10 +88,13 @@ const apiService = {
       const response = await axios.post(`${API_URL}/command/${id}`, { instrument: sound });
       return response.data;
     } catch (error) {
-      console.warn(`Fout bij updaten van sound voor Box ${id}:`, error.message);
+      console.warn(`Failed to update sound for Box ${id}:`, error.message);
       throw error;
     }
   }
 };
 
 export default apiService;
+
+
+
