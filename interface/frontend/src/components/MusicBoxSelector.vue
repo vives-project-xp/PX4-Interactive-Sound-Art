@@ -114,6 +114,12 @@ export default {
       if (index !== -1) {
         this.musicBoxes[index] = { ...this.musicBoxes[index], ...data.settings };
       }
+      if (this.selectedBox && this.selectedBox.id === data.boxId) {
+        this.selectedBox = {
+          ...this.selectedBox,
+          ...data.settings,
+        };
+      }
     });
   },
 

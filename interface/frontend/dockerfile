@@ -1,0 +1,27 @@
+FROM node:18-alpine AS build
+
+WORKDIR /app
+
+# Copy package.json and package-lock.json first for efficient caching
+COPY package.json package-lock.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the application
+COPY . .
+
+# Build the application
+RUN npm run build
+
+# Use a lightweight web server for serving the built files
+FROM nginx:alpine
+
+# Copy built assets to Nginx's default static directory
+COPY --from=build /app/dist /usr/share/nginx/html
+
+# Expose port 80
+EXPOSE 5173
+
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]
