@@ -123,6 +123,12 @@ export default {
           ...data.settings,
         };
       }
+      if (this.selectedBox && this.selectedBox.id === data.boxId) {
+        this.selectedBox = {
+          ...this.selectedBox,
+          ...data.settings,
+        };
+      }
     });
   },
 
