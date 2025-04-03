@@ -77,11 +77,14 @@ export default {
       selectedBox: null,
       availableSounds: ['gitaar', 'drum', 'bass jumpy', 'bell', 'synth Sci-Fi','synth sharp', 'bassline'],
       soundImages: {
-        'Piano': '/image/piano.png',
-        'Guitar': '/image/guitar.png',
-        'Violin': '/image/violin.png',
-        'Flute': '/image/flute.png',
-        'Drums': '/image/drums.png',
+        'gitaar': '/image/gitaar.png',
+        'drum': '/image/drum.png',
+        'bass jumpy': '/image/bassjumpy.png',
+        'bell': '/image/bel.png',
+        'synth Sci-Fi': '/image/synthscifi.png',
+        'synth sharp': '/image/synthsharp.png',
+        'bassline': '/image/bassline.png',
+        
       },
     };
   },
@@ -110,6 +113,17 @@ export default {
         };
       }
     });
+
+    this.$socket.on('update-settings', (data) => {
+      console.log('Received settings update via WebSocket:', data);
+      const index = this.musicBoxes.findIndex(box => box.id === data.boxId);
+      if (index !== -1) {
+        this.musicBoxes[index] = {
+          ...this.musicBoxes[index],
+          ...data.settings,
+        };
+      }
+    });
   },
 
   methods: {
@@ -120,29 +134,42 @@ export default {
     async togglePower(box) {
       box.isOn = !box.isOn;
       await apiService.togglePower(box.id, box.isOn);
+      this.$socket.emit('update-settings', { boxId: box.id, settings: { isOn: box.isOn } });
     },
 
     async updateColor() {
       if (this.selectedBox) {
         await apiService.updateColor(this.selectedBox.id, this.selectedBox.color);
+        this.$socket.emit('update-settings', { boxId: this.selectedBox.id, settings: { color: this.selectedBox.color } });
       }
     },
 
     async updateEffect() {
       if (this.selectedBox) {
         await apiService.updateEffect(this.selectedBox.id, this.selectedBox.effect);
+        this.$socket.emit('update-settings', { boxId: this.selectedBox.id, settings: { effect: this.selectedBox.effect } });
       }
     },
 
     async updateSound(box) {
       box.image = this.soundImages[box.sound];
       await apiService.updateSound(box.id, box.sound);
+      this.$socket.emit('update-settings', { boxId: box.id, settings: { sound: box.sound, image: box.image } });
     },
 
     async confirmSelection() {
       // Also update the instrument (sound) selection when confirming.
       await apiService.updateSound(this.selectedBox.id, this.selectedBox.sound);
       alert(`You selected ${this.selectedBox.name} with color ${this.selectedBox.color}, effect ${this.selectedBox.effect}, instrument ${this.selectedBox.sound}, and LED ${this.selectedBox.led ? 'On' : 'Off'}`);
+      this.$socket.emit('update-settings', {
+        boxId: this.selectedBox.id,
+        settings: {
+          color: this.selectedBox.color,
+          effect: this.selectedBox.effect,
+          sound: this.selectedBox.sound,
+          led: this.selectedBox.led,
+        },
+      });
     },
   },
 };
