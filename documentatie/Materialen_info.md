@@ -16,5 +16,6 @@ Prijzen kunnen variëren. Dit is voor 1 unit.
 | Schroeven | 4,49 per 10 | M4 x 25 mm | / | [Brico](https://www.brico.be/nl/ijzerwaren/technische-bevestigingsmaterialen/bouten/slotbouten/sencys-verzonken-kop-bout-roestvrij-staal-m4-x-25-mm-10-stuks/5367472) | / |
 | Ringen | 10,19 per 50 | breed M4 | / | [Brico](https://www.brico.be/nl/ijzerwaren/technische-bevestigingsmaterialen/ringen-bussen/sluitringen/sencys-carrosseriering-breed-m4-50-st/5368790) | / |
 | Spaanplaatschroeven | 9,69 per 40 | 40x4 mm inox | / | [Hubo](https://www.hubo.be/nl/p/sam-spaanplaatschroeven-pz2-40x4-mm-inox-40-stuks/209609/) | / |
-
-Totaal prijs : +- 285,16 €
+| Jackplug's |  4,94 | 3,5mm plug stereo mogelijk | / | [Conrad](https://www.conrad.be/nl/p/voltcraft-xl-ac35sw-jackplug-3-5-mm-jackplug-male-3-5-mm-open-kabeleinde-stereo-aantal-polen-3-inhoud-1-stuk-s-491762.html?refresh=true) | / |
+| USB-geluidskaarten | 19,16 | Externe geluidskaart | / | [AlleKabels](https://www.allekabels.be/delock/6335/4398057/delock-externe-usb-soundkarte-mit-usb-a-stecker-auf-2-x-35-mm-klinkenbuch.html?mc=nl-be&gad_source=1&gclid=Cj0KCQjwhMq-BhCFARIsAGvo0KfawZiw0aBHh6gZdGKgoc_lwPKSa9NmpS5epDACAZDRU02eevdK-TsaApHwEALw_wcB) | / |
+Totaal prijs : +- 309,26 €

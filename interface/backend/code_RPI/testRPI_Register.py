@@ -1,25 +1,33 @@
+#!/usr/bin/env python3
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit
-import time, threading, numpy as np, RPi.GPIO as GPIO
+import time, threading, json, numpy as np, RPi.GPIO as GPIO
 from rpi_ws281x import PixelStrip, ws, Color
-from led_effects import effect_solid, effect_puls, effect_rainbow
-import socketio  # Client for Socket.IO
+from led_effects import (effect_solid, effect_puls, effect_rainbow, effect_chase, 
+                         effect_fire, effect_sparkle, IdleEffect)
+import socketio  # Socket.IO client
 import requests
 
-# Flask app voor eventuele HTTP endpoints (optioneel)
+# --- Flask App & Socket.IO Setup ---
 app = Flask(__name__)
 CORS(app)
 socketio_server = SocketIO(app, cors_allowed_origins="*")
 
-# LED en sensor instellingen (zoals eerder)
+@socketio_server.on('test_event')
+def handle_test_event(data):
+    print("Ontvangen test_event met data:", data)
+    emit('response', {'data': 'Test response from server'})
+
+# --- LED/Sensor Instellingen ---
 TRIG_PIN = 5
 ECHO_PIN = 6
-LED_COUNT = 100
-LED_PIN = 12
+
+LED_COUNT = 63
+LED_PIN = 18
 LED_FREQ_HZ = 800000
 LED_DMA = 10
-LED_BRIGHTNESS = 50
+LED_BRIGHTNESS = 100
 LED_INVERT = False
 LED_CHANNEL = 0
 strip_type = ws.SK6812_STRIP_RGBW
@@ -34,8 +42,14 @@ strip.begin()
 
 window_size = 5
 distance_buffer = np.zeros(window_size)
-current_color = "#FFFF00"
-current_effect = "solid"  # opties: "solid", "puls", "rainbow"
+
+# Globale LED instellingen
+current_color = "#FFFFFF"
+current_effect = "solid"
+current_instrument = "guitar"
+
+status_file = "/home/RPI2/Documents/txtFile/status.json"
+box_id = "1"  # Globale box identificatie
 
 def measure_distance():
     GPIO.output(TRIG_PIN, False)
@@ -54,73 +68,112 @@ def measure_distance():
     distance_buffer = np.roll(distance_buffer, -1)
     distance_buffer[-1] = distance
     filtered_distance = np.mean(distance_buffer)
-    return max(5, min(filtered_distance, LED_COUNT * 1.5))
+    return max(5, min(filtered_distance, LED_COUNT * 1.6))
 
-def update_leds(distance):
-    leds_to_light = int(distance / 1.5)
+def write_status_to_file(distance):
+    status = {"distance": distance, "instrument": current_instrument}
+    try:
+        with open(status_file, "w") as file:
+            file.write(json.dumps(status))
+    except Exception as e:
+        print("Fout bij wegschrijven status:", e)
+
+def update_leds(leds_to_light):
     if current_effect == "solid":
         effect_solid(strip, leds_to_light, current_color)
     elif current_effect == "puls":
         effect_puls(strip, leds_to_light, current_color)
     elif current_effect == "rainbow":
         effect_rainbow(strip, leds_to_light)
+    elif current_effect == "chase":
+        effect_chase(strip, leds_to_light, current_color)
+    elif current_effect == "fire":
+        effect_fire(strip, leds_to_light)
+    elif current_effect == "sparkle":
+        effect_sparkle(strip, leds_to_light, current_color)
     else:
         effect_solid(strip, leds_to_light, current_color)
 
 def distance_monitor():
+    idle_start = None
+    idle_mode = None
+    idle_effect = IdleEffect(strip, idle_color=(255, 255, 0))
+    threshold = 63
+
     try:
         while True:
             distance = measure_distance()
-            update_leds(distance)
-            time.sleep(0.1)
+            leds_to_light = int(distance / 1.6)
+            
+            if leds_to_light >= threshold:
+                if idle_start is None:
+                    idle_start = time.time()
+                if time.time() - idle_start >= 10:
+                    idle_mode = True
+            else:
+                idle_start = None
+                idle_mode = False
+            
+            if idle_mode:
+                idle_effect.update()
+            else:
+                update_leds(leds_to_light)
+            
+            write_status_to_file(distance)
+            time.sleep(0.005)
+            
     except KeyboardInterrupt:
+        print("Programma gestopt")
         for i in range(strip.numPixels()):
             strip.setPixelColor(i, Color(0, 0, 0, 0))
         strip.show()
         GPIO.cleanup()
 
-# Handle incoming WebSocket command events from the backend
-def on_command(data):
-    global current_color, current_effect
-    current_color = data.get("color", "#FFFFFF")
-    current_effect = data.get("effect", "solid")
-    instrument = data.get("instrument", "unknown")
-    print(f"WebSocket command received -> Instrument: {instrument} | Color: {current_color} | Effect: {current_effect}")
-
-# Create a Socket.IO client and connect to the central backend
+# --- Socket.IO Client ---
 sio = socketio.Client()
 
 @sio.event
 def connect():
-    print("Connected to backend via WebSocket")
-    # Register this device with the backend via WebSocket
-    box_id = "box1"
-    tailscale_ip = "100.98.149.108"  # Your Pi's Tailscale IP
+    print("Verbonden met backend via WebSocket")
+    tailscale_ip = "100.65.86.118"
     sio.emit("register", {"boxId": box_id, "ip": tailscale_ip})
 
 @sio.event
 def disconnect():
-    print("Disconnected from backend")
+    print("Verbroken met backend")
 
 @sio.on("command")
 def command_handler(data):
-    on_command(data)
+    global current_color, current_effect, current_instrument
+    current_color = data.get("color", "#FFFFFF")
+    current_effect = data.get("effect", "solid")
+    current_instrument = data.get("instrument", "unknown")
+    print(f"WebSocket Command -> Instrument: {current_instrument} | Color: {current_color} | Effect: {current_effect}")
+
+def send_heartbeat():
+    while True:
+        try:
+            sio.emit("heartbeat", {"boxId": box_id})
+            print("Heartbeat verzonden")
+        except Exception as e:
+            print("Fout bij het verzenden van heartbeat:", e)
+        time.sleep(15)
 
 def connect_to_backend():
-    # Replace <BACKEND_TAILSCALE_IP> with the Tailscale IP or hostname of your backend server
-    backend_ws_url = "http://<BACKEND_TAILSCALE_IP>:4000"
+    backend_ws_url = "http://sound-art:4000"
     try:
         sio.connect(backend_ws_url)
     except Exception as e:
-        print("Error connecting to backend:", e)
+        print("Fout bij verbinden met backend via WebSocket:", e)
 
+# --- Main ---
 if __name__ == "__main__":
-    # Start the distance monitor in a thread
-    thread = threading.Thread(target=distance_monitor, daemon=True)
-    thread.start()
+    thread_monitor = threading.Thread(target=distance_monitor, daemon=True)
+    thread_monitor.start()
     
-    # Connect to the backend via WebSocket
     connect_to_backend()
     
-    # Start Flask server for HTTP endpoints (if needed)
-    app.run(host="0.0.0.0", port=5000, debug=True, use_reloader=False)
+    thread_heartbeat = threading.Thread(target=send_heartbeat, daemon=True)
+    thread_heartbeat.start()
+    
+    socketio_server.run(app, host="0.0.0.0", port=5000, debug=True, use_reloader=False)
