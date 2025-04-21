@@ -37,6 +37,13 @@
       <h2>Settings for {{ selectedBox.name }}</h2>
       <div class="settings-grid">
         <div class="setting">
+          <label>Instrument:</label>
+          <select v-model="selectedBox.sound" @change="updateSound(selectedBox)" class="sound-dropdown">
+            <option v-for="sound in availableSounds" :key="sound" :value="sound">{{ sound }}</option>
+          </select>
+        </div>
+        
+        <div class="setting">
           <label>Effect:</label>
           <select v-model="selectedBox.effect" @change="updateEffect" class="effect-dropdown">
             <option value="solid">Solid</option>
@@ -49,12 +56,6 @@
           </select>
         </div>
 
-        <div class="setting">
-          <label>Instrument:</label>
-          <select v-model="selectedBox.sound" @change="updateSound(selectedBox)" class="sound-dropdown">
-            <option v-for="sound in availableSounds" :key="sound" :value="sound">{{ sound }}</option>
-          </select>
-        </div>
 
         <div v-if="selectedBox.effect !== 'rainbow'" class="setting">
           <label>Color:</label>
@@ -155,21 +156,6 @@ export default {
       box.image = this.soundImages[box.sound];
       await apiService.updateSound(box.id, box.sound);
       this.$socket.emit('update-settings', { boxId: box.id, settings: { sound: box.sound, image: box.image } });
-    },
-
-    async confirmSelection() {
-      // Also update the instrument (sound) selection when confirming.
-      await apiService.updateSound(this.selectedBox.id, this.selectedBox.sound);
-      alert(`You selected ${this.selectedBox.name} with color ${this.selectedBox.color}, effect ${this.selectedBox.effect}, instrument ${this.selectedBox.sound}, and LED ${this.selectedBox.led ? 'On' : 'Off'}`);
-      this.$socket.emit('update-settings', {
-        boxId: this.selectedBox.id,
-        settings: {
-          color: this.selectedBox.color,
-          effect: this.selectedBox.effect,
-          sound: this.selectedBox.sound,
-          led: this.selectedBox.led,
-        },
-      });
     },
   },
 };
