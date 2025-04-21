@@ -1,28 +1,19 @@
 <template>
   <div class="container">
     <h1 class="title">Interactive Sound Art Controller</h1>
-    <h2 class="subtitle">Select Your Music Box</h2>
-
     <div class="music-box-list">
       <div
         v-for="box in musicBoxes"
         :key="box.id"
         class="music-box"
-        :class="{ 
-          selected: selectedBox?.id === box.id, 
-          solid: box.effect === 'solid' && box.isOn,
-          puls: box.effect === 'puls' && box.isOn,
-          chase: box.effect === 'chase' && box.isOn,
-          rainbow: box.effect === 'rainbow' && box.isOn,
-          fire: box.effect === 'fire' && box.isOn,
-          sparkle: box.effect === 'sparkle' && box.isOn,
-          off: !box.isOn 
+        :class="{
+          selected: selectedBox?.id === box.id,
+          off: !box.isOn
         }"
         @click="selectBox(box)"
         :style="{
-          boxShadow: box.isOn && box.effect !== 'rainbow' ? `0 0 20px ${box.color}` : 'none',
-          backgroundColor: box.isOn && box.effect !== 'rainbow' ? box.color : 'transparent',
-          '--box-color': box.color
+          boxShadow: box.isOn ? `0 0 20px ${box.color}` : 'none',
+          backgroundColor: box.isOn ? box.color : 'transparent'
         }"
       >
         <img :src="box.image" :alt="box.name" class="music-box-image" />
@@ -35,41 +26,33 @@
 
     <div v-if="selectedBox" class="settings-section">
       <h2>Settings for {{ selectedBox.name }}</h2>
-      <div class="settings-grid">
-        <div class="setting">
-          <label>Instrument:</label>
-          <select v-model="selectedBox.sound" @change="updateSound(selectedBox)" class="sound-dropdown">
-            <option v-for="sound in availableSounds" :key="sound" :value="sound">{{ sound }}</option>
-          </select>
-        </div>
-        
-        <div class="setting">
-          <label>Effect:</label>
-          <select v-model="selectedBox.effect" @change="updateEffect" class="effect-dropdown">
-            <option value="solid">Solid</option>
-            <option value="puls">Puls</option>
-            <option value="chase">Chase</option>
-            <option value="fire">Fire</option>
-            <option value="sparkle">Sparkle</option>
-            <option value="firework">Firework</option>
-            <option value="rainbow">Rainbow</option>
-          </select>
-        </div>
-
-
-        <div v-if="selectedBox.effect !== 'rainbow'" class="setting">
-          <label>Color:</label>
-          <input type="color" v-model="selectedBox.color" class="color-slider" @input="updateColor" />
-        </div>
+      <div class="setting">
+        <label>Instrument:</label>
+        <select v-model="selectedBox.sound" @change="updateSound(selectedBox)">
+          <option v-for="sound in availableSounds" :key="sound" :value="sound">{{ sound }}</option>
+        </select>
+      </div>
+      <div class="setting">
+        <label>Effect:</label>
+        <select v-model="selectedBox.effect" @change="updateEffect">
+          <option value="solid">Solid</option>
+          <option value="puls">Puls</option>
+          <option value="chase">Chase</option>
+          <option value="fire">Fire</option>
+          <option value="sparkle">Sparkle</option>
+          <option value="rainbow">Rainbow</option>
+        </select>
+      </div>
+      <div v-if="selectedBox.effect !== 'rainbow'" class="setting">
+        <label>Color:</label>
+        <input type="color" v-model="selectedBox.color" @input="updateColor" />
       </div>
     </div>
-
-    
   </div>
 </template>
 
 <script>
-import apiService from '../services/apiService.js';
+import socketService from "../services/socketService.js";
 
 export default {
   data() {
@@ -77,93 +60,43 @@ export default {
       musicBoxes: [],
       selectedBox: null,
       availableSounds: ['gitaar', 'drum', 'bass jumpy', 'bell', 'synth Sci-Fi','synth sharp', 'bassline'],
-      soundImages: {
-        'gitaar': '/image/gitaar.png',
-        'drum': '/image/drum.png',
-        'bass jumpy': '/image/bassjumpy.png',
-        'bell': '/image/bel.png',
-        'synth Sci-Fi': '/image/synthscifi.png',
-        'synth sharp': '/image/synthsharp.png',
-        'bassline': '/image/bassline.png',
-        
-      },
     };
   },
+  mounted() {
+    // Init dummy of fetch alle devices via WS
+    // Eventuele fetch op /devices kan blijven voor initiële lijst
 
-  async mounted() {
-    // Get initial devices
-    try {
-      this.musicBoxes = await apiService.getMusicBoxes();
-    } catch {
-      console.warn('Backend not available, using mock data');
-      this.musicBoxes = [
-        { id: 1, name: 'Box 1', image: this.soundImages['Piano'], color: '#ff0000', isOn: false, sound: 'Piano', effect: 'pulsating', led: false },
-        { id: 2, name: 'Box 2', image: this.soundImages['Guitar'], color: '#00ff00', isOn: false, sound: 'Guitar', effect: 'firework', led: false },
-        { id: 3, name: 'Box 3', image: this.soundImages['Violin'], color: '#0000ff', isOn: false, sound: 'Violin', effect: 'rainbow', led: false },
-      ];
-    }
-
-    // Listen for real-time updates from the backend
-    this.$socket.on('command', (data) => {
-      console.log('Received command via WebSocket:', data);
-      const index = this.musicBoxes.findIndex(box => box.id === data.boxId);
-      if (index !== -1) {
-        this.musicBoxes[index] = {
-          ...this.musicBoxes[index],
-          ...data,
-        };
+    // Luister naar realtime commands
+    socketService.on('command', (data) => {
+      const idx = this.musicBoxes.findIndex(b => b.id === data.boxId);
+      if (idx !== -1) {
+        this.$set(this.musicBoxes, idx, { ...this.musicBoxes[idx], ...data });
       }
     });
 
-    this.$socket.on('update-settings', (data) => {
-      console.log('Received settings update via WebSocket:', data);
-      const index = this.musicBoxes.findIndex(box => box.id === data.boxId);
-      if (index !== -1) {
-        this.musicBoxes[index] = {
-          ...this.musicBoxes[index],
-          ...data.settings,
-        };
-      }
-    });
+    // Registreer frontend client
+    socketService.emit('register', { client: 'frontend' });
   },
-
   methods: {
     selectBox(box) {
       this.selectedBox = box;
     },
-
-    async togglePower(box) {
+    togglePower(box) {
       box.isOn = !box.isOn;
-      await apiService.togglePower(box.id, box.isOn);
-      this.$socket.emit('update-settings', { boxId: box.id, settings: { isOn: box.isOn } });
+      socketService.emit('update-settings', { boxId: box.id, settings: { isOn: box.isOn } });
     },
-
-    async updateColor() {
-      if (this.selectedBox) {
-        await apiService.updateColor(this.selectedBox.id, this.selectedBox.color);
-        this.$socket.emit('update-settings', { boxId: this.selectedBox.id, settings: { color: this.selectedBox.color } });
-      }
+    updateColor() {
+      socketService.emit('update-settings', { boxId: this.selectedBox.id, settings: { color: this.selectedBox.color } });
     },
-
-    async updateEffect() {
-      if (this.selectedBox) {
-        await apiService.updateEffect(this.selectedBox.id, this.selectedBox.effect);
-        this.$socket.emit('update-settings', { boxId: this.selectedBox.id, settings: { effect: this.selectedBox.effect } });
-      }
+    updateEffect() {
+      socketService.emit('update-settings', { boxId: this.selectedBox.id, settings: { effect: this.selectedBox.effect } });
     },
-
-    async updateSound(box) {
-      box.image = this.soundImages[box.sound];
-      await apiService.updateSound(box.id, box.sound);
-      this.$socket.emit('update-settings', { boxId: box.id, settings: { sound: box.sound, image: box.image } });
+    updateSound(box) {
+      socketService.emit('update-settings', { boxId: box.id, settings: { instrument: box.sound } });
     },
   },
 };
 </script>
-
-<style scoped>
-/* Add your styles here */
-</style>
 
 <style scoped>
 .container {

@@ -17,6 +17,7 @@
     "express": "^4.21.2",
     "fetch": "^1.1.0",
     "node-fetch": "^3.3.2",
-    "socket.io": "^4.8.1"
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1"
   }
 }
