@@ -27,30 +27,31 @@ instruments = {
 ```
  ### How to change distance settings
 
- If u want to change the discance at with the sounds play, u can do that in the ``Play_Sound()`` function.
+ If u want to change the discance at with the sounds play, u can do that in the ``get_level()`` function in the main.py file.
 ```
-     if distance < 10:
-        sounds["niv1"].play()
-        print(f"Speelt {instrument} sample niveau 1 af (afstand < 10)")
+def get_level(distance):
+    if distance < 10:
+        #print(f"Speelt sample niveau 1 af (afstand < 10)")
+        return 1
     elif 10 <= distance < 20:
-        sounds["niv2"].play()
-        print(f"Speelt {instrument} sample niveau 2 af (afstand 10-20)")
+        #print(f"Speelt sample niveau 2 af (afstand 10-20)")
+        return 2
     elif 20 <= distance < 30:
-        sounds["niv3"].play()
-        print(f"Speelt {instrument} sample niveau 3 af (afstand 20-30)")
+        #print(f"Speelt sample niveau 3 af (afstand 20-30)")
+        return 3
     elif 30 <= distance < 40:
-        sounds["niv4"].play()
-        print(f"Speelt {instrument} sample niveau 4 af (afstand 30-40)")
+        #print(f"Speelt sample niveau 4 af (afstand 30-40)")
+        return 4
     elif 40 <= distance < 50:
-        sounds["niv5"].play()
-        print(f"Speelt {instrument} sample niveau 5 af (afstand 40-50)")
+        #print(f"Speelt sample niveau 5 af (afstand 40-50)")
+        return 5
     elif 50 <= distance < 60:
-        sounds["niv6"].play()
-        print(f"Speelt {instrument} sample niveau 6 af (afstand 50-60)")
+        #print(f"Speelt sample niveau 6 af (afstand 50-60)")
+        return 6
     elif 60 <= distance < 70:
-        sounds["niv7"].play()
-        print(f"Speelt {instrument} sample niveau 7 af (afstand 60-70)")
+        #print(f"Speelt sample niveau 7 af (afstand 60-70)")
+        return 7
     elif distance >= 70:
-        sounds["niv8"].play()
-        print(f"Speelt {instrument} sample niveau 8 af (afstand >= 70)")
+        #print(f"Speelt sample niveau 8 af (afstand >= 70)")
+        return 8        
 ```
