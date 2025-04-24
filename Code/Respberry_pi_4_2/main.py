@@ -49,6 +49,8 @@ current_color = "#FFFFFF"      # Default yellow
 current_effect = "solid"       # Options: "solid", "puls", "rainbow", "chase", "fire", "sparkle", etc.
 current_instrument = "guitar"  # Default instrument
 
+idle_mode = False
+
 last_valid_distance = 0
 
 status_file = "/home/RPI2/Documents/txtFile/status.json"
@@ -67,6 +69,7 @@ def measure_distance():
         stop_time = time.time()
     elapsed_time = stop_time - start_time
     distance = (elapsed_time * 34300) / 2
+    print(distance)
     global distance_buffer
     distance_buffer = np.roll(distance_buffer, -1)
     distance_buffer[-1] = distance
@@ -74,7 +77,7 @@ def measure_distance():
     return max(5, min(filtered_distance, LED_COUNT * 1.6))
 
 def write_status_to_file(distance):
-    status = {"instrument": current_instrument , "sound_level": get_level(distance)}
+    status = {"instrument": current_instrument , "sound_level": get_level(distance) , "sound_stop": idle_mode}
     try:
         with open(status_file, "w") as file:
             file.write(json.dumps(status))
@@ -128,33 +131,30 @@ def get_level(distance):
 def distance_monitor():
     global last_valid_distance  # Zorg dat we de global variable updaten
     idle_start = None
-    idle_mode = False
+    global idle_mode
     idle_effect = IdleEffect(strip, idle_color=(255, 255, 0))
-    threshold_idle = 63  # Drempel voor idle mode (bijv. aantal LED's)
+    threshold_idle = 63 
 
     try:
         while True:
             distance = measure_distance()
-            # Update last_valid_distance alleen als er een hand dicht genoeg is
-            #print("distance :" , distance)
             if distance > last_valid_distance + 15:
                 distance = last_valid_distance
-                #print("last_valid_distance :" , last_valid_distance)
-            else:
-                # Als de hand is weg, gebruik dan de laatst bekende geldige waarde
-                last_valid_distance = distance
-
-            leds_to_light = int(distance / 1.6)
-
-            # Idle-detectie: als leds_to_light >= threshold_idle gedurende 60 sec, activeer idle mode
-            if leds_to_light >= threshold_idle:
+                # Begin Hier de timer 
+                
                 if idle_start is None:
                     idle_start = time.time()
-                if time.time() - idle_start >= 60:
+                if time.time() - idle_start >= 10:
+                    print("entering idle mode")
                     idle_mode = True
+                    current_instrument = "Stop"
+                
             else:
+                last_valid_distance = distance
                 idle_start = None
                 idle_mode = False
+
+            leds_to_light = int(distance / 1.6)
 
             if idle_mode:
                 idle_effect.update()
