@@ -7,7 +7,7 @@
         v-for="box in musicBoxes"
         :key="box.id"
         class="music-box"
-        :class="{ selected: selectedBox?.id === box.id, off: !box.isOn }"
+        :class="{ selected: selectedBox && selectedBox.id === box.id, off: !box.isOn }"
         @click="selectBox(box)"
         :style="{
           boxShadow: box.isOn ? `0 0 20px ${box.color}` : 'none',
@@ -27,22 +27,28 @@
       <div class="settings-grid">
         <div class="setting">
           <label>Instrument:</label>
-          <select class="sound-dropdown"
-                  v-model="selectedBox.instrument"
-                  @change="updateInstrument">
+          <select
+            class="sound-dropdown"
+            v-model="selectedBox.instrument"
+            @change="updateInstrument"
+          >
             <option
               v-for="sound in availableSounds"
               :key="sound"
               :value="sound"
-            >{{ sound }}</option>
+            >
+              {{ sound }}
+            </option>
           </select>
         </div>
 
         <div class="setting">
           <label>Effect:</label>
-          <select class="effect-dropdown"
-                  v-model="selectedBox.effect"
-                  @change="updateEffect">
+          <select
+            class="effect-dropdown"
+            v-model="selectedBox.effect"
+            @change="updateEffect"
+          >
             <option value="solid">Solid</option>
             <option value="puls">Puls</option>
             <option value="chase">Chase</option>
@@ -54,10 +60,12 @@
 
         <div v-if="selectedBox.effect !== 'rainbow'" class="setting">
           <label>Color:</label>
-          <input type="color"
-                 class="color-slider"
-                 v-model="selectedBox.color"
-                 @input="updateColor" />
+          <input
+            type="color"
+            class="color-slider"
+            v-model="selectedBox.color"
+            @input="updateColor"
+          />
         </div>
       </div>
     </div>
@@ -68,6 +76,7 @@
 import socketService from "../services/socketService.js";
 
 export default {
+  name: "MusicBoxSelector",
   data() {
     return {
       musicBoxes: [],
@@ -79,26 +88,31 @@ export default {
         "bell",
         "synth Sci-Fi",
         "synth sharp",
-        "bassline"
-      ]
+        "bassline",
+      ],
     };
   },
   mounted() {
-    socketService.on("devices-list", (list) => {
-      this.musicBoxes = list.map(d => ({
-        id: d.boxId,
-        ip: d.ip,
-        name: `Box ${d.boxId}`,
-        image: "/placeholder.png",
-        isOn: false,
-        color: "#ffffff",
-        effect: "solid",
-        instrument: "gitaar"
-      }));
+    // join controllers room
+    socketService.emit("register", { client: "frontend" });
+
+
+    socketService.on("command", (data) => {
+      const idx = this.musicBoxes.findIndex((b) => b.id === data.boxId);
+      if (idx !== -1) {
+        // create updated object
+        const updated = { ...this.musicBoxes[idx], ...data };
+        // replace the array item reactively
+        this.musicBoxes.splice(idx, 1, updated);
+        // if that box is currently selected, update it too
+        if (this.selectedBox && this.selectedBox.id === data.boxId) {
+          this.selectedBox = updated;
+        }
+      }
     });
 
     socketService.on("device-connected", ({ boxId, ip }) => {
-      if (!this.musicBoxes.some(b => b.id === boxId)) {
+      if (!this.musicBoxes.some((b) => b.id === boxId)) {
         this.musicBoxes.push({
           id: boxId,
           ip,
@@ -107,57 +121,62 @@ export default {
           isOn: false,
           color: "#ffffff",
           effect: "solid",
-          instrument: "gitaar"
+          instrument: "gitaar",
         });
       }
     });
 
     socketService.on("device-disconnected", ({ boxId }) => {
-      this.musicBoxes = this.musicBoxes.filter(b => b.id !== boxId);
-    });
-
-    socketService.on("command", (data) => {
-      const idx = this.musicBoxes.findIndex(b => b.id === data.boxId);
-      if (idx !== -1) {
-        this.$set(this.musicBoxes, idx, {
-          ...this.musicBoxes[idx],
-          ...data
-        });
+      this.musicBoxes = this.musicBoxes.filter((b) => b.id !== boxId);
+      if (this.selectedBox && this.selectedBox.id === boxId) {
+        this.selectedBox = null;
       }
     });
 
-    socketService.emit("register", { client: "frontend" });
+    // **every** setting change (including your own) comes back via this event
+    socketService.on("command", (data) => {
+  console.log("⚡️ [Vue] received command:", data);
+  const idx = this.musicBoxes.findIndex(b => b.id === data.boxId);
+  if (idx !== -1) {
+    this.$set(this.musicBoxes, idx, { ...this.musicBoxes[idx], ...data });
+    if (this.selectedBox?.id === data.boxId) {
+      this.selectedBox = this.musicBoxes[idx];
+    }
+  }
+});
+
   },
   methods: {
     selectBox(box) {
       this.selectedBox = box;
     },
     togglePower(box) {
+      // optimistic UI update
       box.isOn = !box.isOn;
       socketService.emit("update-settings", {
         boxId: box.id,
-        settings: { isOn: box.isOn }
+        settings: { isOn: box.isOn },
       });
     },
     updateColor() {
       socketService.emit("update-settings", {
         boxId: this.selectedBox.id,
-        settings: { color: this.selectedBox.color }
+        settings: { color: this.selectedBox.color },
       });
     },
     updateEffect() {
       socketService.emit("update-settings", {
         boxId: this.selectedBox.id,
-        settings: { effect: this.selectedBox.effect }
+        settings: { effect: this.selectedBox.effect },
       });
     },
     updateInstrument() {
       socketService.emit("update-settings", {
         boxId: this.selectedBox.id,
-        settings: { instrument: this.selectedBox.instrument }
+        settings: { instrument: this.selectedBox.instrument },
       });
-    }
-  }
+    },
+  },
 };
 </script>
 

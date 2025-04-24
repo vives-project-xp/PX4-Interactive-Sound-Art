@@ -8,14 +8,11 @@
 import MusicBoxSelector from "./components/MusicBoxSelector.vue";
 
 export default {
-  components: {
-    MusicBoxSelector,
-  },
+  components: { MusicBoxSelector },
 };
 </script>
 
 <style>
-/* Dark Mode Background */
 #app {
   font-family: "Arial", sans-serif;
   display: flex;
