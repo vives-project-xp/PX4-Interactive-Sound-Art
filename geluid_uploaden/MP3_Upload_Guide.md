@@ -113,6 +113,43 @@ export default {
 
 ### 1. Add an MP3 Upload Endpoint
 Update the backend to handle MP3 file uploads. Use the `express-fileupload` middleware for handling file uploads.
+## Manipulate the mp3 for different pitches
+
+````python
+from pydub import AudioSegment
+from pydub.playback import play
+import os
+
+def change_pitch(sound, semitones):
+    """
+    Change the pitch of an audio file by a given number of semitones.
+    Positive semitones increase pitch, negative decrease pitch.
+    """
+    new_sample_rate = int(sound.frame_rate * (2.0 ** (semitones / 12.0)))
+    return sound._spawn(sound.raw_data, overrides={"frame_rate": new_sample_rate}).set_frame_rate(sound.frame_rate)
+
+def create_pitched_versions(input_file, output_folder):
+    """
+    Create 8 different pitch versions of the input MP3 file.
+    """
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder)
+
+    # Load the MP3 file
+    sound = AudioSegment.from_file(input_file)
+
+    # Generate 8 pitch variations
+    for i, semitones in enumerate(range(-4, 4), start=1):  # -4 to +3 semitones
+        pitched_sound = change_pitch(sound, semitones)
+        output_file = os.path.join(output_folder, f"niveau {i}.mp3")
+        pitched_sound.export(output_file, format="mp3")
+        print(f"Saved: {output_file}")
+
+# Example usage
+input_mp3 = "path/to/your/input.mp3"  # Replace with your MP3 file path
+output_dir = "path/to/output/folder"  # Replace with your desired output folder
+create_pitched_versions(input_mp3, output_dir)
+````
 
 #### Install Dependencies
 ```bash
