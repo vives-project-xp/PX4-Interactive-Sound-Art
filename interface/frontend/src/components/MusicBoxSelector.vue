@@ -24,43 +24,41 @@
 
     <div v-if="selectedBox" class="settings-section">
       <h2>Settings for {{ selectedBox.name }}</h2>
+      <div class="settings-grid">
+        <div class="setting">
+          <label>Instrument:</label>
+          <select class="sound-dropdown"
+                  v-model="selectedBox.instrument"
+                  @change="updateInstrument">
+            <option
+              v-for="sound in availableSounds"
+              :key="sound"
+              :value="sound"
+            >{{ sound }}</option>
+          </select>
+        </div>
 
-      <div class="setting">
-        <label>Instrument:</label>
-        <select
-          v-model="selectedBox.instrument"
-          @change="updateInstrument"
-        >
-          <option
-            v-for="sound in availableSounds"
-            :key="sound"
-            :value="sound"
-          >{{ sound }}</option>
-        </select>
-      </div>
+        <div class="setting">
+          <label>Effect:</label>
+          <select class="effect-dropdown"
+                  v-model="selectedBox.effect"
+                  @change="updateEffect">
+            <option value="solid">Solid</option>
+            <option value="puls">Puls</option>
+            <option value="chase">Chase</option>
+            <option value="fire">Fire</option>
+            <option value="sparkle">Sparkle</option>
+            <option value="rainbow">Rainbow</option>
+          </select>
+        </div>
 
-      <div class="setting">
-        <label>Effect:</label>
-        <select
-          v-model="selectedBox.effect"
-          @change="updateEffect"
-        >
-          <option value="solid">Solid</option>
-          <option value="puls">Puls</option>
-          <option value="chase">Chase</option>
-          <option value="fire">Fire</option>
-          <option value="sparkle">Sparkle</option>
-          <option value="rainbow">Rainbow</option>
-        </select>
-      </div>
-
-      <div v-if="selectedBox.effect !== 'rainbow'" class="setting">
-        <label>Color:</label>
-        <input
-          type="color"
-          v-model="selectedBox.color"
-          @input="updateColor"
-        />
+        <div v-if="selectedBox.effect !== 'rainbow'" class="setting">
+          <label>Color:</label>
+          <input type="color"
+                 class="color-slider"
+                 v-model="selectedBox.color"
+                 @input="updateColor" />
+        </div>
       </div>
     </div>
   </div>
@@ -86,7 +84,6 @@ export default {
     };
   },
   mounted() {
-    // 1) Initial devices snapshot
     socketService.on("devices-list", (list) => {
       this.musicBoxes = list.map(d => ({
         id: d.boxId,
@@ -100,7 +97,6 @@ export default {
       }));
     });
 
-    // 2) New device connected
     socketService.on("device-connected", ({ boxId, ip }) => {
       if (!this.musicBoxes.some(b => b.id === boxId)) {
         this.musicBoxes.push({
@@ -116,12 +112,10 @@ export default {
       }
     });
 
-    // 3) Device disconnected
     socketService.on("device-disconnected", ({ boxId }) => {
       this.musicBoxes = this.musicBoxes.filter(b => b.id !== boxId);
     });
 
-    // 4) Command updates
     socketService.on("command", (data) => {
       const idx = this.musicBoxes.findIndex(b => b.id === data.boxId);
       if (idx !== -1) {
@@ -132,7 +126,6 @@ export default {
       }
     });
 
-    // Register this UI
     socketService.emit("register", { client: "frontend" });
   },
   methods: {
@@ -178,7 +171,8 @@ export default {
   border-radius: 15px;
   backdrop-filter: blur(15px);
   color: white;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
 }
 
 h1, h2 {
@@ -191,7 +185,8 @@ h1, h2 {
 
 .music-box-list {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  flex-wrap:wrap;
   gap: 20px;
   justify-content: center;
   margin: 20px 0;
@@ -208,6 +203,14 @@ h1, h2 {
   position: relative;
   overflow: hidden;
   width: 200px;
+}
+
+.music-box.selected {
+  transform: scale(1.05);
+}
+
+.music-box.off {
+  opacity: 0.4;
 }
 
 .music-box-image {
@@ -237,10 +240,7 @@ h1, h2 {
 .slider {
   position: absolute;
   cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  top: 0; left: 0; right: 0; bottom: 0;
   background-color: #ccc;
   transition: 0.4s;
   border-radius: 34px;
@@ -253,10 +253,8 @@ h1, h2 {
 .slider:before {
   position: absolute;
   content: "";
-  height: 26px;
-  width: 26px;
-  left: 4px;
-  bottom: 4px;
+  height: 26px; width: 26px;
+  left: 4px; bottom: 4px;
   background-color: white;
   transition: 0.4s;
   border-radius: 50%;
@@ -276,28 +274,34 @@ h1, h2 {
 
 .settings-grid {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   gap: 15px;
-  align-items: center;
+  justify-content: center;
 }
 
 .setting {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
+  width: 200px;
 }
 
-.effect-dropdown, .sound-dropdown, .color-slider {
+.setting label {
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.effect-dropdown,
+.sound-dropdown,
+.color-slider {
   width: 100%;
-  padding: 10px;
+  padding: 8px;
   border-radius: 5px;
   background: #0f0f0f;
   color: #fff;
   font-size: 1em;
+  border: none;
 }
-
-
 
 .rainbow {
   background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet);
@@ -306,15 +310,9 @@ h1, h2 {
 }
 
 @keyframes rainbow-animation {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 .pulsating {
@@ -322,55 +320,23 @@ h1, h2 {
 }
 
 @keyframes pulsate {
-  0% {
-    box-shadow: 0 0 0 0 var(--box-color);
-  }
-  50% {
-    box-shadow: 0 0 20px 10px var(--box-color);
-  }
-  100% {
-    box-shadow: 0 0 0 0 var(--box-color);
-  }
+  0% { box-shadow: 0 0 0 0 var(--box-color); }
+  50% { box-shadow: 0 0 20px 10px var(--box-color); }
+  100% { box-shadow: 0 0 0 0 var(--box-color); }
 }
 
 @media (max-width: 768px) {
-  h1 {
-    font-size: 1.5rem;
-  }
-  h2 {
-    font-size: 1.2rem;
-  }
-  .container {
-    padding: 10px;
-  }
-  .music-box-list {
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-  }
-  .music-box {
-    width: 100%;
-    padding: 10px;
-  }
-  .settings-section {
-    padding: 10px;
-  }
-  
-  .box-name {
-    font-size: 1rem;
-  }
+  h1 { font-size: 1.5rem; }
+  h2 { font-size: 1.2rem; }
+  .container { padding: 10px; }
+  .music-box-list { flex-direction: column; gap: 10px; }
+  .music-box { width: 100%; padding: 10px; }
+  .settings-section { padding: 10px; }
 }
 
 @media (max-width: 480px) {
-  h1 {
-    font-size: 1.2rem;
-  }
-  h2 {
-    font-size: 1rem;
-  }
-  .music-box-image {
-    width: 80px;
-    height: 80px;
-  }
+  h1 { font-size: 1.2rem; }
+  h2 { font-size: 1rem; }
+  .music-box-image { width: 80px; height: 80px; }
 }
 </style>
