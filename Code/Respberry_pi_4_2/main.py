@@ -16,9 +16,9 @@ from led_effects import (
 )
 
 # --- Configuratie ---
-box_id = "1"                                 # Uniek ID van deze RPI-box
-TAILSCALE_IP = "100.65.86.118"              # Lokale IP-adres van de Pi
-BACKEND_URL = "http://sound-art:4000"       # WebSocket-server URL
+box_id = "1"                              # Uniek ID
+TAILSCALE_IP = "100.65.86.118"            # RPi IP
+BACKEND_URL = "http://sound-art:4000"     # WS-server URL
 
 # Sensor pins
 TRIG_PIN = 5
@@ -44,13 +44,11 @@ current_instrument = "guitar"
 idle_mode = False
 last_valid_distance = 0
 
+# Setup hardware
 def setup_hardware():
-    # GPIO setup
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(TRIG_PIN, GPIO.OUT)
     GPIO.setup(ECHO_PIN, GPIO.IN)
-
-    # LED strip init
     strip = PixelStrip(
         LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA,
         LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL,
@@ -62,55 +60,38 @@ def setup_hardware():
 strip = setup_hardware()
 distance_buffer = np.zeros(5)
 
-# --- Sensor en LED-logica ---
+# --- Sensor & LED logic ---
 def measure_distance():
-    """Meet afstand met ultrasoon sensor en return gefilterde waarde."""
     GPIO.output(TRIG_PIN, False)
     time.sleep(0.001)
     GPIO.output(TRIG_PIN, True)
     time.sleep(0.00001)
     GPIO.output(TRIG_PIN, False)
 
-    # Puls-detectie
     start = time.time()
     while GPIO.input(ECHO_PIN) == 0:
         start = time.time()
     while GPIO.input(ECHO_PIN) == 1:
         stop = time.time()
 
-    elapsed = stop - start
-    distance = (elapsed * 34300) / 2
-
-    # Buffer voor gladstrijken
+    distance = ((stop - start) * 34300) / 2
     global distance_buffer
     distance_buffer = np.roll(distance_buffer, -1)
     distance_buffer[-1] = distance
     filtered = np.mean(distance_buffer)
     return max(5, min(filtered, LED_COUNT * 1.6))
 
-
 def get_level(distance):
-    """Bepaal geluidsniveau aan de hand van afstand."""
-    if distance < 10:
-        return 1
-    elif distance < 20:
-        return 2
-    elif distance < 30:
-        return 3
-    elif distance < 40:
-        return 4
-    elif distance < 50:
-        return 5
-    elif distance < 60:
-        return 6
-    elif distance < 70:
-        return 7
-    else:
-        return 8
-
+    if distance < 10: return 1
+    if distance < 20: return 2
+    if distance < 30: return 3
+    if distance < 40: return 4
+    if distance < 50: return 5
+    if distance < 60: return 6
+    if distance < 70: return 7
+    return 8
 
 def write_status_to_file(distance):
-    """Schrijf instrument- en geluidsstatus naar JSON."""
     status = {
         "instrument": current_instrument,
         "sound_level": get_level(distance),
@@ -122,27 +103,19 @@ def write_status_to_file(distance):
     except Exception as e:
         print("Error writing status:", e)
 
-
 def update_leds(count):
-    """Update LED-strip aan de hand van huidige effectinstellingen."""
-    if current_effect == "solid":
-        effect_solid(strip, count, current_color)
-    elif current_effect == "puls":
-        effect_puls(strip, count, current_color)
-    elif current_effect == "rainbow":
-        effect_rainbow(strip, count)
-    elif current_effect == "chase":
-        effect_chase(strip, count, current_color)
-    elif current_effect == "fire":
-        effect_fire(strip, count)
-    elif current_effect == "sparkle":
-        effect_sparkle(strip, count, current_color)
-    else:
-        effect_solid(strip, count, current_color)
-
+    mapping = {
+        "solid": effect_solid,
+        "puls": effect_puls,
+        "rainbow": effect_rainbow,
+        "chase": effect_chase,
+        "fire": effect_fire,
+        "sparkle": effect_sparkle
+    }
+    func = mapping.get(current_effect, effect_solid)
+    func(strip, count, current_color)
 
 def distance_monitor():
-    """Continue meten en updaten van LEDs, schakel na idle-tijd naar idle mode."""
     global last_valid_distance, idle_mode, current_instrument
     idle_effect = IdleEffect(strip, idle_color=(255,255,0))
     idle_start = None
@@ -150,8 +123,6 @@ def distance_monitor():
     try:
         while True:
             dist = measure_distance()
-
-            # Idle detectie
             if dist > last_valid_distance + 15:
                 if idle_start is None:
                     idle_start = time.time()
@@ -178,41 +149,37 @@ def distance_monitor():
         strip.show()
         GPIO.cleanup()
 
-# --- WebSocket-client ---
+# --- WebSocket client ---
 sio = socketio.Client()
+
+@sio.event
+def connect():
+    print("Connected to backend")
+    sio.emit('register', {
+      'boxId': box_id,
+      'ip': TAILSCALE_IP,
+      'client': 'device'
+    })
+
+@sio.on('command')
+def on_command(data):
+    global current_color, current_effect, current_instrument
+    current_color = data.get('color', current_color)
+    current_effect = data.get('effect', current_effect)
+    current_instrument = data.get('instrument', current_instrument)
+    print("Command ontvangen:", data)
+
+@sio.event
+def disconnect():
+    print("Disconnected from backend")
 
 def send_heartbeat():
     while True:
         sio.emit('heartbeat', {'boxId': box_id})
         time.sleep(15)
 
-
-@sio.event
-def connect():
-    print("Connected to backend")
-    sio.emit('register', {'boxId': box_id, 'ip': TAILSCALE_IP, 'client': 'device'})
-
-
-@sio.on('command')
-def on_command(data):
-    """Verwerk inkomende command: update globals en log."""
-    global current_color, current_effect, current_instrument
-    current_color = data.get('color', current_color)
-    current_effect = data.get('effect', current_effect)
-    current_instrument = data.get('instrument', current_instrument)
-    print(f"Command ontvangen: {data}")
-
-
-@sio.event
-def disconnect():
-    print("Disconnected from backend")
-
-# --- Main ---
 if __name__ == '__main__':
-    # Start sensorloop
     threading.Thread(target=distance_monitor, daemon=True).start()
-    # Start heartbeat
     threading.Thread(target=send_heartbeat, daemon=True).start()
-    # Connect en block
     sio.connect(BACKEND_URL)
     sio.wait()

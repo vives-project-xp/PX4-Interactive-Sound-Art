@@ -1,15 +1,13 @@
 <template>
   <div class="container">
     <h1 class="title">Interactive Sound Art Controller</h1>
+
     <div class="music-box-list">
       <div
         v-for="box in musicBoxes"
         :key="box.id"
         class="music-box"
-        :class="{
-          selected: selectedBox?.id === box.id,
-          off: !box.isOn
-        }"
+        :class="{ selected: selectedBox?.id === box.id, off: !box.isOn }"
         @click="selectBox(box)"
         :style="{
           boxShadow: box.isOn ? `0 0 20px ${box.color}` : 'none',
@@ -26,12 +24,18 @@
 
     <div v-if="selectedBox" class="settings-section">
       <h2>Settings for {{ selectedBox.name }}</h2>
+
       <div class="setting">
         <label>Instrument:</label>
-        <select v-model="selectedBox.sound" @change="updateSound(selectedBox)">
-          <option v-for="sound in availableSounds" :key="sound" :value="sound">{{ sound }}</option>
+        <select v-model="selectedBox.instrument" @change="updateInstrument">
+          <option
+            v-for="sound in availableSounds"
+            :key="sound"
+            :value="sound"
+          >{{ sound }}</option>
         </select>
       </div>
+
       <div class="setting">
         <label>Effect:</label>
         <select v-model="selectedBox.effect" @change="updateEffect">
@@ -43,9 +47,14 @@
           <option value="rainbow">Rainbow</option>
         </select>
       </div>
+
       <div v-if="selectedBox.effect !== 'rainbow'" class="setting">
         <label>Color:</label>
-        <input type="color" v-model="selectedBox.color" @input="updateColor" />
+        <input
+          type="color"
+          v-model="selectedBox.color"
+          @input="updateColor"
+        />
       </div>
     </div>
   </div>
@@ -59,23 +68,61 @@ export default {
     return {
       musicBoxes: [],
       selectedBox: null,
-      availableSounds: ['gitaar', 'drum', 'bass jumpy', 'bell', 'synth Sci-Fi','synth sharp', 'bassline'],
+      availableSounds: [
+        "gitaar",
+        "drum",
+        "bass jumpy",
+        "bell",
+        "synth Sci-Fi",
+        "synth sharp",
+        "bassline"
+      ]
     };
   },
   mounted() {
-    // Init dummy of fetch alle devices via WS
-    // Eventuele fetch op /devices kan blijven voor initiële lijst
+    // Initial list might come via HTTP if you want—but we handle via WS here:
+    socketService.on("devices-list", (list) => {
+      this.musicBoxes = list.map(d => ({
+        id: d.boxId,
+        ip: d.ip,
+        name: `Box ${d.boxId}`,
+        image: "/placeholder.png",
+        isOn: false,
+        color: "#ffffff",
+        effect: "solid",
+        instrument: "gitaar"
+      }));
+    });
 
-    // Luister naar realtime commands
-    socketService.on('command', (data) => {
+    socketService.on("device-connected", ({ boxId, ip }) => {
+      this.musicBoxes.push({
+        id: boxId,
+        ip,
+        name: `Box ${boxId}`,
+        image: "/placeholder.png",
+        isOn: false,
+        color: "#ffffff",
+        effect: "solid",
+        instrument: "gitaar"
+      });
+    });
+
+    socketService.on("device-disconnected", ({ boxId }) => {
+      this.musicBoxes = this.musicBoxes.filter(b => b.id !== boxId);
+    });
+
+    socketService.on("command", (data) => {
       const idx = this.musicBoxes.findIndex(b => b.id === data.boxId);
       if (idx !== -1) {
-        this.$set(this.musicBoxes, idx, { ...this.musicBoxes[idx], ...data });
+        this.$set(this.musicBoxes, idx, {
+          ...this.musicBoxes[idx],
+          ...data
+        });
       }
     });
 
-    // Registreer frontend client
-    socketService.emit('register', { client: 'frontend' });
+    // Register as frontend client
+    socketService.emit("register", { client: "frontend" });
   },
   methods: {
     selectBox(box) {
@@ -83,18 +130,30 @@ export default {
     },
     togglePower(box) {
       box.isOn = !box.isOn;
-      socketService.emit('update-settings', { boxId: box.id, settings: { isOn: box.isOn } });
+      socketService.emit("update-settings", {
+        boxId: box.id,
+        settings: { isOn: box.isOn }
+      });
     },
     updateColor() {
-      socketService.emit('update-settings', { boxId: this.selectedBox.id, settings: { color: this.selectedBox.color } });
+      socketService.emit("update-settings", {
+        boxId: this.selectedBox.id,
+        settings: { color: this.selectedBox.color }
+      });
     },
     updateEffect() {
-      socketService.emit('update-settings', { boxId: this.selectedBox.id, settings: { effect: this.selectedBox.effect } });
+      socketService.emit("update-settings", {
+        boxId: this.selectedBox.id,
+        settings: { effect: this.selectedBox.effect }
+      });
     },
-    updateSound(box) {
-      socketService.emit('update-settings', { boxId: box.id, settings: { instrument: box.sound } });
-    },
-  },
+    updateInstrument() {
+      socketService.emit("update-settings", {
+        boxId: this.selectedBox.id,
+        settings: { instrument: this.selectedBox.instrument }
+      });
+    }
+  }
 };
 </script>
 

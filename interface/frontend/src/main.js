@@ -1,21 +1,17 @@
-import './assets/main.css'
+import './assets/main.css';
+import { createApp } from 'vue';
+import { createPinia } from 'pinia';
+import router from './router';
+import socketService from './services/socketService.js';
 
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
-import io from 'socket.io-client' // Import socket.io-client
+const app = createApp(App);
 
-import App from './app.vue'
-import router from './router' // Import the router
+// Make WS available globally as $socket
+app.config.globalProperties.$socket = socketService;
 
-// Establish WebSocket connection
-const socket = io('http://localhost:4000')
+// Start WS connection
+socketService.connect();
 
-const app = createApp(App)
-
-// Provide the socket instance globally
-app.config.globalProperties.$socket = socket
-
-app.use(createPinia())
-app.use(router) // Use the router
-
-app.mount('#app') // Mount the app instance after applying plugins
+app.use(createPinia());
+app.use(router);
+app.mount('#app');

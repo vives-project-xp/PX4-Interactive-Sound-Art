@@ -5,13 +5,15 @@ import { Server as SocketIOServer } from "socket.io";
 
 const app = express();
 const server = http.createServer(app);
-const io = new SocketIOServer(server, { cors: { origin: "*" } });
+const io = new SocketIOServer(server, {
+  cors: { origin: "*" }
+});
 const PORT = 4000;
 
 app.use(cors());
 app.use(express.json());
 
-// In-memory opslag
+// In-memory opslag van devices en hun laatste status
 const devices = {};
 const commands = {};
 
@@ -19,64 +21,73 @@ const commands = {};
 io.on("connection", (socket) => {
   console.log("Nieuwe socket-verbinding:", socket.id);
 
-  // Device of frontend registratie
+  // Register (frontend of RPi)
   socket.on("register", ({ boxId, ip, client }) => {
-    console.log(`Geregistreerd via WebSocket door ${client || 'onbekend'} (socket: ${socket.id})`);
-    if (boxId) {
-      devices[boxId] = { ip, socketId: socket.id, lastSeen: Date.now() };
-      console.log(`Geregistreerd via WebSocket: ${boxId} (${client || 'device'})`);
-      socket.emit("register_ack", { success: true });
-    }
-  });
-  
+    if (!boxId) return;
+    devices[boxId] = {
+      ip,
+      socketId: socket.id,
+      lastSeen: Date.now()
+    };
+    console.log(`Geregistreerd: ${boxId} (${client})`);
 
-  // Update settings van frontend
+    // Ack back to registrant
+    socket.emit("register_ack", { success: true });
+
+    // Notify all UIs of new device
+    io.emit("device-connected", { boxId, ip });
+  });
+
+  // Frontend updates settings for a box
   socket.on("update-settings", ({ boxId, settings }) => {
-    // Werk commandes bij
+    if (!devices[boxId]) return;
+    // Merge new settings
     commands[boxId] = { ...commands[boxId], ...settings };
     const payload = { boxId, ...commands[boxId] };
 
-    // Stuur naar specifiek device
-    const device = devices[boxId];
-    if (device?.socketId) {
-      io.to(device.socketId).emit("command", payload);
-      console.log(`Verzonden naar device ${boxId}:`, payload);
-    }
+    // Send command to the specific RPi
+    io.to(devices[boxId].socketId).emit("command", payload);
+    console.log(`Sent to device ${boxId}:`, payload);
 
-    // Broadcast naar andere UIs
+    // Broadcast to other frontends
     socket.broadcast.emit("command", payload);
-    console.log(`Gebroadcast naar andere clients:`, payload);
   });
 
-  // Heartbeat van devices
+  // Heartbeat from RPi
   socket.on("heartbeat", ({ boxId }) => {
     if (devices[boxId]) {
       devices[boxId].lastSeen = Date.now();
     }
   });
 
+  // Cleanup on disconnect
   socket.on("disconnect", () => {
-    console.log("Socket disconnected:", socket.id);
-    // Cleanup inactieve registraties
-    for (const boxId in devices) {
-      if (devices[boxId].socketId === socket.id) {
-        delete devices[boxId];
-        console.log(`Verwijderd door disconnect: ${boxId}`);
-      }
+    // Find if this socket belonged to a device
+    const gone = Object.entries(devices).find(
+      ([, info]) => info.socketId === socket.id
+    );
+    if (gone) {
+      const [boxId] = gone;
+      delete devices[boxId];
+      delete commands[boxId];
+      io.emit("device-disconnected", { boxId });
+      console.log(`Device disconnected: ${boxId}`);
     }
   });
 });
 
-// Periodieke check voor inactiviteit
+// Periodieke inactiviteits-check
 setInterval(() => {
   const now = Date.now();
-  for (const boxId in devices) {
-    if (now - devices[boxId].lastSeen > 60000) {
+  for (const [boxId, info] of Object.entries(devices)) {
+    if (now - info.lastSeen > 60_000) {
       delete devices[boxId];
-      console.log(`Verwijderd wegens inactiviteit: ${boxId}`);
+      delete commands[boxId];
+      io.emit("device-disconnected", { boxId });
+      console.log(`Removed inactive device: ${boxId}`);
     }
   }
-}, 30000);
+}, 30_000);
 
 server.listen(PORT, () => {
   console.log(`Backend draait op http://0.0.0.0:${PORT}`);
