@@ -1,28 +1,17 @@
 <template>
   <div class="container">
     <h1 class="title">Interactive Sound Art Controller</h1>
-    <h2 class="subtitle">Select Your Music Box</h2>
 
     <div class="music-box-list">
       <div
         v-for="box in musicBoxes"
         :key="box.id"
         class="music-box"
-        :class="{ 
-          selected: selectedBox?.id === box.id, 
-          solid: box.effect === 'solid' && box.isOn,
-          puls: box.effect === 'puls' && box.isOn,
-          chase: box.effect === 'chase' && box.isOn,
-          rainbow: box.effect === 'rainbow' && box.isOn,
-          fire: box.effect === 'fire' && box.isOn,
-          sparkle: box.effect === 'sparkle' && box.isOn,
-          off: !box.isOn 
-        }"
+        :class="{ selected: selectedBox && selectedBox.id === box.id, off: !box.isOn }"
         @click="selectBox(box)"
         :style="{
-          boxShadow: box.isOn && box.effect !== 'rainbow' ? `0 0 20px ${box.color}` : 'none',
-          backgroundColor: box.isOn && box.effect !== 'rainbow' ? box.color : 'transparent',
-          '--box-color': box.color
+          boxShadow: box.isOn ? `0 0 20px ${box.color}` : 'none',
+          backgroundColor: box.isOn ? box.color : 'transparent'
         }"
       >
         <img :src="box.image" :alt="box.name" class="music-box-image" />
@@ -38,132 +27,159 @@
       <div class="settings-grid">
         <div class="setting">
           <label>Instrument:</label>
-          <select v-model="selectedBox.sound" @change="updateSound(selectedBox)" class="sound-dropdown">
-            <option v-for="sound in availableSounds" :key="sound" :value="sound">{{ sound }}</option>
+          <select
+            class="sound-dropdown"
+            v-model="selectedBox.instrument"
+            @change="updateInstrument"
+          >
+            <option
+              v-for="sound in availableSounds"
+              :key="sound"
+              :value="sound"
+            >
+              {{ sound }}
+            </option>
           </select>
         </div>
-        
+
         <div class="setting">
           <label>Effect:</label>
-          <select v-model="selectedBox.effect" @change="updateEffect" class="effect-dropdown">
+          <select
+            class="effect-dropdown"
+            v-model="selectedBox.effect"
+            @change="updateEffect"
+          >
             <option value="solid">Solid</option>
             <option value="puls">Puls</option>
             <option value="chase">Chase</option>
             <option value="fire">Fire</option>
             <option value="sparkle">Sparkle</option>
-            <option value="firework">Firework</option>
             <option value="rainbow">Rainbow</option>
           </select>
         </div>
 
-
         <div v-if="selectedBox.effect !== 'rainbow'" class="setting">
           <label>Color:</label>
-          <input type="color" v-model="selectedBox.color" class="color-slider" @input="updateColor" />
+          <input
+            type="color"
+            class="color-slider"
+            v-model="selectedBox.color"
+            @input="updateColor"
+          />
         </div>
       </div>
     </div>
-
-    
   </div>
 </template>
 
 <script>
-import apiService from '../services/apiService.js';
+import socketService from "../services/socketService.js";
 
 export default {
+  name: "MusicBoxSelector",
   data() {
     return {
       musicBoxes: [],
       selectedBox: null,
-      availableSounds: ['gitaar', 'drum', 'bass jumpy', 'bell', 'synth Sci-Fi','synth sharp', 'bassline'],
-      soundImages: {
-        'gitaar': '/image/gitaar.png',
-        'drum': '/image/drum.png',
-        'bass jumpy': '/image/bassjumpy.png',
-        'bell': '/image/bel.png',
-        'synth Sci-Fi': '/image/synthscifi.png',
-        'synth sharp': '/image/synthsharp.png',
-        'bassline': '/image/bassline.png',
-        
-      },
+      availableSounds: [
+        "gitaar",
+        "drum",
+        "bass jumpy",
+        "bell",
+        "synth Sci-Fi",
+        "synth sharp",
+        "bassline",
+      ],
     };
   },
+  mounted() {
+    // register this UI
+    socketService.emit("register", { client: "frontend" });
 
-  async mounted() {
-    // Get initial devices
-    try {
-      this.musicBoxes = await apiService.getMusicBoxes();
-    } catch {
-      console.warn('Backend not available, using mock data');
-      this.musicBoxes = [
-        { id: 1, name: 'Box 1', image: this.soundImages['Piano'], color: '#ff0000', isOn: false, sound: 'Piano', effect: 'pulsating', led: false },
-        { id: 2, name: 'Box 2', image: this.soundImages['Guitar'], color: '#00ff00', isOn: false, sound: 'Guitar', effect: 'firework', led: false },
-        { id: 3, name: 'Box 3', image: this.soundImages['Violin'], color: '#0000ff', isOn: false, sound: 'Violin', effect: 'rainbow', led: false },
-      ];
-    }
+    // receive initial list of already-connected boxes
+    socketService.on("devices-list", (list) => {
+      this.musicBoxes = list.map(({ boxId, ip }) => ({
+        id: boxId,
+        ip,
+        name: `Box ${boxId}`,
+        image: "/placeholder.png",
+        isOn: false,
+        color: "#ffffff",
+        effect: "solid",
+        instrument: "gitaar",
+      }));
+    });
 
-    // Listen for real-time updates from the backend
-    this.$socket.on('command', (data) => {
-      console.log('Received command via WebSocket:', data);
-      const index = this.musicBoxes.findIndex(box => box.id === data.boxId);
-      if (index !== -1) {
-        this.musicBoxes[index] = {
-          ...this.musicBoxes[index],
-          ...data,
-        };
+    // handle updates from any client or Pi
+    socketService.on("command", (data) => {
+      console.log("⚡️ [Vue] received command:", data);
+      const idx = this.musicBoxes.findIndex((b) => b.id === data.boxId);
+      if (idx !== -1) {
+        const updated = { ...this.musicBoxes[idx], ...data };
+        // reactive in-place replace so all UIs update
+        this.musicBoxes.splice(idx, 1, updated);
+        if (this.selectedBox && this.selectedBox.id === data.boxId) {
+          this.selectedBox = updated;
+        }
       }
     });
 
-    this.$socket.on('update-settings', (data) => {
-      console.log('Received settings update via WebSocket:', data);
-      const index = this.musicBoxes.findIndex(box => box.id === data.boxId);
-      if (index !== -1) {
-        this.musicBoxes[index] = {
-          ...this.musicBoxes[index],
-          ...data.settings,
-        };
+    // when a new Pi connects
+    socketService.on("device-connected", ({ boxId, ip }) => {
+      if (!this.musicBoxes.some((b) => b.id === boxId)) {
+        this.musicBoxes.push({
+          id: boxId,
+          ip,
+          name: `Box ${boxId}`,
+          image: "/placeholder.png",
+          isOn: false,
+          color: "#ffffff",
+          effect: "solid",
+          instrument: "gitaar",
+        });
+      }
+    });
+
+    // when a Pi disconnects
+    socketService.on("device-disconnected", ({ boxId }) => {
+      this.musicBoxes = this.musicBoxes.filter((b) => b.id !== boxId);
+      if (this.selectedBox && this.selectedBox.id === boxId) {
+        this.selectedBox = null;
       }
     });
   },
-
   methods: {
     selectBox(box) {
       this.selectedBox = box;
     },
-
-    async togglePower(box) {
+    togglePower(box) {
       box.isOn = !box.isOn;
-      await apiService.togglePower(box.id, box.isOn);
-      this.$socket.emit('update-settings', { boxId: box.id, settings: { isOn: box.isOn } });
+      socketService.emit("update-settings", {
+        boxId: box.id,
+        settings: { isOn: box.isOn },
+      });
     },
-
-    async updateColor() {
-      if (this.selectedBox) {
-        await apiService.updateColor(this.selectedBox.id, this.selectedBox.color);
-        this.$socket.emit('update-settings', { boxId: this.selectedBox.id, settings: { color: this.selectedBox.color } });
-      }
+    updateColor() {
+      socketService.emit("update-settings", {
+        boxId: this.selectedBox.id,
+        settings: { color: this.selectedBox.color },
+      });
     },
-
-    async updateEffect() {
-      if (this.selectedBox) {
-        await apiService.updateEffect(this.selectedBox.id, this.selectedBox.effect);
-        this.$socket.emit('update-settings', { boxId: this.selectedBox.id, settings: { effect: this.selectedBox.effect } });
-      }
+    updateEffect() {
+      socketService.emit("update-settings", {
+        boxId: this.selectedBox.id,
+        settings: { effect: this.selectedBox.effect },
+      });
     },
-
-    async updateSound(box) {
-      box.image = this.soundImages[box.sound];
-      await apiService.updateSound(box.id, box.sound);
-      this.$socket.emit('update-settings', { boxId: box.id, settings: { sound: box.sound, image: box.image } });
+    updateInstrument() {
+      socketService.emit("update-settings", {
+        boxId: this.selectedBox.id,
+        settings: { instrument: this.selectedBox.instrument },
+      });
     },
   },
 };
 </script>
-
-<style scoped>
-/* Add your styles here */
-</style>
 
 <style scoped>
 .container {
@@ -175,7 +191,8 @@ export default {
   border-radius: 15px;
   backdrop-filter: blur(15px);
   color: white;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
 }
 
 h1, h2 {
@@ -188,7 +205,8 @@ h1, h2 {
 
 .music-box-list {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  flex-wrap:wrap;
   gap: 20px;
   justify-content: center;
   margin: 20px 0;
@@ -205,6 +223,14 @@ h1, h2 {
   position: relative;
   overflow: hidden;
   width: 200px;
+}
+
+.music-box.selected {
+  transform: scale(1.05);
+}
+
+.music-box.off {
+  opacity: 0.4;
 }
 
 .music-box-image {
@@ -234,10 +260,7 @@ h1, h2 {
 .slider {
   position: absolute;
   cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  top: 0; left: 0; right: 0; bottom: 0;
   background-color: #ccc;
   transition: 0.4s;
   border-radius: 34px;
@@ -250,10 +273,8 @@ h1, h2 {
 .slider:before {
   position: absolute;
   content: "";
-  height: 26px;
-  width: 26px;
-  left: 4px;
-  bottom: 4px;
+  height: 26px; width: 26px;
+  left: 4px; bottom: 4px;
   background-color: white;
   transition: 0.4s;
   border-radius: 50%;
@@ -273,28 +294,34 @@ h1, h2 {
 
 .settings-grid {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   gap: 15px;
-  align-items: center;
+  justify-content: center;
 }
 
 .setting {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
+  width: 200px;
 }
 
-.effect-dropdown, .sound-dropdown, .color-slider {
+.setting label {
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.effect-dropdown,
+.sound-dropdown,
+.color-slider {
   width: 100%;
-  padding: 10px;
+  padding: 8px;
   border-radius: 5px;
   background: #0f0f0f;
   color: #fff;
   font-size: 1em;
+  border: none;
 }
-
-
 
 .rainbow {
   background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet);
@@ -303,15 +330,9 @@ h1, h2 {
 }
 
 @keyframes rainbow-animation {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 .pulsating {
@@ -319,55 +340,23 @@ h1, h2 {
 }
 
 @keyframes pulsate {
-  0% {
-    box-shadow: 0 0 0 0 var(--box-color);
-  }
-  50% {
-    box-shadow: 0 0 20px 10px var(--box-color);
-  }
-  100% {
-    box-shadow: 0 0 0 0 var(--box-color);
-  }
+  0% { box-shadow: 0 0 0 0 var(--box-color); }
+  50% { box-shadow: 0 0 20px 10px var(--box-color); }
+  100% { box-shadow: 0 0 0 0 var(--box-color); }
 }
 
 @media (max-width: 768px) {
-  h1 {
-    font-size: 1.5rem;
-  }
-  h2 {
-    font-size: 1.2rem;
-  }
-  .container {
-    padding: 10px;
-  }
-  .music-box-list {
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-  }
-  .music-box {
-    width: 100%;
-    padding: 10px;
-  }
-  .settings-section {
-    padding: 10px;
-  }
-  
-  .box-name {
-    font-size: 1rem;
-  }
+  h1 { font-size: 1.5rem; }
+  h2 { font-size: 1.2rem; }
+  .container { padding: 10px; }
+  .music-box-list { flex-direction: column; gap: 10px; }
+  .music-box { width: 100%; padding: 10px; }
+  .settings-section { padding: 10px; }
 }
 
 @media (max-width: 480px) {
-  h1 {
-    font-size: 1.2rem;
-  }
-  h2 {
-    font-size: 1rem;
-  }
-  .music-box-image {
-    width: 80px;
-    height: 80px;
-  }
+  h1 { font-size: 1.2rem; }
+  h2 { font-size: 1rem; }
+  .music-box-image { width: 80px; height: 80px; }
 }
 </style>

@@ -1,20 +1,15 @@
-import './assets/main.css'
+import './assets/main.css';
+import { createApp } from 'vue';
+import { createPinia } from 'pinia';
+import App from './App.vue';
+import router from './router';              // if used
+import socketService from './services/socketService.js';
 
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
+const app = createApp(App);
 
-import App from './app.vue'
-import router from './router' // Import the router
+app.config.globalProperties.$socket = socketService;
+socketService.connect();
 
-
-const app = createApp(App)
-
-createApp(App).mount('#app')
-
-app.use(createPinia())
-app.use(router) // Use the router
-
-app.mount('#app')
-
-
-
+app.use(createPinia());
+app.use(router);
+app.mount('#app');
