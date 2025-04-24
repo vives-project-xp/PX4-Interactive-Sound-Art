@@ -230,7 +230,8 @@ def play_uploaded_sound(file_name):
 # Connect to the WebSocket server
 sio.connect("http://localhost:4000")
 ```
-
+- 2) A login system should be implemented to manage who can acces the "upload" feature.
+    which does bring complexity with it.
 ---
 
 ## Conclusion
