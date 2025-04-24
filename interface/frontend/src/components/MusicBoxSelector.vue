@@ -112,7 +112,7 @@ export default {
 
     // handle updates from any client or Pi
     socketService.on("command", (data) => {
-      console.log("⚡️ [Vue] received command:", data);
+      console.log("[Vue] received command:", data);
       const idx = this.musicBoxes.findIndex((b) => b.id === data.boxId);
       if (idx !== -1) {
         const updated = { ...this.musicBoxes[idx], ...data };
