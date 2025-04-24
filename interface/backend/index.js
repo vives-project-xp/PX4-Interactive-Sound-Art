@@ -10,59 +10,57 @@ const io = new SocketIOServer(server, {
 });
 const PORT = 4000;
 
-app.use(cors());
-app.use(express.json());
-
-// In-memory opslag van devices en hun laatste status
+// In-memory opslag
 const devices = {};
 const commands = {};
 
-// Socket.IO events
+app.use(cors());
+app.use(express.json());
+
 io.on("connection", (socket) => {
   console.log("Nieuwe socket-verbinding:", socket.id);
 
-  // Register (frontend of RPi)
+  // 1. Stuur huidige lijst devices
+  const list = Object.entries(devices).map(([boxId, info]) => ({
+    boxId,
+    ip: info.ip
+  }));
+  socket.emit("devices-list", list);
+
+  // 2. Registratie van frontend of RPi
   socket.on("register", ({ boxId, ip, client }) => {
     if (!boxId) return;
-    devices[boxId] = {
-      ip,
-      socketId: socket.id,
-      lastSeen: Date.now()
-    };
+    devices[boxId] = { ip, socketId: socket.id, lastSeen: Date.now() };
     console.log(`Geregistreerd: ${boxId} (${client})`);
-
-    // Ack back to registrant
     socket.emit("register_ack", { success: true });
 
-    // Notify all UIs of new device
+    // Notify alle UIs
     io.emit("device-connected", { boxId, ip });
   });
 
-  // Frontend updates settings for a box
+  // 3. Frontend stuurt nieuwe instellingen
   socket.on("update-settings", ({ boxId, settings }) => {
     if (!devices[boxId]) return;
-    // Merge new settings
     commands[boxId] = { ...commands[boxId], ...settings };
     const payload = { boxId, ...commands[boxId] };
 
-    // Send command to the specific RPi
+    // Naar RPi
     io.to(devices[boxId].socketId).emit("command", payload);
     console.log(`Sent to device ${boxId}:`, payload);
 
-    // Broadcast to other frontends
+    // Broadcast naar andere frontends
     socket.broadcast.emit("command", payload);
   });
 
-  // Heartbeat from RPi
+  // 4. Heartbeat van RPi
   socket.on("heartbeat", ({ boxId }) => {
     if (devices[boxId]) {
       devices[boxId].lastSeen = Date.now();
     }
   });
 
-  // Cleanup on disconnect
+  // 5. Cleanup op disconnect
   socket.on("disconnect", () => {
-    // Find if this socket belonged to a device
     const gone = Object.entries(devices).find(
       ([, info]) => info.socketId === socket.id
     );
@@ -76,7 +74,7 @@ io.on("connection", (socket) => {
   });
 });
 
-// Periodieke inactiviteits-check
+// Periodieke inactieve‐check
 setInterval(() => {
   const now = Date.now();
   for (const [boxId, info] of Object.entries(devices)) {

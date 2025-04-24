@@ -16,9 +16,9 @@ from led_effects import (
 )
 
 # --- Configuratie ---
-box_id = "1"                              # Uniek ID
-TAILSCALE_IP = "100.65.86.118"            # RPi IP
-BACKEND_URL = "http://sound-art:4000"     # WS-server URL
+box_id = "1"
+TAILSCALE_IP = "100.65.86.118"
+BACKEND_URL = "http://sound-art:4000"
 
 # Sensor pins
 TRIG_PIN = 5
@@ -34,7 +34,6 @@ LED_INVERT = False
 LED_CHANNEL = 0
 STRIP_TYPE = ws.SK6812_STRIP_RGBW
 
-# Statusbestand (optioneel)
 STATUS_FILE = "/home/RPI2/Documents/txtFile/status.json"
 
 # Globals
@@ -44,7 +43,6 @@ current_instrument = "guitar"
 idle_mode = False
 last_valid_distance = 0
 
-# Setup hardware
 def setup_hardware():
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(TRIG_PIN, GPIO.OUT)
@@ -60,20 +58,16 @@ def setup_hardware():
 strip = setup_hardware()
 distance_buffer = np.zeros(5)
 
-# --- Sensor & LED logic ---
 def measure_distance():
     GPIO.output(TRIG_PIN, False)
     time.sleep(0.001)
     GPIO.output(TRIG_PIN, True)
     time.sleep(0.00001)
     GPIO.output(TRIG_PIN, False)
-
-    start = time.time()
     while GPIO.input(ECHO_PIN) == 0:
         start = time.time()
     while GPIO.input(ECHO_PIN) == 1:
         stop = time.time()
-
     distance = ((stop - start) * 34300) / 2
     global distance_buffer
     distance_buffer = np.roll(distance_buffer, -1)
@@ -82,13 +76,13 @@ def measure_distance():
     return max(5, min(filtered, LED_COUNT * 1.6))
 
 def get_level(distance):
-    if distance < 10: return 1
-    if distance < 20: return 2
-    if distance < 30: return 3
-    if distance < 40: return 4
-    if distance < 50: return 5
-    if distance < 60: return 6
-    if distance < 70: return 7
+    if distance < 10:   return 1
+    if distance < 20:   return 2
+    if distance < 30:   return 3
+    if distance < 40:   return 4
+    if distance < 50:   return 5
+    if distance < 60:   return 6
+    if distance < 70:   return 7
     return 8
 
 def write_status_to_file(distance):
@@ -143,22 +137,17 @@ def distance_monitor():
             write_status_to_file(dist)
             time.sleep(0.005)
     except KeyboardInterrupt:
-        print("Stopping, cleanup...")
-        for i in range(strip.numPixels()):
-            strip.setPixelColor(i, Color(0,0,0,0))
-        strip.show()
         GPIO.cleanup()
 
-# --- WebSocket client ---
 sio = socketio.Client()
 
 @sio.event
 def connect():
     print("Connected to backend")
     sio.emit('register', {
-      'boxId': box_id,
-      'ip': TAILSCALE_IP,
-      'client': 'device'
+        'boxId': box_id,
+        'ip': TAILSCALE_IP,
+        'client': 'device'
     })
 
 @sio.on('command')

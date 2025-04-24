@@ -27,7 +27,10 @@
 
       <div class="setting">
         <label>Instrument:</label>
-        <select v-model="selectedBox.instrument" @change="updateInstrument">
+        <select
+          v-model="selectedBox.instrument"
+          @change="updateInstrument"
+        >
           <option
             v-for="sound in availableSounds"
             :key="sound"
@@ -38,7 +41,10 @@
 
       <div class="setting">
         <label>Effect:</label>
-        <select v-model="selectedBox.effect" @change="updateEffect">
+        <select
+          v-model="selectedBox.effect"
+          @change="updateEffect"
+        >
           <option value="solid">Solid</option>
           <option value="puls">Puls</option>
           <option value="chase">Chase</option>
@@ -80,7 +86,7 @@ export default {
     };
   },
   mounted() {
-    // Initial list might come via HTTP if you want—but we handle via WS here:
+    // 1) Initial devices snapshot
     socketService.on("devices-list", (list) => {
       this.musicBoxes = list.map(d => ({
         id: d.boxId,
@@ -94,23 +100,28 @@ export default {
       }));
     });
 
+    // 2) New device connected
     socketService.on("device-connected", ({ boxId, ip }) => {
-      this.musicBoxes.push({
-        id: boxId,
-        ip,
-        name: `Box ${boxId}`,
-        image: "/placeholder.png",
-        isOn: false,
-        color: "#ffffff",
-        effect: "solid",
-        instrument: "gitaar"
-      });
+      if (!this.musicBoxes.some(b => b.id === boxId)) {
+        this.musicBoxes.push({
+          id: boxId,
+          ip,
+          name: `Box ${boxId}`,
+          image: "/placeholder.png",
+          isOn: false,
+          color: "#ffffff",
+          effect: "solid",
+          instrument: "gitaar"
+        });
+      }
     });
 
+    // 3) Device disconnected
     socketService.on("device-disconnected", ({ boxId }) => {
       this.musicBoxes = this.musicBoxes.filter(b => b.id !== boxId);
     });
 
+    // 4) Command updates
     socketService.on("command", (data) => {
       const idx = this.musicBoxes.findIndex(b => b.id === data.boxId);
       if (idx !== -1) {
@@ -121,7 +132,7 @@ export default {
       }
     });
 
-    // Register as frontend client
+    // Register this UI
     socketService.emit("register", { client: "frontend" });
   },
   methods: {
