@@ -2,6 +2,7 @@
 
 ## Benodigdheden
 - **Raspberry Pi 4**
+- **USB Gekuidkaart**
 - **3.5mm stereo jackkabel met open uiteinde** (bijv. VOLTCRAFT XL-AC35SW)
 - **TDA2030 versterkermodule**
 - **Visaton FR 9.15 luidspreker (4Ω, 15W)**
