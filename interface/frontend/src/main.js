@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import './assets/main.css'
 
 import { createApp } from 'vue'
@@ -23,3 +24,20 @@ app.use(createPinia())
 app.use(router) // Use the router
 
 app.mount('#app') // Mount the app instance *after* applying plugins
+=======
+import './assets/main.css';
+import { createApp } from 'vue';
+import { createPinia } from 'pinia';
+import App from './App.vue';
+import router from './router';
+import socketService from './services/socketService.js';
+
+const app = createApp(App);
+
+app.config.globalProperties.$socket = socketService;
+socketService.connect();
+
+app.use(createPinia());
+app.use(router);
+app.mount('#app');
+>>>>>>> d30cca8852268da199c138b688e9a55109f7c233
