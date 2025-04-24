@@ -93,24 +93,38 @@ export default {
     };
   },
   mounted() {
-    // join controllers room
+    // register this UI
     socketService.emit("register", { client: "frontend" });
 
+    // receive initial list of already-connected boxes
+    socketService.on("devices-list", (list) => {
+      this.musicBoxes = list.map(({ boxId, ip }) => ({
+        id: boxId,
+        ip,
+        name: `Box ${boxId}`,
+        image: "/placeholder.png",
+        isOn: false,
+        color: "#ffffff",
+        effect: "solid",
+        instrument: "gitaar",
+      }));
+    });
 
+    // handle updates from any client or Pi
     socketService.on("command", (data) => {
+      console.log("[Vue] received command:", data);
       const idx = this.musicBoxes.findIndex((b) => b.id === data.boxId);
       if (idx !== -1) {
-        // create updated object
         const updated = { ...this.musicBoxes[idx], ...data };
-        // replace the array item reactively
+        // reactive in-place replace so all UIs update
         this.musicBoxes.splice(idx, 1, updated);
-        // if that box is currently selected, update it too
         if (this.selectedBox && this.selectedBox.id === data.boxId) {
           this.selectedBox = updated;
         }
       }
     });
 
+    // when a new Pi connects
     socketService.on("device-connected", ({ boxId, ip }) => {
       if (!this.musicBoxes.some((b) => b.id === boxId)) {
         this.musicBoxes.push({
@@ -126,32 +140,19 @@ export default {
       }
     });
 
+    // when a Pi disconnects
     socketService.on("device-disconnected", ({ boxId }) => {
       this.musicBoxes = this.musicBoxes.filter((b) => b.id !== boxId);
       if (this.selectedBox && this.selectedBox.id === boxId) {
         this.selectedBox = null;
       }
     });
-
-    // **every** setting change (including your own) comes back via this event
-    socketService.on("command", (data) => {
-  console.log("⚡️ [Vue] received command:", data);
-  const idx = this.musicBoxes.findIndex(b => b.id === data.boxId);
-  if (idx !== -1) {
-    this.$set(this.musicBoxes, idx, { ...this.musicBoxes[idx], ...data });
-    if (this.selectedBox?.id === data.boxId) {
-      this.selectedBox = this.musicBoxes[idx];
-    }
-  }
-});
-
   },
   methods: {
     selectBox(box) {
       this.selectedBox = box;
     },
     togglePower(box) {
-      // optimistic UI update
       box.isOn = !box.isOn;
       socketService.emit("update-settings", {
         boxId: box.id,

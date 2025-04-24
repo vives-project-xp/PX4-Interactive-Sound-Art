@@ -18,7 +18,7 @@ app.use(cors());
 app.use(express.json());
 
 io.on("connection", (socket) => {
-  console.log("🔌 New socket:", socket.id);
+  console.log("New socket:", socket.id);
 
   // 1) Immediately send current device list to the newcomer
   const list = Object.entries(devices).map(([boxId, info]) => ({
@@ -30,13 +30,13 @@ io.on("connection", (socket) => {
   // 2) Registration handler (front-end vs. Pi)
   socket.on("register", ({ boxId, ip, client }) => {
     if (client === "frontend") {
-      console.log(`👩‍💻 Front-end registered: ${socket.id}`);
+      console.log(`Front-end registered: ${socket.id}`);
       return;
     }
     // must be a Pi
     if (!boxId || !ip) return;
     devices[boxId] = { ip, socketId: socket.id, lastSeen: Date.now() };
-    console.log(`🎵 Pi registered → boxId=${boxId} ip=${ip}`);
+    console.log(`Pi registered → boxId=${boxId} ip=${ip}`);
 
     // ack & notify all front-ends about the new box
     socket.emit("register_ack", { success: true });
@@ -49,10 +49,6 @@ io.on("connection", (socket) => {
     // merge into our commands store
     commands[boxId] = { ...commands[boxId], ...settings };
     const payload = { boxId, ...commands[boxId] };
-
-    // a) send to the specific Pi
-    io.to(devices[boxId].socketId).emit("command", payload);
-    // b) broadcast to ALL clients (so every open UI sees it)
     io.emit("command", payload);
 
     console.log(`Update box ${boxId}:`, payload);
