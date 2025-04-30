@@ -222,7 +222,6 @@ h1, h2 {
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
-  width: 200px;
 }
 
 .music-box.selected {
@@ -285,15 +284,15 @@ h1, h2 {
 }
 
 .settings-section {
-  margin-top: 20px;
   background: rgba(255, 255, 255, 0.1);
-  padding: 20px;
+  padding: 15px;
   border-radius: 10px;
   border: 1px solid rgba(0, 255, 255, 0.5);
 }
 
 .settings-grid {
   display: flex;
+  flex-direction: column;
   flex-wrap: wrap;
   gap: 15px;
   justify-content: center;
@@ -303,7 +302,6 @@ h1, h2 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 200px;
 }
 
 .setting label {
@@ -314,6 +312,9 @@ h1, h2 {
 .effect-dropdown,
 .sound-dropdown,
 .color-slider {
+  --webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
   width: 100%;
   padding: 8px;
   border-radius: 5px;
@@ -321,6 +322,18 @@ h1, h2 {
   color: #fff;
   font-size: 1em;
   border: none;
+}
+
+.color-slider {
+  padding: 6px;
+}
+
+.color-slider::-webkit-color-swatch {
+  border: none;
+  border-radius: 2px;
+}
+.color-slider::-webkit-color-swatch-wrapper {
+  padding: 0;
 }
 
 .rainbow {
