@@ -14,7 +14,6 @@
           backgroundColor: box.isOn ? box.color : 'transparent'
         }"
       >
-        <img :src="box.image" :alt="box.name" class="music-box-image" />
         <p class="box-name">{{ box.name }}</p>
         <div class="switch" @click.stop="togglePower(box)">
           <div :class="['slider', { on: box.isOn }]" />
@@ -82,13 +81,13 @@ export default {
       musicBoxes: [],
       selectedBox: null,
       availableSounds: [
-        "gitaar",
-        "drum",
-        "bass jumpy",
-        "bell",
-        "synth Sci-Fi",
-        "synth sharp",
-        "bassline",
+        "Gitaar",
+        "Drum",
+        "Bass jumpy",
+        "Bell",
+        "Synth Sci-Fi",
+        "Synth sharp",
+        "Bassline",
       ],
     };
   },
@@ -102,9 +101,8 @@ export default {
         id: boxId,
         ip,
         name: `Box ${boxId}`,
-        image: "/placeholder.png",
         isOn: false,
-        color: "#ffffff",
+        color: "#FF0000",
         effect: "solid",
         instrument: "gitaar",
       }));
@@ -133,9 +131,9 @@ export default {
           name: `Box ${boxId}`,
           image: "/placeholder.png",
           isOn: false,
-          color: "#ffffff",
+          color: "#ff0000",
           effect: "solid",
-          instrument: "gitaar",
+          instrument: "Gitaar",
         });
       }
     });
@@ -222,7 +220,6 @@ h1, h2 {
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
-  width: 200px;
 }
 
 .music-box.selected {
@@ -294,6 +291,7 @@ h1, h2 {
 
 .settings-grid {
   display: flex;
+  flex-direction: column;
   flex-wrap: wrap;
   gap: 15px;
   justify-content: center;
@@ -303,7 +301,6 @@ h1, h2 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 200px;
 }
 
 .setting label {
@@ -311,11 +308,35 @@ h1, h2 {
   font-weight: 500;
 }
 
-.effect-dropdown,
-.sound-dropdown,
 .color-slider {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.color-slider::-webkit-color-swatch {
+  border-radius: 3px;
+  border: none;
+}
+
+.color-slider::-moz-color-swatch {
+  border: none;
+}
+
+.effect-dropdown,
+.sound-dropdown {
   width: 100%;
   padding: 8px;
+  border-radius: 5px;
+  background: #0f0f0f;
+  color: #fff;
+  font-size: 1em;
+  border: none;
+}
+
+.color-slider {
+  width: 100%;
+  padding: 3px;
   border-radius: 5px;
   background: #0f0f0f;
   color: #fff;
