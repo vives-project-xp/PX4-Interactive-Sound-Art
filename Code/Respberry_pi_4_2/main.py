@@ -187,7 +187,7 @@ def disconnect():
 
 @sio.on("command")
 def command_handler(data):
-    global current_color, current_effect, current_instrument
+    global current_color, current_effect, current_instrument 
     current_color = data.get("color", "#FFFFFF")
     current_effect = data.get("effect", "solid")
     current_instrument = data.get("instrument", "unknown")
