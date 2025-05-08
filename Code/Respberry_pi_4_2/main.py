@@ -1,4 +1,4 @@
-#!/usr/bin/env python3#!/usr/bin/env python3
+#!/usr/bin/env python3
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit
@@ -33,6 +33,7 @@ LED_INVERT = False
 LED_CHANNEL = 0
 strip_type = ws.SK6812_STRIP_RGBW
 
+GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(TRIG_PIN, GPIO.OUT)
 GPIO.setup(ECHO_PIN, GPIO.IN)
@@ -44,17 +45,20 @@ strip.begin()
 window_size = 5
 distance_buffer = np.zeros(window_size)
 
-# Global LED settings
-current_color = "#FFFFFF"      # Default yellow
-current_effect = "solid"       # Options: "solid", "puls", "rainbow", "chase", "fire", "sparkle", etc.
+# Global LED and state settings
+current_color = "#FFFFFF"      # Default color
+current_effect = "solid"       # Options: "solid", "puls", "rainbow", "chase", "fire", "sparkle"
 current_instrument = "guitar"  # Default instrument
+current_device_isOn = True      # Device power state
 
 idle_mode = False
-
 last_valid_distance = 0
 
 status_file = "/home/RPI2/Documents/txtFile/status.json"
 box_id = "1"  # Global box identifier
+
+sound_isOn = False
+
 
 def measure_distance():
     GPIO.output(TRIG_PIN, False)
@@ -69,20 +73,23 @@ def measure_distance():
         stop_time = time.time()
     elapsed_time = stop_time - start_time
     distance = (elapsed_time * 34300) / 2
-    print(distance)
     global distance_buffer
     distance_buffer = np.roll(distance_buffer, -1)
     distance_buffer[-1] = distance
     filtered_distance = np.mean(distance_buffer)
     return max(5, min(filtered_distance, LED_COUNT * 1.6))
 
+
 def write_status_to_file(distance):
-    status = {"instrument": current_instrument , "sound_level": get_level(distance) , "sound_stop": sound_isOn}
+    status = {"instrument": current_instrument,
+              "sound_level": get_level(distance),
+              "sound_stop": sound_isOn}
     try:
         with open(status_file, "w") as file:
             file.write(json.dumps(status))
     except Exception as e:
         print("Error writing status:", e)
+
 
 def update_leds(leds_to_light):
     if current_effect == "solid":
@@ -99,81 +106,71 @@ def update_leds(leds_to_light):
         effect_sparkle(strip, leds_to_light, current_color)
     else:
         effect_solid(strip, leds_to_light, current_color)
-        
+
+
 def get_level(distance):
     if distance < 10:
-        #print(f"Speelt sample niveau 1 af (afstand < 10)")
         return 1
-    elif 10 <= distance < 20:
-        #print(f"Speelt sample niveau 2 af (afstand 10-20)")
+    elif distance < 20:
         return 2
-    elif 20 <= distance < 30:
-        #print(f"Speelt sample niveau 3 af (afstand 20-30)")
+    elif distance < 30:
         return 3
-    elif 30 <= distance < 40:
-        #print(f"Speelt sample niveau 4 af (afstand 30-40)")
+    elif distance < 40:
         return 4
-    elif 40 <= distance < 50:
-        #print(f"Speelt sample niveau 5 af (afstand 40-50)")
+    elif distance < 50:
         return 5
-    elif 50 <= distance < 60:
-        #print(f"Speelt sample niveau 6 af (afstand 50-60)")
+    elif distance < 60:
         return 6
-    elif 60 <= distance < 70:
-        #print(f"Speelt sample niveau 7 af (afstand 60-70)")
+    elif distance < 70:
         return 7
-    elif distance >= 70:
-        #print(f"Speelt sample niveau 8 af (afstand >= 70)")
-        return 8        
-
+    else:
+        return 8
 
 
 def distance_monitor():
-    global last_valid_distance  # Zorg dat we de global variable updaten
+    global last_valid_distance, idle_mode, sound_isOn, current_device_isOn
     idle_start = None
-    global idle_mode
-    global sound_isOn
     idle_effect = IdleEffect(strip, idle_color=(255, 255, 0))
-    threshold_idle = 63 
 
     try:
         while True:
-            if current_device_isOn:
-                distance = measure_distance()
-                if distance > last_valid_distance + 15:
-                    distance = last_valid_distance
-                    # Begin Hier de timer 
-                    
-                    if idle_start is None:
-                        idle_start = time.time()
-                    if time.time() - idle_start >= 10:
-                        print("entering idle mode")
-                        idle_mode = True
-                        current_instrument = "Stop"
-                    
-                else:
-                    last_valid_distance = distance
-                    idle_start = None
-                    idle_mode = False
-
-                leds_to_light = int(distance / 1.6)
-
-                if idle_mode:
-                    sound_isOn = False
-                    idle_effect.update()
-                else:
-                    sound_isOn = True
-                    update_leds(leds_to_light)
-
-                write_status_to_file(distance)
-                time.sleep(0.005)
-            else:
+            # If device is switched off, disable sound and turn off LEDs
+            if not current_device_isOn:
                 sound_isOn = False
-                # Zet alle LEDs uit
                 for i in range(strip.numPixels()):
                     strip.setPixelColor(i, Color(0, 0, 0, 0))
                 strip.show()
-            
+                write_status_to_file(last_valid_distance)
+                time.sleep(0.005)
+                continue
+
+            distance = measure_distance()
+            # Idle detection
+            if distance > last_valid_distance + 15:
+                distance = last_valid_distance
+                if idle_start is None:
+                    idle_start = time.time()
+                if time.time() - idle_start >= 30:
+                    print("entering idle mode")
+                    idle_mode = True
+                    current_instrument = "Stop"
+            else:
+                last_valid_distance = distance
+                idle_start = None
+                idle_mode = False
+
+            leds_to_light = int(distance / 1.6)
+
+            if idle_mode:
+                sound_isOn = False
+                idle_effect.update()
+            else:
+                sound_isOn = True
+                update_leds(leds_to_light)
+
+            write_status_to_file(distance)
+            time.sleep(0.005)
+
     except KeyboardInterrupt:
         print("Program stopped")
         for i in range(strip.numPixels()):
@@ -187,7 +184,6 @@ sio = socketio.Client()
 @sio.event
 def connect():
     print("Connected to backend via WebSocket")
-    # Register the device with its box_id and IP (update IP if needed)
     tailscale_ip = "100.65.86.118"
     sio.emit("register", {"boxId": box_id, "ip": tailscale_ip})
 
@@ -197,7 +193,7 @@ def disconnect():
 
 @sio.on("command")
 def command_handler(data):
-    global current_color, current_effect, current_instrument , current_volume , current_device_isOn
+    global current_color, current_effect, current_instrument, current_volume, current_device_isOn
     current_color = data.get("color", "#FFFFFF")
     current_effect = data.get("effect", "solid")
     current_instrument = data.get("instrument", "unknown")
@@ -206,14 +202,13 @@ def command_handler(data):
     print(f"WebSocket Command -> Instrument: {current_instrument} | Color: {current_color} | Effect: {current_effect} | Volume: {current_volume} | Device is On: {current_device_isOn}")
 
 def send_heartbeat():
-    """Periodically emit a heartbeat to the backend to indicate this device is still active."""
     while True:
         try:
             sio.emit("heartbeat", {"boxId": box_id})
             print("Heartbeat sent")
         except Exception as e:
             print("Error sending heartbeat:", e)
-        time.sleep(15)  # Emit heartbeat every 15 seconds
+        time.sleep(15)
 
 def connect_to_backend():
     backend_ws_url = "http://sound-art:4000"
@@ -224,16 +219,9 @@ def connect_to_backend():
 
 # --- Main Execution ---
 if __name__ == "__main__":
-    # Start the distance monitor in a background thread
     thread_monitor = threading.Thread(target=distance_monitor, daemon=True)
     thread_monitor.start()
-    
-    # Connect to the central backend via WebSocket
     connect_to_backend()
-    
-    # Start the heartbeat thread so that the device remains registered
     thread_heartbeat = threading.Thread(target=send_heartbeat, daemon=True)
     thread_heartbeat.start()
-    
-    # Start the Flask app with Socket.IO support for incoming WebSocket connections
     socketio_server.run(app, host="0.0.0.0", port=5000, debug=True, use_reloader=False)
