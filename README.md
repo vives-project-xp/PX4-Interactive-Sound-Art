@@ -8,28 +8,20 @@ Het doel van dit project is om een interactieve sound-art installatie te creëre
 
 ## Inhoudstafel
 
-• [Code](#code)   
-• [Sound](#sound)   
-• [Documentatie](#documentatie)  
-• [Interface](#interface)  
-
-## Code
-
-## Documentatie
-
-## Sound
-
-## Interface
+• [Code](#Code/README.md)   
+• [Sound](#Sound/README.md)   
+• [Documentatie](#documentatie/README.md)  
+• [Interface](#interface/README.md)  
 
 ## Team
 
-- Maxime Coen
-- Michiel Geeraert
-- William Rogov
-- Sam De Wispeleare
 - Thorben Andries
-- Timo Plets
+- Maxime Coen
 - Ward Dereeper
+- Sam De Wispeleare
+- Michiel Geeraert
+- Timo Plets
+- William Rogov
 - Joren Vandewalle
 
 
