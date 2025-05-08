@@ -14,7 +14,6 @@ app = Flask(__name__)
 CORS(app)
 socketio_server = SocketIO(app, cors_allowed_origins="*")
 
-# (Optional) Example Socket.IO event handler for clients connecting to this server
 @socketio_server.on('test_event')
 def handle_test_event(data):
     print("Received test_event with data:", data)
@@ -38,48 +37,71 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(TRIG_PIN, GPIO.OUT)
 GPIO.setup(ECHO_PIN, GPIO.IN)
 
-strip = PixelStrip(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT,
-                   LED_BRIGHTNESS, LED_CHANNEL, strip_type=strip_type)
+strip = PixelStrip(
+    LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA,
+    LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL,
+    strip_type=strip_type
+)
 strip.begin()
 
 window_size = 5
 distance_buffer = np.zeros(window_size)
+default_max_distance = 150.0  # 1.50 m maximum for responsiveness
 
 # Global LED and state settings
-current_color = "#FFFFFF"      # Default color
-current_effect = "solid"       # Options: "solid", "puls", "rainbow", "chase", "fire", "sparkle"
-current_instrument = "guitar"  # Default instrument
-current_device_isOn = True      # Device power state
+current_color = "#FFFFFF"
+current_effect = "solid"
+current_instrument = "guitar"
+current_device_isOn = True
 current_volume = 100
 
 idle_mode = False
 last_valid_distance = 0
 
 status_file = "/home/RPI2/Documents/txtFile/status.json"
-box_id = "1"  # Global box identifier
-
+box_id = "1"
 sound_isOff = False
 
-
-def measure_distance():
+def measure_distance(timeout=0.01):
+    """
+    Meet afstand met korte echo-timeout (10 ms). 
+    Alles boven 1.50 m wordt direct op 1.50 m gezet.
+    """
+    # Trigger pulse
     GPIO.output(TRIG_PIN, False)
     time.sleep(0.001)
     GPIO.output(TRIG_PIN, True)
     time.sleep(0.00001)
     GPIO.output(TRIG_PIN, False)
-    start_time, stop_time = time.time(), time.time()
-    while GPIO.input(ECHO_PIN) == 0:
-        start_time = time.time()
-    while GPIO.input(ECHO_PIN) == 1:
-        stop_time = time.time()
-    elapsed_time = stop_time - start_time
-    distance = (elapsed_time * 34300) / 2
+
+    start = time.time()
+    # Wacht op rising edge, max timeout
+    while GPIO.input(ECHO_PIN) == 0 and (time.time() - start) < timeout:
+        pass
+    if GPIO.input(ECHO_PIN) == 0:
+        raw = default_max_distance
+    else:
+        echo_start = time.time()
+        # Wacht op falling edge, max timeout
+        while GPIO.input(ECHO_PIN) == 1 and (time.time() - echo_start) < timeout:
+            pass
+        if GPIO.input(ECHO_PIN) == 1:
+            raw = default_max_distance
+        else:
+            elapsed = time.time() - echo_start
+            raw = (elapsed * 34300) / 2  # in cm
+
+    # Direct clippen van extreme waarden
+    if raw > default_max_distance or raw < 5:
+        raw = default_max_distance
+
+    # Buffer en median-filter voor robuustheid
     global distance_buffer
     distance_buffer = np.roll(distance_buffer, -1)
-    distance_buffer[-1] = distance
-    filtered_distance = np.mean(distance_buffer)
-    return max(5, min(filtered_distance, LED_COUNT * 1.6))
+    distance_buffer[-1] = raw
+    filtered = float(np.median(distance_buffer))
 
+    return max(5, min(filtered, default_max_distance))
 
 def write_status_to_file(distance):
     status = {
@@ -148,6 +170,7 @@ def distance_monitor():
                 continue
 
             distance = measure_distance()
+            print(distance)
             # Idle detection
             if distance > last_valid_distance + 15:
                 distance = last_valid_distance
