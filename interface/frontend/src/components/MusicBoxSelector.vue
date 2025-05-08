@@ -135,7 +135,7 @@ export default {
       }
     });
 
-    // when a new Pi connects
+    // when a new Pi connects  
     socketService.on("device-connected", ({ boxId, ip }) => {
       if (!this.musicBoxes.some((b) => b.id === boxId)) {
         this.musicBoxes.push({
