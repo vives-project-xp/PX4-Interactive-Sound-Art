@@ -66,6 +66,18 @@
             @input="updateColor"
           />
         </div>
+
+        <div class="setting">
+          <label>Volume: <span>{{ selectedBox.volume }}%</span></label>
+          <input
+            type="range"
+            class="volume-slider"
+            min="0"
+            max="100"
+            v-model="selectedBox.volume"
+            @input="updateVolume"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -105,6 +117,7 @@ export default {
         color: "#FF0000",
         effect: "solid",
         instrument: "gitaar",
+        volume: 50,
       }));
     });
 
@@ -134,6 +147,7 @@ export default {
           color: "#ff0000",
           effect: "solid",
           instrument: "Gitaar",
+          volume: 50,
         });
       }
     });
@@ -173,6 +187,12 @@ export default {
       socketService.emit("update-settings", {
         boxId: this.selectedBox.id,
         settings: { instrument: this.selectedBox.instrument },
+      });
+    },
+    updateVolume() {
+      socketService.emit("update-settings", {
+        boxId: this.selectedBox.id,
+        settings: { volume: this.selectedBox.volume },
       });
     },
   },
@@ -321,6 +341,36 @@ h1, h2 {
 
 .color-slider::-moz-color-swatch {
   border: none;
+}
+
+.volume-slider {
+  width: 100%;
+  padding: 8px;
+  border-radius: 5px;
+  background: #0f0f0f;
+  color: #fff;
+  font-size: 1em;
+  border: none;
+  -webkit-appearance: none;
+  height: 10px;
+}
+
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+}
+
+.volume-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
 }
 
 .effect-dropdown,
