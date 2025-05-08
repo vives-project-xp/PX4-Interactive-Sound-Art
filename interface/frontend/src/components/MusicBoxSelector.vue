@@ -7,14 +7,17 @@
         v-for="box in musicBoxes"
         :key="box.id"
         class="music-box"
-        :class="{ selected: selectedBox && selectedBox.id === box.id, off: !box.isOn }"
+        :class="{ 
+          selected: selectedBox && selectedBox.id === box.id, 
+          off: !box.isOn,
+          rainbow: box.isOn && box.effect === 'rainbow'
+        }"
         @click="selectBox(box)"
         :style="{
-          boxShadow: box.isOn ? `0 0 20px ${box.color}` : 'none',
-          backgroundColor: box.isOn ? box.color : 'transparent'
+          boxShadow: box.isOn && box.effect !== 'rainbow' ? `0 0 20px ${box.color}` : 'none',
+          backgroundColor: box.isOn && box.effect !== 'rainbow' ? box.color : 'transparent'
         }"
       >
-        <img :src="box.image" :alt="box.name" class="music-box-image" />
         <p class="box-name">{{ box.name }}</p>
         <div class="switch" @click.stop="togglePower(box)">
           <div :class="['slider', { on: box.isOn }]" />
@@ -67,6 +70,18 @@
             @input="updateColor"
           />
         </div>
+
+        <div class="setting">
+          <label>Volume: <span>{{ selectedBox.volume }}%</span></label>
+          <input
+            type="range"
+            class="volume-slider"
+            min="0"
+            max="100"
+            v-model="selectedBox.volume"
+            @input="updateVolume"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -82,13 +97,13 @@ export default {
       musicBoxes: [],
       selectedBox: null,
       availableSounds: [
-        "gitaar",
-        "drum",
-        "bass jumpy",
-        "bell",
-        "synth Sci-Fi",
-        "synth sharp",
-        "bassline",
+        "Gitaar",
+        "Drum",
+        "Bass jumpy",
+        "Bell",
+        "Synth Sci-Fi",
+        "Synth sharp",
+        "Bassline",
       ],
     };
   },
@@ -102,11 +117,11 @@ export default {
         id: boxId,
         ip,
         name: `Box ${boxId}`,
-        image: "/placeholder.png",
         isOn: false,
-        color: "#ffffff",
+        color: "#FF0000",
         effect: "solid",
         instrument: "gitaar",
+        volume: 50,
       }));
     });
 
@@ -124,7 +139,7 @@ export default {
       }
     });
 
-    // when a new Pi connects
+    // when a new Pi connects  
     socketService.on("device-connected", ({ boxId, ip }) => {
       if (!this.musicBoxes.some((b) => b.id === boxId)) {
         this.musicBoxes.push({
@@ -133,14 +148,15 @@ export default {
           name: `Box ${boxId}`,
           image: "/placeholder.png",
           isOn: false,
-          color: "#ffffff",
+          color: "#ff0000",
           effect: "solid",
-          instrument: "gitaar",
+          instrument: "Gitaar",
+          volume: 50,
         });
       }
     });
 
-    // when a Pi disconnects
+    // when a Pi disconnects 
     socketService.on("device-disconnected", ({ boxId }) => {
       this.musicBoxes = this.musicBoxes.filter((b) => b.id !== boxId);
       if (this.selectedBox && this.selectedBox.id === boxId) {
@@ -175,6 +191,12 @@ export default {
       socketService.emit("update-settings", {
         boxId: this.selectedBox.id,
         settings: { instrument: this.selectedBox.instrument },
+      });
+    },
+    updateVolume() {
+      socketService.emit("update-settings", {
+        boxId: this.selectedBox.id,
+        settings: { volume: this.selectedBox.volume },
       });
     },
   },
@@ -284,8 +306,9 @@ h1, h2 {
 }
 
 .settings-section {
+  margin-top: 20px;
   background: rgba(255, 255, 255, 0.1);
-  padding: 15px;
+  padding: 20px;
   border-radius: 10px;
   border: 1px solid rgba(0, 255, 255, 0.5);
 }
@@ -309,12 +332,53 @@ h1, h2 {
   font-weight: 500;
 }
 
-.effect-dropdown,
-.sound-dropdown,
 .color-slider {
-  --webkit-appearance: none;
+  -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+}
+
+.color-slider::-webkit-color-swatch {
+  border-radius: 3px;
+  border: none;
+}
+
+.color-slider::-moz-color-swatch {
+  border: none;
+}
+
+.volume-slider {
+  width: 100%;
+  padding: 8px;
+  border-radius: 5px;
+  background: #0f0f0f;
+  color: #fff;
+  font-size: 1em;
+  border: none;
+  -webkit-appearance: none;
+  height: 10px;
+}
+
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+}
+
+.volume-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+}
+
+.effect-dropdown,
+.sound-dropdown {
   width: 100%;
   padding: 8px;
   border-radius: 5px;
@@ -325,21 +389,20 @@ h1, h2 {
 }
 
 .color-slider {
-  padding: 6px;
-}
-
-.color-slider::-webkit-color-swatch {
+  width: 100%;
+  padding: 3px;
+  border-radius: 5px;
+  background: #0f0f0f;
+  color: #fff;
+  font-size: 1em;
   border: none;
-  border-radius: 2px;
-}
-.color-slider::-webkit-color-swatch-wrapper {
-  padding: 0;
 }
 
 .rainbow {
   background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet);
   background-size: 400% 400%;
   animation: rainbow-animation 5s linear infinite;
+  border: 1px solid white;
 }
 
 @keyframes rainbow-animation {
