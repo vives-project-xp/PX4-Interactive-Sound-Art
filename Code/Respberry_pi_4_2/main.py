@@ -77,7 +77,7 @@ def measure_distance():
     return max(5, min(filtered_distance, LED_COUNT * 1.6))
 
 def write_status_to_file(distance):
-    status = {"instrument": current_instrument , "sound_level": get_level(distance) , "sound_stop": idle_mode}
+    status = {"instrument": current_instrument , "sound_level": get_level(distance) , "sound_stop": sound_isOn}
     try:
         with open(status_file, "w") as file:
             file.write(json.dumps(status))
@@ -132,37 +132,47 @@ def distance_monitor():
     global last_valid_distance  # Zorg dat we de global variable updaten
     idle_start = None
     global idle_mode
+    global sound_isOn
     idle_effect = IdleEffect(strip, idle_color=(255, 255, 0))
     threshold_idle = 63 
 
     try:
         while True:
-            distance = measure_distance()
-            if distance > last_valid_distance + 15:
-                distance = last_valid_distance
-                # Begin Hier de timer 
-                
-                if idle_start is None:
-                    idle_start = time.time()
-                if time.time() - idle_start >= 10:
-                    print("entering idle mode")
-                    idle_mode = True
-                    current_instrument = "Stop"
-                
+            if current_device_isOn:
+                distance = measure_distance()
+                if distance > last_valid_distance + 15:
+                    distance = last_valid_distance
+                    # Begin Hier de timer 
+                    
+                    if idle_start is None:
+                        idle_start = time.time()
+                    if time.time() - idle_start >= 10:
+                        print("entering idle mode")
+                        idle_mode = True
+                        current_instrument = "Stop"
+                    
+                else:
+                    last_valid_distance = distance
+                    idle_start = None
+                    idle_mode = False
+
+                leds_to_light = int(distance / 1.6)
+
+                if idle_mode:
+                    sound_isOn = False
+                    idle_effect.update()
+                else:
+                    sound_isOn = True
+                    update_leds(leds_to_light)
+
+                write_status_to_file(distance)
+                time.sleep(0.005)
             else:
-                last_valid_distance = distance
-                idle_start = None
-                idle_mode = False
-
-            leds_to_light = int(distance / 1.6)
-
-            if idle_mode:
-                idle_effect.update()
-            else:
-                update_leds(leds_to_light)
-
-            write_status_to_file(distance)
-            time.sleep(0.005)
+                sound_isOn = False
+                # Zet alle LEDs uit
+                for i in range(strip.numPixels()):
+                    strip.setPixelColor(i, Color(0, 0, 0, 0))
+                strip.show()
             
     except KeyboardInterrupt:
         print("Program stopped")
@@ -187,11 +197,13 @@ def disconnect():
 
 @sio.on("command")
 def command_handler(data):
-    global current_color, current_effect, current_instrument 
+    global current_color, current_effect, current_instrument , current_volume , current_device_isOn
     current_color = data.get("color", "#FFFFFF")
     current_effect = data.get("effect", "solid")
     current_instrument = data.get("instrument", "unknown")
-    print(f"WebSocket Command -> Instrument: {current_instrument} | Color: {current_color} | Effect: {current_effect}")
+    current_volume = data.get("volume", 0)
+    current_device_isOn = data.get("device_isOn", False)
+    print(f"WebSocket Command -> Instrument: {current_instrument} | Color: {current_color} | Effect: {current_effect} | Volume: {current_volume} | Device is On: {current_device_isOn}")
 
 def send_heartbeat():
     """Periodically emit a heartbeat to the backend to indicate this device is still active."""
