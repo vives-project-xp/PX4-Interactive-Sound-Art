@@ -50,6 +50,7 @@ current_color = "#FFFFFF"      # Default color
 current_effect = "solid"       # Options: "solid", "puls", "rainbow", "chase", "fire", "sparkle"
 current_instrument = "guitar"  # Default instrument
 current_device_isOn = True      # Device power state
+current_volume = 100
 
 idle_mode = False
 last_valid_distance = 0
@@ -57,7 +58,7 @@ last_valid_distance = 0
 status_file = "/home/RPI2/Documents/txtFile/status.json"
 box_id = "1"  # Global box identifier
 
-sound_isOn = False
+sound_isOff = False
 
 
 def measure_distance():
@@ -81,16 +82,17 @@ def measure_distance():
 
 
 def write_status_to_file(distance):
-    status = {"instrument": current_instrument,
-              "sound_level": get_level(distance),
-              "sound_stop": sound_isOn,
-              "volume": current_volume}
+    status = {
+        "instrument": current_instrument,
+        "sound_level": get_level(distance),
+        "sound_stop": sound_isOff,            # schrijf een boolean
+        "volume": int(current_volume)            # zorg dat het een int is
+    }
     try:
         with open(status_file, "w") as file:
-            file.write(json.dumps(status))
+            json.dump(status, file)
     except Exception as e:
         print("Error writing status:", e)
-
 
 def update_leds(leds_to_light):
     if current_effect == "solid":
@@ -129,7 +131,7 @@ def get_level(distance):
 
 
 def distance_monitor():
-    global last_valid_distance, idle_mode, sound_isOn, current_device_isOn
+    global last_valid_distance, idle_mode, sound_isOff, current_device_isOn
     idle_start = None
     idle_effect = IdleEffect(strip, idle_color=(255, 255, 0))
 
@@ -137,7 +139,7 @@ def distance_monitor():
         while True:
             # If device is switched off, disable sound and turn off LEDs
             if not current_device_isOn:
-                sound_isOn = False
+                sound_isOff = True
                 for i in range(strip.numPixels()):
                     strip.setPixelColor(i, Color(0, 0, 0, 0))
                 strip.show()
@@ -163,10 +165,10 @@ def distance_monitor():
             leds_to_light = int(distance / 1.6)
 
             if idle_mode:
-                sound_isOn = False
+                sound_isOff = True
                 idle_effect.update()
             else:
-                sound_isOn = True
+                sound_isOff = False
                 update_leds(leds_to_light)
 
             write_status_to_file(distance)

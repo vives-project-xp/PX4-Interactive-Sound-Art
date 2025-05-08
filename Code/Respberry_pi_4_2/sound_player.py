@@ -34,13 +34,13 @@ def load_instrument_sounds(instrument_name):
 
 # Laad de geluiden voor de instrumenten
 instruments = {
-    "gitaar": load_instrument_sounds("gitaar"),
-    "drum": load_instrument_sounds("drum"),
-    "bass jumpy": load_instrument_sounds("bass jumpy"),
-    "bell": load_instrument_sounds("bell"),
-    "synth Sci-Fi": load_instrument_sounds("synth Sci-Fi"),
-    "synth sharp": load_instrument_sounds("synth sharp"),
-    "bassline": load_instrument_sounds("bassline")
+    "Gitaar": load_instrument_sounds("gitaar"),
+    "Drum": load_instrument_sounds("drum"),
+    "Bass jumpy": load_instrument_sounds("bass jumpy"),
+    "Bell": load_instrument_sounds("bell"),
+    "Synth Sci-Fi": load_instrument_sounds("synth Sci-Fi"),
+    "Synth sharp": load_instrument_sounds("synth sharp"),
+    "Bassline": load_instrument_sounds("bassline")
 }
 
 default_instrument = instruments.get("gitaar")  # Als het ontvangen instrument niet herkend wordt
