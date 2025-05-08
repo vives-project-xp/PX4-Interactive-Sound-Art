@@ -83,7 +83,8 @@ def measure_distance():
 def write_status_to_file(distance):
     status = {"instrument": current_instrument,
               "sound_level": get_level(distance),
-              "sound_stop": sound_isOn}
+              "sound_stop": sound_isOn,
+              "volume": current_volume}
     try:
         with open(status_file, "w") as file:
             file.write(json.dumps(status))
