@@ -8,10 +8,10 @@ Het doel van dit project is om een interactieve sound-art installatie te creëre
 
 ## Inhoudstafel
 
-• [Code](#Code/README.md)   
-• [Sound](#Sound/README.md)   
-• [Documentatie](#documentatie/README.md)  
-• [Interface](#interface/README.md)  
+• [Code](/Code/README.md)   
+• [Sound](/Sound/README.md)   
+• [Documentatie](/Documentatie/documentatie/README.md)  
+• [Interface](/Interface/README.md)  
 
 ## Team
 
