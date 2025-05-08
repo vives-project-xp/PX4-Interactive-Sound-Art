@@ -8,10 +8,10 @@ Het doel van dit project is om een interactieve sound-art installatie te creëre
 
 ## Inhoudstafel
 
-•[Code](#code)  
-•[Documentatie](#documentatie)  
-•[Sound](#sound)  
-•[Interface](#interface)  
+• [Code](#code)   
+• [Sound](#sound)   
+• [Documentatie](#documentatie)  
+• [Interface](#interface)  
 
 ## Code
 
