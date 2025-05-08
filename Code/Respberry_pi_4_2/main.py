@@ -202,7 +202,7 @@ def command_handler(data):
     current_effect = data.get("effect", "solid")
     current_instrument = data.get("instrument", "unknown")
     current_volume = data.get("volume", 0)
-    current_device_isOn = data.get("device_isOn", False)
+    current_device_isOn = data.get("isOn", False)
     print(f"WebSocket Command -> Instrument: {current_instrument} | Color: {current_color} | Effect: {current_effect} | Volume: {current_volume} | Device is On: {current_device_isOn}")
 
 def send_heartbeat():
