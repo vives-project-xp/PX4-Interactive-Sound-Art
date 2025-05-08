@@ -6,9 +6,12 @@ PX4-Interactive-Sound-Art is een interactief kunstproject dat beweging, geluid e
 
 Het doel van dit project is om een interactieve sound-art installatie te creëren waarin gebruikers door handbewegingen muziek en licht kunnen beïnvloeden.
 
-## Inhoudstabel
+## Inhoudstafel
 
-
+-[Code](#Code)
+-[Documentatie](#Documentatie)
+-[Sound](#Sound)
+-[Interface](#Interface]
 
 ## Team
 
