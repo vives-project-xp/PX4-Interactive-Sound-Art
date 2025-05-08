@@ -1,7 +1,9 @@
 # MP3 Bestanden Uploaden en Gebruiken in de Interactieve Geluidskunst Interface
 
-## Introductie
-Dit document beschrijft de stappen die nodig zijn om MP3-bestandsuploads via de frontend-interface mogelijk te maken en ze af te spelen op de Raspberry Pi (RPi) geluidsbox. De implementatie omvat wijzigingen in zowel de frontend- als backend-componenten van het project, met WebSocket-integratie voor realtime communicatie.
+# Moeilijkheden 
+- 1) Er zal real time audio manipulatie moeten gebeuren, wat een hoop andere complexiteiten met zich meebrengt (geluid moet goed zijn, zal het niet slecht klinken, zal er geen delay daardoor komen etc...)
+- 2) Een inlogsysteem moet worden geïmplementeerd om te beheren wie toegang heeft tot de "upload" functie.
+    Dit brengt wel extra complexiteit met zich mee.
 
 ---
 
@@ -231,9 +233,6 @@ def play_uploaded_sound(file_name):
 sio.connect("http://localhost:4000")
 ```
 
-# Moeilijkheden 
-- 2) Een inlogsysteem moet worden geïmplementeerd om te beheren wie toegang heeft tot de "upload" functie.
-    Dit brengt wel extra complexiteit met zich mee.
 ---
 
 ## Conclusie
