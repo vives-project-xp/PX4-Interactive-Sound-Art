@@ -1,21 +1,21 @@
-# Uploading and Using MP3 Files in the Interactive Sound Art Interface
+# MP3 Bestanden Uploaden en Gebruiken in de Interactieve Geluidskunst Interface
 
-## Introduction
-This document outlines the steps required to enable MP3 file uploads via the frontend interface and use them for playback on the Raspberry Pi (RPi) sound box. The implementation involves changes to both the frontend and backend components of the project, with WebSocket integration for real-time communication.
+## Introductie
+Dit document beschrijft de stappen die nodig zijn om MP3-bestandsuploads via de frontend-interface mogelijk te maken en ze af te spelen op de Raspberry Pi (RPi) geluidsbox. De implementatie omvat wijzigingen in zowel de frontend- als backend-componenten van het project, met WebSocket-integratie voor realtime communicatie.
 
 ---
 
-## Frontend Implementation
+## Frontend Implementatie
 
-### 1. Add an MP3 Upload Component
-Create a new Vue component for uploading MP3 files. This component will allow users to select and upload MP3 files.
+### 1. Een MP3 Upload Component Toevoegen
+Creëer een nieuw Vue-component voor het uploaden van MP3-bestanden. Dit component zal gebruikers in staat stellen om MP3-bestanden te selecteren en te uploaden.
 
 ```vue
 <template>
   <div class="upload-container">
-    <h2>Upload MP3 File</h2>
+    <h2>Upload MP3 Bestand</h2>
     <input type="file" accept="audio/mp3" @change="handleFileUpload" />
-    <button @click="uploadFile">Upload</button>
+    <button @click="uploadFile">Uploaden</button>
   </div>
 </template>
 
@@ -39,15 +39,15 @@ export default {
         formData.append("file", this.selectedFile);
         try {
           await apiService.uploadMP3(formData);
-          alert("File uploaded successfully!");
-          // Notify backend via WebSocket
+          alert("Bestand succesvol geüpload!");
+          // Backend informeren via WebSocket
           socket.emit("mp3Uploaded", { fileName: this.selectedFile.name });
         } catch (error) {
-          console.error("Error uploading file:", error);
-          alert("Failed to upload file.");
+          console.error("Fout bij uploaden bestand:", error);
+          alert("Uploaden van bestand mislukt.");
         }
       } else {
-        alert("Please select a file first.");
+        alert("Selecteer eerst een bestand.");
       }
     },
   },
@@ -65,7 +65,7 @@ export default {
 ```
 
 ### 2. Update `apiService.js`
-Add a new method to handle MP3 file uploads.
+Voeg een nieuwe methode toe om MP3-bestandsuploads te verwerken.
 
 ```js
 async uploadMP3(fileData) {
@@ -77,14 +77,14 @@ async uploadMP3(fileData) {
     });
     return response.data;
   } catch (error) {
-    console.warn("Failed to upload MP3 file:", error.message);
+    console.warn("MP3 bestand uploaden mislukt:", error.message);
     throw error;
   }
 }
 ```
 
-### 3. Integrate the Upload Component
-Include the new upload component in the main application.
+### 3. Integreer het Upload Component
+Neem het nieuwe uploadcomponent op in de hoofdapplicatie.
 
 ```vue
 <template>
@@ -109,11 +109,11 @@ export default {
 
 ---
 
-## Backend Implementation
+## Backend Implementatie
 
-### 1. Add an MP3 Upload Endpoint
-Update the backend to handle MP3 file uploads. Use the `express-fileupload` middleware for handling file uploads.
-## Manipulate the mp3 for different pitches
+### 1. Een MP3 Upload Eindpunt Toevoegen
+Werk de backend bij om MP3-bestandsuploads te verwerken. Gebruik de `express-fileupload` middleware voor het verwerken van bestandsuploads.
+## MP3 manipuleren voor verschillende toonhoogtes
 
 ````python
 from pydub import AudioSegment
@@ -122,42 +122,42 @@ import os
 
 def change_pitch(sound, semitones):
     """
-    Change the pitch of an audio file by a given number of semitones.
-    Positive semitones increase pitch, negative decrease pitch.
+    Verander de toonhoogte van een audiobestand met een bepaald aantal halve tonen.
+    Positieve waardes verhogen de toonhoogte, negatieve verlagen deze.
     """
     new_sample_rate = int(sound.frame_rate * (2.0 ** (semitones / 12.0)))
     return sound._spawn(sound.raw_data, overrides={"frame_rate": new_sample_rate}).set_frame_rate(sound.frame_rate)
 
 def create_pitched_versions(input_file, output_folder):
     """
-    Create 8 different pitch versions of the input MP3 file.
+    Maak 8 verschillende toonhoogte-versies van het input MP3-bestand.
     """
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
 
-    # Load the MP3 file
+    # Laad het MP3-bestand
     sound = AudioSegment.from_file(input_file)
 
-    # Generate 8 pitch variations
-    for i, semitones in enumerate(range(-4, 4), start=1):  # -4 to +3 semitones
+    # Genereer 8 toonhoogte-variaties
+    for i, semitones in enumerate(range(-4, 4), start=1):  # -4 tot +3 halve tonen
         pitched_sound = change_pitch(sound, semitones)
         output_file = os.path.join(output_folder, f"niveau {i}.mp3")
         pitched_sound.export(output_file, format="mp3")
-        print(f"Saved: {output_file}")
+        print(f"Opgeslagen: {output_file}")
 
-# Example usage
-input_mp3 = "path/to/your/input.mp3"  # Replace with your MP3 file path
-output_dir = "path/to/output/folder"  # Replace with your desired output folder
+# Voorbeeld gebruik
+input_mp3 = "pad/naar/jouw/input.mp3"  # Vervang met het pad naar jouw MP3-bestand
+output_dir = "pad/naar/output/map"  # Vervang met je gewenste output map
 create_pitched_versions(input_mp3, output_dir)
 ````
 
-#### Install Dependencies
+#### Installeer Afhankelijkheden
 ```bash
 npm install express-fileupload
 ```
 
 #### Update `index.js`
-Add the following code to handle MP3 uploads and notify clients via WebSocket:
+Voeg de volgende code toe om MP3-uploads te verwerken en clients te informeren via WebSocket:
 
 ```js
 import fileUpload from "express-fileupload";
@@ -168,7 +168,7 @@ const io = new Server(server);
 
 app.post("/upload-mp3", (req, res) => {
   if (!req.files || !req.files.file) {
-    return res.status(400).send("No file uploaded.");
+    return res.status(400).send("Geen bestand geüpload.");
   }
 
   const mp3File = req.files.file;
@@ -176,11 +176,11 @@ app.post("/upload-mp3", (req, res) => {
 
   mp3File.mv(uploadPath, (err) => {
     if (err) {
-      console.error("Error saving file:", err);
-      return res.status(500).send("Failed to upload file.");
+      console.error("Fout bij opslaan bestand:", err);
+      return res.status(500).send("Uploaden van bestand mislukt.");
     }
-    res.send("File uploaded successfully.");
-    // Notify all connected clients
+    res.send("Bestand succesvol geüpload.");
+    // Informeer alle verbonden clients
     io.emit("mp3Uploaded", { fileName: mp3File.name });
   });
 });
@@ -188,17 +188,17 @@ app.post("/upload-mp3", (req, res) => {
 
 ---
 
-## Raspberry Pi Integration
+## Raspberry Pi Integratie
 
 ### 1. Update `sound_player.py`
-Modify the `sound_player.py` script to dynamically load and play uploaded MP3 files upon receiving WebSocket events.
+Wijzig het `sound_player.py` script om dynamisch geüploade MP3-bestanden te laden en af te spelen bij het ontvangen van WebSocket-events.
 
 ```python
 import os
 import pygame
 import socketio
 
-# Initialize pygame mixer
+# Initialiseer pygame mixer
 pygame.mixer.init()
 
 SOUNDS_BASE_PATH = "/home/RPI2/Documents/Sounds"
@@ -206,7 +206,7 @@ sio = socketio.Client()
 
 @sio.event
 def connect():
-    print("Connected to backend via WebSocket")
+    print("Verbonden met backend via WebSocket")
 
 @sio.event
 def mp3Uploaded(data):
@@ -216,23 +216,25 @@ def mp3Uploaded(data):
 
 @sio.event
 def disconnect():
-    print("Disconnected from backend")
+    print("Verbinding met backend verbroken")
 
 def play_uploaded_sound(file_name):
     file_path = os.path.join(SOUNDS_BASE_PATH, file_name)
     if os.path.exists(file_path):
         sound = pygame.mixer.Sound(file_path)
         sound.play()
-        print(f"Playing {file_name}")
+        print(f"Speelt {file_name} af")
     else:
-        print(f"File {file_name} not found.")
+        print(f"Bestand {file_name} niet gevonden.")
 
-# Connect to the WebSocket server
+# Verbind met de WebSocket server
 sio.connect("http://localhost:4000")
 ```
-- 2) A login system should be implemented to manage who can acces the "upload" feature.
-    which does bring complexity with it.
+
+# Moeilijkheden 
+- 2) Een inlogsysteem moet worden geïmplementeerd om te beheren wie toegang heeft tot de "upload" functie.
+    Dit brengt wel extra complexiteit met zich mee.
 ---
 
-## Conclusion
-By following the steps outlined above, you can enable MP3 file uploads via the frontend interface and use them for playback on the Raspberry Pi sound box. The integration of WebSockets ensures real-time communication between the frontend, backend, and Raspberry Pi.
+## Conclusie
+Door de hierboven beschreven stappen te volgen, kun je MP3-bestandsuploads via de frontend-interface mogelijk maken en ze afspelen op de Raspberry Pi geluidsbox. De integratie van WebSockets zorgt voor realtime communicatie tussen de frontend, backend en Raspberry Pi.
