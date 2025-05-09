@@ -1,13 +1,23 @@
-## Uitleg code
-
 # Pi4 instellen
 
 Gebruik deze commands voor de juiste library's enzo:
 ```
 sudo apt update
-sudo apt install python3-dev python3-pip
-sudo pip3 install RPi.GPIO
-sudo pip3 install rpi_ws281x
+
+sudo apt install -y \
+  python3-pip python3-dev build-essential \
+  libffi-dev libssl-dev \
+  python3-rpi.gpio python3-numpy python3-pygame
+
+sudo pip3 install \
+  rpi_ws281x \
+  flask \
+  flask-cors \
+  flask-socketio \
+  python-socketio \
+  requests \
+  pygame \
+  eventlet
 ```
 
 Moeite met de rpi_ws281x probeer:
@@ -22,10 +32,67 @@ Hiervan zou je geen errors moeten krijgen.
 
 Run file:
 ```
-sudo python3 /home/RPI2/Documents/test1.py
+sudo python3 /home/RPI2/Documents/main.py
 
 python3 /home/RPI2/Documents/sound_player.py
 ```
+
+## Auto start van scripts
+Als je wenst dat je scripts vanzelf gestart worden vanaf de Pi stroom heeft doen we dit via systeemd.
+
+
+Maak onderstaande files aan in de map ``/etc/systemd/system/``
+
+``sound_player.service``
+```
+[Unit]
+Description=Sound-Player Service
+After=led_sensor.service sound.target
+Requires=led_sensor.service sound.target
+
+[Service]
+User=RPI2
+Enviroment=XDG_RUNTIME_DIR=/run/user/1000
+Type=simple
+WorkingDirectory=/home/RPI2/Documents
+ExecStart=python3 /home/RPI2/Documents/sound_player.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+```
+
+
+``led_sensor.service``
+```
+[Unit]
+Description=Sound-Art Main Service (Flask + LED)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/RPI2/Documents
+ExecStart=sudo python3  /home/RPI2/Documents/main.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Voor het activeren van de systeemd voer je dit uit in je terminal.
+```
+sudo systemctl daemon-reload
+
+sudo systemctl enable sound_player.service
+sudo systemctl enable led_sensor.service
+
+sudo systemctl start sound_player.service
+sudo systemctl enable led_sensor.service
+```
+
+
 
 
 
