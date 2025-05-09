@@ -1,6 +1,9 @@
-# Pi4 instellen
+In deze README word er uitgelegt hoe je de **Pi4** moet **opzetten** , hoe je **extra ledeffects** kunt toevoegen en hoe je **extra geluiden** toevoegt op de Pi zelf. Als laatst word er gezegt hoe je gemakkelijk een **2de Pi kunt instellen**.
 
-Gebruik deze commands voor de juiste library's enzo:
+
+# 1. Pi4 instellen
+
+Gebruik deze commands voor de juiste library's te installeren:
 ```
 sudo apt update
 
@@ -28,7 +31,7 @@ Test of het correct is geinstaleerd:
 ```
 sudo python3 -c "import rpi_ws281x"
 ```
-Hiervan zou je geen errors moeten krijgen.
+Nu kun je alle scripts en sounds op de Pi zetten van de github. Zet de scripts onder de map ``/home/RPI2/Documents/`` en **noem ze zoals ze noemen op de github.** Zet dan alle sounds onder de map ``/home/RPI2/Documents/Sounds/`` **Hou hier bij ook dezelfde benaming van op github!!**
 
 Run file:
 ```
@@ -91,12 +94,14 @@ sudo systemctl enable led_sensor.service
 sudo systemctl start sound_player.service
 sudo systemctl enable led_sensor.service
 ```
+Heb je een probleem met de scripts die niet werken? Dan kun je alle logs zien sins de laatste met onderstaande command :
+```
+sudo journalctl -u sound_player.service -b
+sudo journalctl -u led_sensor.service -b
+```
 
 
-
-
-
-# How to add extra light effects?
+# 2. How to add extra light effects?
 In this part u wil learn how to add light effects to ur project.
 
 ## Add the code in the Pi4
@@ -144,7 +149,7 @@ def update_leds(leds_to_light):
 ```
 
 
-# How to add extra sounds?
+# 3. How to add extra sounds?
 In this part u wil learn how to add extra Sounds to ur Project.
 
 ## Add the code in the Pi4
@@ -202,4 +207,20 @@ def get_level(distance):
         return 8        
 ```
 
+## Meerdere Pi’s instellen
 
+Als je dit project op meerdere Raspberry Pi’s wilt draaien, kun je het handigst één volledig geconfigureerde SD-kaart klonen en op de andere Pi’s gebruiken. Dit doe je in twee stappen met **balenaEtcher**:
+
+1. **SD-kaart uitlezen**  
+   – Sluit de bron-SD-kaart aan op je pc en maak er met balenaEtcher een `.img`-bestand van.  
+2. **SD-kaart flashen**  
+   – Schrijf dat `.img`-bestand naar de doel-SD-kaart en steek die in de volgende Pi.
+
+Ná het klonen moet je in `main.py` twee variabelen per Pi nog aanpassen, zodat elke Pi uniek is en met de website communiceert:
+
+```python
+# Regel 62: box-nummer van deze Pi
+box_id = "Vul_hier_je_box_nummer_in"
+
+# Regel 213: Tailscale-IP van deze Pi
+tailscale_ip = "IP_Van_Je_Pi"
