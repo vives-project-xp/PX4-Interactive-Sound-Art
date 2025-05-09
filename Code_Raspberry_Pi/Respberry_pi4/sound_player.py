@@ -10,6 +10,15 @@ pygame.mixer.init()
 # Basis pad voor de geluiden
 SOUNDS_BASE_PATH = "/home/RPI2/Documents/Sounds"
 
+def system_mute():
+    """Zet de Master-uitgang op mute zodat er geen ruis of DC-offset meer hoorbaar is."""
+    os.system("amixer set Master mute")
+
+def system_unmute():
+    """Haal de mute eraf voordat je een nieuw geluid wilt afspelen."""
+    os.system("amixer set Master unmute")
+
+
 def load_instrument_sounds(instrument_name):
     """
     Laadt 8 geluiden voor het gegeven instrument uit de bijbehorende map.
@@ -74,7 +83,8 @@ def play_sound(sound_level, instrument, sound_stop, volume):
         print(f"Geen geluiden gevonden voor instrument: {instrument}")
         return
 
-    if not sound_stop:
+    if sound_stop== False and volume > 0:
+        system_unmute()
         match sound_level:
             case 1:
                 sounds["niv1"].set_volume(volume)
@@ -111,11 +121,13 @@ def play_sound(sound_level, instrument, sound_stop, volume):
             case _:
                 print("Ongeldig geluidsniveau")
     else:
+        system_mute()
         # Stop alle lopende geluiden
         pygame.mixer.stop()
         print("Sound Off")
 
 try:
+    system_mute()
     while True:
         instrument, sound_level, sound_stop, volume = read_status()
         print(sound_level)
