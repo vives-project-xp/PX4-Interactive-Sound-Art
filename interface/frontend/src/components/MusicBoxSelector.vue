@@ -108,9 +108,14 @@ export default {
     };
   },
   mounted() {
-    // register this UI
-    socketService.emit("register", { client: "frontend" });
 
+    // connect to the socket server
+    socketService.connect();
+    socketService.emit("register", { client: "frontend" });
+    socketService.on("connect", () => {
+      console.log("[Vue] connected to socket server");
+    });
+    
     // receive initial list of already-connected boxes
     socketService.on("devices-list", (list) => {
       this.musicBoxes = list.map(({ boxId, ip }) => ({

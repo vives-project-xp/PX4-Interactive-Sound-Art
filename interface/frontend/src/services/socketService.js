@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:4000", { autoConnect: false });
+const socket = io("http://api.soundart.devbitapp.be", { autoConnect: false });
 
 socket.on("connect_error", (err) => {
   console.warn("Socket.IO connect error:", err);
