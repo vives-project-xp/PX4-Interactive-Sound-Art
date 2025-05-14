@@ -1,4 +1,4 @@
-In deze README word er uitgelegt hoe je de **Pi4** moet **opzetten** , hoe je **extra ledeffects** kunt toevoegen en hoe je **extra geluiden** toevoegt op de Pi zelf. Als laatst word er gezegt hoe je gemakkelijk een **2de Pi kunt instellen**.
+In deze README wordt uitgelegd hoe je de **Pi4** moet **opzetten**, hoe je **extra lichteffecten** kunt toevoegen en hoe je **extra geluiden** toevoegt op de Pi zelf. Tot slot wordt uitgelegd hoe je gemakkelijk een **tweede Pi** kunt instellen.
 
 
 # 1. Pi4 instellen
@@ -156,12 +156,12 @@ In dit gedeelte leer je hoe je extra geluiden aan je project kunt toevoegen.
 **Stap 1 : Zet het geluid in de juiste map**
 
 Begin met het plaatsen van je map met geluiden in de map ``home/RPI2/Documents/Sound``. 
-![Fysieke_box](../Technische_documentatie/Images/Sound_Folder.png)
+![Fysieke_box](../Technische_documentatie/Foto's/Sound_Folder.png)
 
 Je hebt **8** verschillende tonen van je geluid nodig. Deze moeten genoemd worden als  ``niveau 1.mp3``, ``niveau 2.mp3``, ``niveau 3.mp3``, .... ,``niveau 8.mp3``.
 **Niveau 1 wordt afgespeeld bij de laagste afstand, en niveau 8 bij de hoogste afstand.**
 
-![Fysieke_box](../Technische_documentatie/Images/New_Sound_Folder.png)
+![Fysieke_box](../Technische_documentatie/Foto's/New_Sound_Folder.png)
 
 **Stap 2 : Voeg je geluid toe in de ``sound_player.py``**
 ```
