@@ -3,7 +3,7 @@ In deze README word er uitgelegt hoe je de **Pi4** moet **opzetten** , hoe je **
 
 # 1. Pi4 instellen
 
-Gebruik deze commands voor de juiste library's te installeren:
+Gebruik de volgende commando's om de juiste library's te installeren:
 ```
 sudo apt update
 
@@ -23,15 +23,15 @@ sudo pip3 install \
   eventlet
 ```
 
-Moeite met de rpi_ws281x probeer:
+Moeite met de rpi_ws281x? Probeer het volgende:
 ```
 sudo pip3 install rpi_ws281x --break-systeel-packages
 ```
-Test of het correct is geinstaleerd: 
+Test of het correct is geïnstalleerd: 
 ```
 sudo python3 -c "import rpi_ws281x"
 ```
-Nu kun je alle scripts en sounds op de Pi zetten van de github. Zet de scripts onder de map ``/home/RPI2/Documents/`` en **noem ze zoals ze noemen op de github.** Zet dan alle sounds onder de map ``/home/RPI2/Documents/Sounds/`` **Hou hier bij ook dezelfde benaming van op github!!**
+Nu kun je alle scripts en sounds op de Pi zetten van de github. Zet de scripts onder de map ``/home/RPI2/Documents/`` en **noem ze zoals ze staan op de Github.** Zet dan alle sounds onder de map ``/home/RPI2/Documents/Sounds/`` **Gebruik ook hier de zelfde benaming als op GitHub!!**
 
 Run file:
 ```
@@ -41,7 +41,7 @@ python3 /home/RPI2/Documents/sound_player.py
 ```
 
 ## Auto start van scripts
-Als je wenst dat je scripts vanzelf gestart worden vanaf de Pi stroom heeft doen we dit via systeemd.
+Als je wilt dat je scripts automatisch starten zodra de Pi aanstaat, kun je dit instellen via systemd.
 
 
 Maak onderstaande files aan in de map ``/etc/systemd/system/``
@@ -84,7 +84,7 @@ RestartSec=5
 WantedBy=multi-user.target
 ```
 
-Voor het activeren van de systeemd voer je dit uit in je terminal.
+Om de systemd-services te activeren, voer je de volgende commando's uit in de terminal:
 ```
 sudo systemctl daemon-reload
 
@@ -94,20 +94,20 @@ sudo systemctl enable led_sensor.service
 sudo systemctl start sound_player.service
 sudo systemctl enable led_sensor.service
 ```
-Heb je een probleem met de scripts die niet werken? Dan kun je alle logs zien sins de laatste met onderstaande command :
+Heb je een probleem met de scripts die niet werken? Dan kun je alle logs zien sinds de laatste met onderstaande commando's :
 ```
 sudo journalctl -u sound_player.service -b
 sudo journalctl -u led_sensor.service -b
 ```
 
 
-# 2. How to add extra light effects?
-In this part u wil learn how to add light effects to ur project.
+# 2. Hoe extra lichteffecten toe voegen?
+In dit gedeelte leer je hoe je lichteffecten aan je project kunt toevoegen.
 
-## Add the code in the Pi4
-**Step 1 : make ur effect in the library**
+## Voeg de code toe op de Pi4
+**Stap 1 : maak je effect in de bibliotheek**
 
-First, determine whether your effect needs a color. For example, in the rainbow effect you don't need to choose a color. Then, in the ``led_effects.py`` script, add your code. For example, you can start with:
+Bepaal eerst of je effect een kleur nodig heeft. Bijvoorbeeld, bij het regenboogeffect is het niet nodig om een kleur te kiezen. Voeg vervolgens je code toe in het led_effects.py script. Je kunt bijvoorbeeld beginnen met:
 
 ```
  def UrNewEffect(strip, leds_to_light, hex_color):
@@ -118,15 +118,15 @@ First, determine whether your effect needs a color. For example, in the rainbow 
 
 ```
 
-From here, you can implement your own effect.
+Vanaf hier kun je je eigen effect implementeren.
 
-**Step 2 : add code to main.py file**
+**Stap 2 : voeg de code toe aan het main.py bestand**
 
-In your main.py script, import your new effect along with the existing ones:
+Importeer je nieuwe effect in je main.py script, samen met de bestaande effecten:
 ```
 from led_effects import (effect_solid, effect_puls, effect_rainbow, effect_chase, effect_fire, effect_sparkle, IdleEffect , UrNewEffect)
 ```
-Then, update your ``update_leds()`` function to include your effect:
+Werk vervolgens je ``update_leds()`` functie bij om je effect toe te voegen: 
 
 ```
 def update_leds(leds_to_light):
@@ -149,21 +149,21 @@ def update_leds(leds_to_light):
 ```
 
 
-# 3. How to add extra sounds?
-In this part u wil learn how to add extra Sounds to ur Project.
+# 3. Hoe extra geluiden toe te voegen?
+In dit gedeelte leer je hoe je extra geluiden aan je project kunt toevoegen.
 
-## Add the code in the Pi4
-**Step 1 : Put the sound in the right folder**
+## Voeg de code toe op de Pi4
+**Stap 1 : Zet het geluid in de juiste map**
 
-Start with placing ur folder with the sound in this folder ``home/RPI2/Documents/Sound``. 
+Begin met het plaatsen van je map met geluiden in de map ``home/RPI2/Documents/Sound``. 
 ![Fysieke_box](../Technische_documentatie/Images/Sound_Folder.png)
 
-U will also need **8** different tones of ur sound. And they have to be called ``niveau 1.mp3``, ``niveau 2.mp3``, ``niveau 3.mp3``, .... ,``niveau 8.mp3``.
-**Niveau 1 will play with the lowest distance. And niveau 8 with the highest distance.**
+Je hebt **8** verschillende tonen van je geluid nodig. Deze moeten genoemd worden als  ``niveau 1.mp3``, ``niveau 2.mp3``, ``niveau 3.mp3``, .... ,``niveau 8.mp3``.
+**Niveau 1 wordt afgespeeld bij de laagste afstand, en niveau 8 bij de hoogste afstand.**
 
 ![Fysieke_box](../Technische_documentatie/Images/New_Sound_Folder.png)
 
-**Step 2 : Add ur sound in the ``sound_player.py``**
+**Stap 2 : Voeg je geluid toe in de ``sound_player.py``**
 ```
 instruments = {
     "gitaar": load_instrument_sounds("gitaar"),
@@ -176,9 +176,9 @@ instruments = {
     "UrNewSound": load_instrument_sounds("UrNewSound")    
 }
 ```
- ### How to change distance settings
+ ### Hoe de afstandsinstellingen te wijzigen
 
- If u want to change the discance at with the sounds play, u can do that in the ``get_level()`` function in the main.py file.
+ Als je de afstand waarop de geluiden worden afgespeeld wilt wijzigen, kun je dit doen in de ``get_level()`` functie in het main.py bestand.
 ```
 def get_level(distance):
     if distance < 10:
