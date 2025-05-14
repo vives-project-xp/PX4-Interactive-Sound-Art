@@ -18,4 +18,4 @@ Prijzen kunnen variëren. Dit is voor 1 unit.
 | Hoekankers | 5,28 | 30x30x14mm 20 stuks | / | [Hubo](https://www.hubo.be/nl/p/fg-wood-connectors-hoekanker-30x30x14-mm-20-stuks/86273/) | / |
 | Jackplug |  1,93 | 3,5mm Stereo Jack Plug | / | [Farnell](https://be.farnell.com/pro-signal/jr8013-7m/lead-3-5mm-s-jack-jack-7m/dp/4258502) | / |
 | USB-geluidskaarten | 8,67 | Externe geluidskaart | / | [AlleKabels](https://www.allekabels.be/delock/6335/4398057/delock-externe-usb-soundkarte-mit-usb-a-stecker-auf-2-x-35-mm-klinkenbuch.html?mc=nl-be&gad_source=1&gclid=Cj0KCQjwhMq-BhCFARIsAGvo0KfawZiw0aBHh6gZdGKgoc_lwPKSa9NmpS5epDACAZDRU02eevdK-TsaApHwEALw_wcB) | / |
-Totaal prijs : +- 309,26 €
+Totaal prijs (excl. btw) : 213,39 €
