@@ -498,19 +498,36 @@ h1, h2 {
   border-radius: 5px;
 }
 
+/* Updated rainbow animation styles */
 .rainbow {
   background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet);
   background-size: 400% 400%;
   animation: rainbow-animation 5s linear infinite;
+  position: relative;
+  z-index: 1;
+}
+
+.rainbow::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet);
+  background-size: 400% 400%;
+  animation: rainbow-animation 5s linear infinite;
+  z-index: -1;
+  border-radius: 15px;
+  filter: blur(8px);
 }
 
 .dark-mode .rainbow {
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: none;
 }
 
 .light-mode .rainbow {
   border: none;
-  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
 }
 
 @keyframes rainbow-animation {
