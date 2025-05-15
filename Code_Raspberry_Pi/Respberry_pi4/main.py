@@ -51,15 +51,15 @@ default_max_distance = 150.0  # 1.50 m maximum for responsiveness
 # Global LED and state settings
 current_color = "#FFFFFF"
 current_effect = "solid"
-current_instrument = "guitar"
+current_instrument = "Guitar"
 current_device_isOn = True
 current_volume = 100
 
-idle_mode = False
+idle_mode = True
 last_valid_distance = 0
 
 status_file = "/home/RPI2/Documents/txtFile/status.json"
-box_id = "1"
+box_id = "2"
 sound_isOff = False
 
 def measure_distance(timeout=0.01):
@@ -176,7 +176,7 @@ def distance_monitor():
                 distance = last_valid_distance
                 if idle_start is None:
                     idle_start = time.time()
-                if time.time() - idle_start >= 30:
+                if time.time() - idle_start >= 60:
                     print("entering idle mode")
                     idle_mode = True
                     current_instrument = "Stop"
@@ -237,7 +237,7 @@ def send_heartbeat():
         time.sleep(15)
 
 def connect_to_backend():
-    backend_ws_url = "http://sound-art:4000"
+    backend_ws_url = "https://api.soundart.devbitapp.be"
     try:
         sio.connect(backend_ws_url)
     except Exception as e:
@@ -250,4 +250,4 @@ if __name__ == "__main__":
     connect_to_backend()
     thread_heartbeat = threading.Thread(target=send_heartbeat, daemon=True)
     thread_heartbeat.start()
-    socketio_server.run(app, host="0.0.0.0", port=5000, debug=True, use_reloader=False)
+    socketio_server.run(app, host="0.0.0.0", port=5000, debug=True, use_reloader=False, allow_unsafe_werkzeug=True)
