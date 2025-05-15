@@ -34,7 +34,7 @@ De website ondersteunt verschillende weergaven:
 Voor meer gedetailleerde informatie over de werking van de gebruikersinterface kun je onderstaande links volgen:
 
 - Klik [hier](./frontend/README.md) voor een uitgebreide uitleg over de **frontend**.
-- Klik [hier](./backend/README.md) voor een diepgaand overzicht van de **backend**.
+- Klik [hier](./backend/README.md) voor een uitgebreide uitleg van de **backend**.
 
 Deze secties geven inzicht in de opbouw, gebruikte technologieën en functionaliteit van beide onderdelen van de installatie.
 
