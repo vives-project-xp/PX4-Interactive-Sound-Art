@@ -16,6 +16,18 @@ De installatie bestaat uit een sensor, een Raspberry Pi, geluidsmodules en LED-v
 
 De software zorgt voor een realtime reactie, waardoor een vloeiende en meeslepende interactie ontstaat. Voor wie meer wil weten over de technische kant, zoals de code en schema’s, kan je hieronder verdere informatie vinden die het project meer in detail toelicht.
 
+## Gebruikersinterface
+
+De gebruikersinterface is de visuele en digitale bediening van onze installatie. Het is als het ware het “controlepaneel” waarmee je onze installatie kunt aanpassen.
+
+Via een eenvoudige en duidelijke webpagina kunnen gebruikers bepaalde functies aan- of uitzetten of instellingen wijzigen. Denk bijvoorbeeld aan het kiezen van een geluidstype of het aanpassen van de lichtkleur.
+
+Onze frontend is voornamelijk ontwerpen met Vue.js, anderzijds is de backend geschreven in Node.js.
+
+De interface is bewust zo ontworpen dat je geen technische kennis nodig hebt om ermee aan de slag te gaan. Alles werkt via duidelijke knoppen en visuele elementen, zodat iedereen de installatie op een intuïtieve manier kan bedienen.
+
+Via deze [link](https://soundart.devbitapp.be/) komt u op onze frontend terecht.
+
 ## Specificaties
 
 Hieronder vind je een overzicht van de belangrijkste mappen van ons project. Elke map bevat specificaties over onder andere de gebruikte code en gebruikte bestanden:
