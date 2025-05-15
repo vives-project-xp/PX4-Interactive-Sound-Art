@@ -22,4 +22,4 @@ Welkom bij de frontend van de Interactive Sound Art Controller. Deze handleiding
     npm run dev
     ```
 
-    ⬅️ [Terug naar overzicht](../README.md)
+    ⬅️ [Terug naar overzicht](../README.md#technische-informatie)

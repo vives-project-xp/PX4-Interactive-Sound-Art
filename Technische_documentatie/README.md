@@ -5,10 +5,10 @@ Deze map bevat alle technische informatie die nodig is om het PX4-Interactive-So
 ## Inhoudstafel
 
 - **[Bestelling](./Bestelling/)**  
-  Bevat een overzicht van alle benodigde materialen en componenten, inclusief bestellingslijsten en leveranciersinformatie.
+  Bevat een overzicht van alle benodigde materialen en componenten, inclusief bestellijst en leveranciersinformatie.
 
 - **[Foto's](./Foto's/)**  
-  Documenteert het bouwproces en de opstelling van de installatie aan de hand van foto's.
+  Hier zijn alle foto's te vinden die in deze repository gebruikt worden.
 
 - **[Introductieposter](./Introductieposter/)**  
   De officiële projectposter met een beknopte uitleg van het concept, de werking en de doelstelling van de installatie.

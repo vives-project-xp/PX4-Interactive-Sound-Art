@@ -26,4 +26,4 @@ npm install
 npm start
 ```
 
-⬅️ [Terug naar overzicht](../README.md)
+⬅️ [Terug naar overzicht](../README.md#technische-informatie)
