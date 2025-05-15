@@ -8,10 +8,10 @@ Het doel van dit project is om een interactieve sound-art installatie te creëre
 
 ## Inhoudstafel
 
-• [Code_Raspberry_Pi](/Code_Raspberry_Pi/README.md)   
-• [Geluidsbestanden](/Geluidsbestanden/README.md)   
-• [Technische documentatie](/Technische_documentatie/README.md)  
-• [Website](/website/README.md)  
+• [Code_Raspberry_Pi](/Code_Raspberry_Pi)   
+• [Geluidsbestanden](/Geluidsbestanden)   
+• [Technische documentatie](/Technische_documentatie)  
+• [Website](/website)  
 
 ## Team
 
