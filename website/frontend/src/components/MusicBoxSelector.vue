@@ -128,7 +128,7 @@ export default {
         isOn: false,
         color: "#FF0000",
         effect: "solid",
-        instrument: "gitaar",
+        instrument: "Gitaar",
         volume: 50,
       }));
     });
