@@ -6,12 +6,22 @@ PX4-Interactive-Sound-Art is een interactief kunstproject dat beweging, geluid e
 
 Het doel van dit project is om een interactieve sound-art installatie te creëren waarin gebruikers door handbewegingen muziek en licht kunnen beïnvloeden.
 
-## Inhoudstafel
+## Inhoudstafel 
 
-• [Code_Raspberry_Pi](/Code_Raspberry_Pi)   
-• [Geluidsbestanden](/Geluidsbestanden)   
-• [Technische documentatie](/Technische_documentatie)  
-• [Website](/website)  
+Hieronder vind je een overzicht van de belangrijkste onderdelen van het PX4-Interactive-Sound-Art project. Elke map bevat essentiële bouwstenen van de interactieve installatie:
+
+- **[Code_Raspberry_Pi](/Code_Raspberry_Pi)**  
+  Bevat de broncode die draait op de Raspberry Pi. Deze code stuurt de sensor aan, verwerkt handbewegingen en activeert geluiden en lichtpatronen.
+
+- **[Geluidsbestanden](/Geluidsbestanden)**  
+  Een collectie audiobestanden die worden afgespeeld op basis van de interactie van de gebruiker met de installatie.
+
+- **[Technische documentatie](/Technische_documentatie)**  
+  Hier vind je een overzicht van alle benodigde materialen, een introductieposter van het project, en verschillende schema’s zoals het elektrisch schema, software schema en het blokschema die de werking van het systeem verduidelijken.
+
+- **[Website](/website)**  
+  Bevat de backend- en frontendcode van de gebruikersinterface. Deze interface stelt gebruikers in staat om de installatie aan te sturen en ermee te interageren via een visuele en toegankelijke bediening.
+
 
 ## Team
 
