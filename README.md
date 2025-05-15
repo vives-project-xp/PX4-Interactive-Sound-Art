@@ -22,7 +22,7 @@ De gebruikersinterface is de visuele en digitale bediening van onze installatie.
 
 Via een eenvoudige en duidelijke webpagina kunnen gebruikers bepaalde functies aan- of uitzetten of instellingen wijzigen. Denk bijvoorbeeld aan het kiezen van een geluidstype of het aanpassen van de lichtkleur.
 
-Onze frontend is voornamelijk ontwerpen met Vue.js, anderzijds is de backend geschreven in Node.js.
+Onze frontend is voornamelijk ontworpen met Vue.js, anderzijds is de backend geschreven in Node.js.
 
 De interface is bewust zo ontworpen dat je geen technische kennis nodig hebt om ermee aan de slag te gaan. Alles werkt via duidelijke knoppen en visuele elementen, zodat iedereen de installatie op een intuïtieve manier kan bedienen.
 
