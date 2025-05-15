@@ -14,4 +14,4 @@ Deze bestanden worden automatisch geladen en afgespeeld door de code op de Raspb
 
 Indien je nieuwe geluiden wil toevoegen, klik [hier](../Code_Raspberry_Pi/README.md#3-hoe-extra-geluiden-toe-te-voegen) voor extra uitleg. Zorg ervoor dat ze correct zijn geformatteerd en logisch worden geplaatst binnen de bestaande structuur.
 
-<a href="../README.md" style="text-decoration: none; color: white;">⬅️ Terug naar overzicht</a>
+⬅️ [Terug naar overzicht](../README.md)

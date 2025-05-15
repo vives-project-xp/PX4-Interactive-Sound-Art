@@ -35,7 +35,8 @@ Voor meer gedetailleerde informatie over de werking van de gebruikersinterface k
 
 Deze secties geven inzicht in de opbouw, gebruikte technologieën en functionaliteit van beide onderdelen van de installatie.
 
-<a href="../README.md" style="text-decoration: none; color: white;">⬅️ Terug naar overzicht</a>
+⬅️ [Terug naar overzicht](../README.md)
+
 
 
 

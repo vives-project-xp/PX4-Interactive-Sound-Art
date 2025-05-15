@@ -26,4 +26,4 @@ npm install
 npm start
 ```
 
-<a href="../README.md" style="text-decoration: none; color: white;">⬅️ Terug naar overzicht</a>
+⬅️ [Terug naar overzicht](../README.md)

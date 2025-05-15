@@ -20,4 +20,4 @@ Deze map bevat alle technische informatie die nodig is om het PX4-Interactive-So
 
 Raadpleeg deze map bij het bouwen, testen of presenteren van het project. De inhoud biedt ondersteuning bij zowel praktische uitvoering als theoretische onderbouwing.
 
-<a href="../README.md" style="text-decoration: none; color: white;">⬅️ Terug naar overzicht</a>
+⬅️ [Terug naar overzicht](../README.md)
