@@ -229,5 +229,5 @@ box_id = "Vul_hier_je_box_nummer_in"
 tailscale_ip = "IP_Van_Je_Pi"
 ```
 
-⬅️ [Terug naar overzicht](../README.md)
+⬅️ [Terug naar overzicht](../README.md#specificaties)
 
