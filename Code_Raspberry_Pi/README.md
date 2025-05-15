@@ -4,14 +4,16 @@ In deze README wordt uitgelegd hoe je de **Pi4** moet **opzetten**, hoe je **ext
 # 1. Pi4 instellen
 
 Gebruik de volgende commando's om de juiste library's te installeren:
-```
+```bash
 sudo apt update
-
+```
+```bash
 sudo apt install -y \
   python3-pip python3-dev build-essential \
   libffi-dev libssl-dev \
   python3-rpi.gpio python3-numpy python3-pygame
-
+```
+```bash
 sudo pip3 install \
   rpi_ws281x \
   flask \
@@ -24,19 +26,20 @@ sudo pip3 install \
 ```
 
 Moeite met de rpi_ws281x? Probeer het volgende:
-```
+```bash
 sudo pip3 install rpi_ws281x --break-systeel-packages
 ```
 Test of het correct is geïnstalleerd: 
-```
+```bash
 sudo python3 -c "import rpi_ws281x"
 ```
 Nu kun je alle scripts en sounds op de Pi zetten van de github. Zet de scripts onder de map ``/home/RPI2/Documents/`` en **noem ze zoals ze staan op de Github.** Zet dan alle sounds onder de map ``/home/RPI2/Documents/Sounds/`` **Gebruik ook hier de zelfde benaming als op GitHub!!**
 
 Run file:
-```
+```bash
 sudo python3 /home/RPI2/Documents/main.py
-
+```
+```bash
 python3 /home/RPI2/Documents/sound_player.py
 ```
 
@@ -85,18 +88,26 @@ WantedBy=multi-user.target
 ```
 
 Om de systemd-services te activeren, voer je de volgende commando's uit in de terminal:
-```
+```bash
 sudo systemctl daemon-reload
-
+```
+```bash
 sudo systemctl enable sound_player.service
+```
+```bash
 sudo systemctl enable led_sensor.service
-
+```
+```bash
 sudo systemctl start sound_player.service
+```
+```bash
 sudo systemctl start led_sensor.service
 ```
 Heb je een probleem met de scripts die niet werken? Dan kun je alle logs zien sinds de laatste boot met onderstaande commando's :
-```
+```bash
 sudo journalctl -u sound_player.service -b
+```
+```bash
 sudo journalctl -u led_sensor.service -b
 ```
 
@@ -109,7 +120,7 @@ In dit gedeelte leer je hoe je lichteffecten aan je project kunt toevoegen.
 
 Bepaal eerst of je effect een kleur nodig heeft. Bijvoorbeeld, bij het regenboogeffect is het niet nodig om een kleur te kiezen. Voeg vervolgens je code toe in het led_effects.py script. Je kunt bijvoorbeeld beginnen met:
 
-```
+```python
  def UrNewEffect(strip, leds_to_light, hex_color):
     # Your custom code here.
     # - leds_to_light: the number of LEDs that need to be on.
@@ -123,12 +134,12 @@ Vanaf hier kun je je eigen effect implementeren.
 **Stap 2 : voeg de code toe aan het main.py bestand**
 
 Importeer je nieuwe effect in je main.py script, samen met de bestaande effecten:
-```
+```python
 from led_effects import (effect_solid, effect_puls, effect_rainbow, effect_chase, effect_fire, effect_sparkle, IdleEffect , UrNewEffect)
 ```
 Werk vervolgens je ``update_leds()`` functie bij om je effect toe te voegen: 
 
-```
+```python
 def update_leds(leds_to_light):
     if current_effect == "solid":
         effect_solid(strip, leds_to_light, current_color)
@@ -164,7 +175,7 @@ Je hebt **8** verschillende tonen van je geluid nodig. Deze moeten genoemd worde
 ![Fysieke_box](../Technische_documentatie/Foto's/New_Sound_Folder.png)
 
 **Stap 2 : Voeg je geluid toe in de ``sound_player.py``**
-```
+```python
 instruments = {
     "gitaar": load_instrument_sounds("gitaar"),
     "drum": load_instrument_sounds("drum"),
@@ -179,7 +190,7 @@ instruments = {
  ### Hoe de afstandsinstellingen te wijzigen
 
  Als je de afstand waarop de geluiden worden afgespeeld wilt wijzigen, kun je dit doen in de ``get_level()`` functie in het main.py bestand.
-```
+```python
 def get_level(distance):
     if distance < 10:
         return 1

@@ -1,20 +1,20 @@
 # Interactive Sound Art Controller - Frontend
 
-Welcome to the frontend for the Interactive Sound Art Controller. This guide will walk you through the process to get your project up and running quickly.
+Welkom bij de frontend van de Interactive Sound Art Controller. Deze handleiding helpt je om het project snel op te starten en lokaal uit te voeren.
 
-## Prerequisites
-- [Node.js](https://nodejs.org/) (v12+ recommended)
-- npm (bundled with Node.js)
+## Vereisten
+- [Node.js](https://nodejs.org/) (versie 12 of hoger aanbevolen)
+- npm (wordt standaard meegeleverd met Node.js)
 
-## Installation Steps
+## Installatiestappen
 
-1. **Clone the Repository:**
+1. **Clone de repository:**
    ```bash
    git clone https://github.com/vives-project-xp/PX4-Interactive-Sound-Art.git
    cd vives-project-xp PX4-Interactive-Sound-Art
-2. **Install packages:**
+2. **Installeer de packages:**
     ```bash
     npm install
-3. **Run the Frontend:**
+3. **Start the Frontend:**
     ```bash
     npm run dev
