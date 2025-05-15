@@ -26,4 +26,4 @@ npm install
 npm start
 ```
 
-<a href="../README.md" style="display:inline-block; padding:8px 16px; color:white; border-radius:6px; text-decoration:none;">⬅️ Terug naar overzicht</a>
+<a href="../README.md" style="text-decoration: none; color: white;">⬅️ Terug naar overzicht</a>
