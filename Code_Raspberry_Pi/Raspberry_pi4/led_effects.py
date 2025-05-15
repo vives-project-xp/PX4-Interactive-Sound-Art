@@ -135,3 +135,9 @@ class IdleEffect:
                 self.current_index = 0
                 # Vernieuw de idle kleur na een volledige cyclus
                 self.idle_color = (random.randint(0,255), random.randint(0,255), random.randint(0,255))
+
+    def reset(self):
+        """Reset de idle-effect state zodat de animatie weer bij LED 1 begint."""
+        self.state = "build_on"
+        self.current_index = 0
+        self.last_update = time.time()

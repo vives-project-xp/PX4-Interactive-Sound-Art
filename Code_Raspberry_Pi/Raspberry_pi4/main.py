@@ -153,13 +153,13 @@ def get_level(distance):
 
 
 def distance_monitor():
-    global last_valid_distance, idle_mode, sound_isOff, current_device_isOn
+    global last_valid_distance, idle_mode, prev_idle_mode, sound_isOff, current_device_isOn
     idle_start = None
     idle_effect = IdleEffect(strip, idle_color=(255, 255, 0))
 
     try:
         while True:
-            # If device is switched off, disable sound and turn off LEDs
+            # Device uit?
             if not current_device_isOn:
                 sound_isOff = True
                 for i in range(strip.numPixels()):
@@ -170,14 +170,12 @@ def distance_monitor():
                 continue
 
             distance = measure_distance()
-            print(distance)
-            # Idle detection
+            # Idle-detectie
             if distance > last_valid_distance + 15:
                 distance = last_valid_distance
                 if idle_start is None:
                     idle_start = time.time()
                 if time.time() - idle_start >= 60:
-                    print("entering idle mode")
                     idle_mode = True
                     current_instrument = "Stop"
             else:
@@ -189,8 +187,18 @@ def distance_monitor():
 
             if idle_mode:
                 sound_isOff = True
+                # *** overgang naar idle: reset en zet alles uit ***
+                if not prev_idle_mode:
+                    # alle LEDs uit
+                    for i in range(strip.numPixels()):
+                        strip.setPixelColor(i, Color(0, 0, 0, 0))
+                    strip.show()
+                    # reset animatie
+                    idle_effect.reset()
+                prev_idle_mode = True
                 idle_effect.update()
             else:
+                prev_idle_mode = False
                 sound_isOff = False
                 update_leds(leds_to_light)
 
