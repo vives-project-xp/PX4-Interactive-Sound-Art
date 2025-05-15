@@ -1,8 +1,5 @@
 # PX4 Interactive Sound Art Website
 
-
-![Desktopweergave](../Technische_documentatie/Foto's/desktop_view.jpeg)
-
 Deze website is een interactieve ervaring die geluid en kunst combineert. Het project is ontworpen om gebruikers te betrekken bij een unieke audiovisuele beleving, waarbij technologie en creativiteit samenkomen.
 
 ## Over het project
@@ -20,7 +17,7 @@ De website ondersteunt verschillende weergaven:
 ![Desktopweergave](../Technische_documentatie/Foto's/desktop_view.jpeg)
 
 ### Mobiele weergave
-![Mobiele weergave](../Technische_documentatie/Foto's/mobile_view.jpeg)
+<img src="../Technische_documentatie/Foto's/mobile_view.jpeg" alt="Mobiele weergave" width="250"/>
 
 ## Hoe het is gemaakt
 
