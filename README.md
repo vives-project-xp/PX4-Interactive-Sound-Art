@@ -26,7 +26,7 @@ Onze frontend is voornamelijk ontworpen met Vue.js, terwijl de backend geschreve
 
 De interface is bewust zo ontworpen dat je geen technische kennis nodig hebt om ermee aan de slag te gaan. Alles werkt via duidelijke knoppen en visuele elementen, zodat iedereen de installatie op een intuïtieve manier kan bedienen.
 
-<a href="https://soundart.devbitapp.be/" target="_blank">Via deze link komt u op onze frontend terecht</a>
+👉 Via deze [link](https://soundart.devbitapp.be/) komt u op onze frontend terecht.
 
 ## Specificaties
 
