@@ -18,7 +18,7 @@ De software zorgt voor een realtime reactie, waardoor een vloeiende en meeslepen
 
 ## Specificaties
 
-Hieronder vind je een overzicht van de belangrijkste mappen van ons project. Elke map bevat specificaties over ons project:
+Hieronder vind je een overzicht van de belangrijkste mappen van ons project. Elke map bevat specificaties over onder andere de gebruikte code en gebruikte bestanden:
 
 - **[Code Raspberry Pi](/Code_Raspberry_Pi)**  
   Bevat de broncode die draait op de Raspberry Pi. Deze code stuurt de sensor aan, verwerkt handbewegingen en activeert geluiden en lichtpatronen.
