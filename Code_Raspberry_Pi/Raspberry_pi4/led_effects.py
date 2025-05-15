@@ -61,7 +61,7 @@ def effect_rainbow(strip, leds_to_light):
 
 def effect_chase(strip, leds_to_light, hex_color):
     rgb_color = normalize_hex(hex_color)
-    chase_speed = 10  # Aantal keren per seconde
+    chase_speed = 20  # Aantal keren per seconde
     offset = int(time.time() * chase_speed) % (leds_to_light if leds_to_light > 0 else 1)
     group_size = 4  # Vier LED's in een groep
     for i in range(strip.numPixels()):

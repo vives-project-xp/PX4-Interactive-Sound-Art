@@ -128,7 +128,7 @@ export default {
         isOn: false,
         color: "#FF0000",
         effect: "solid",
-        instrument: "gitaar",
+        instrument: "Gitaar",
         volume: 50,
       }));
     });
@@ -154,8 +154,7 @@ export default {
           id: boxId,
           ip,
           name: `Box ${boxId}`,
-          image: "/placeholder.png",
-          isOn: false,
+          isOn: true,
           color: "#ff0000",
           effect: "solid",
           instrument: "Gitaar",
