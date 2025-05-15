@@ -1,24 +1,20 @@
 # PX4-Interactive-Sound-Art
 
-PX4-Interactive-Sound-Art is een unieke kunstinstallatie waarbij je muziek en licht kunt creëren door simpelweg je handen te bewegen. Het combineert technologie met kunst, en nodigt iedereen uit om op een speelse manier te experimenteren met geluid en visuele effecten. Wanneer je je hand boven een sensor beweegt, reageert het systeem onmiddellijk met klanken en lichtpatronen — alsof je zelf een instrument en lichtshow in één bedient.
+PX4-Interactive-Sound-Art is een interactieve kunstinstallatie waarin je door simpele handbewegingen muziek en licht tot leven brengt. Het project combineert technologie en kunst en nodigt uit tot speels experimenteren met geluid en visuele effecten. Beweeg je hand boven een sensor en het systeem reageert onmiddellijk met klanken en licht — alsof je zelf een muzikaal instrument en lichtshow bestuurt.
 
-Deze interactieve ervaring is ontworpen om intuïtief, laagdrempelig en vooral leuk te zijn voor jong en oud. Of je nu geïnteresseerd bent in technologie, kunst of gewoon wil spelen met geluid, PX4 biedt een creatieve ruimte om te ontdekken en te creëren.
+De installatie is ontworpen om intuïtief en toegankelijk te zijn voor jong en oud. Of je nu houdt van technologie, kunst of gewoon wil spelen met geluid, PX4 biedt een creatieve ruimte waarin iedereen kan ontdekken en creëren.
 
 ## Doel
 
-Het doel van PX4-Interactive-Sound-Art is om een interactieve installatie te ontwerpen die kunst, technologie en beleving met elkaar verbindt. Door gebruik te maken van handgebaren boven een sensor, kunnen gebruikers op een intuïtieve manier muziek en licht aansturen.
+Met dit project willen we een brug slaan tussen digitale technologie en artistieke expressie. Het project creëert een interactieve ervaring waarbij gebruikers met handgebaren muziek en licht aansturen. Zo worden ze zelf onderdeel van het kunstwerk.
 
-We willen hiermee een laagdrempelige en speelse ervaring creëren waarbij bezoekers actief betrokken worden bij het kunstwerk. Het project stimuleert creativiteit, verwondering en ontdekking, en laat zien hoe moderne technologie gebruikt kan worden als expressiemiddel binnen interactieve kunst.
-
-Daarnaast beoogt het project een brug te slaan tussen digitale techniek en artistieke expressie, en wil het mensen — ongeacht hun leeftijd of achtergrond — uitnodigen om zelf te experimenteren met geluid en visuele effecten.
+De installatie is laagdrempelig en nodigt uit tot actieve participatie. Ze stimuleert verwondering, creativiteit en nieuwsgierigheid, en toont hoe moderne technologie gebruikt kan worden als vorm van expressie in interactieve kunst.
 
 ## Technisch
 
-PX4-Interactive-Sound-Art werkt met een combinatie van een sensor, een Raspberry Pi, geluidsmodules en LED-verlichting. Wanneer een gebruiker zijn of haar hand boven de sensor beweegt, detecteert het systeem deze beweging. De Raspberry Pi verwerkt deze input en stuurt op basis daarvan specifieke geluiden en lichtpatronen aan.
+De installatie bestaat uit een sensor, een Raspberry Pi, geluidsmodules en LED-verlichting. Handbewegingen worden door de sensor opgevangen en doorgestuurd naar de Raspberry Pi, die deze input verwerkt en vertaalt naar bijpassende geluiden en lichtpatronen.
 
-De installatie is volledig geprogrammeerd om realtime te reageren op handbewegingen, waardoor een vloeiende en interactieve ervaring ontstaat. Alles is verbonden via een op maat gemaakte software die beweging omzet in audiovisuele output.
-
-Voor wie interesse heeft in de technische details zoals de code, elektrische schema’s en gebruikte hardware, kan je hieronder verdere informatie vinden omtrent alle technische specificaties van ons project.
+De software zorgt voor een realtime reactie, waardoor een vloeiende en meeslepende interactie ontstaat. Voor wie meer wil weten over de technische kant, zoals de code en schema’s, kan je hieronder verdere informatie vinden die het project meer in detail toelicht.
 
 ## Specificaties
 
