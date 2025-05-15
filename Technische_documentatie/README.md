@@ -2,7 +2,7 @@
 
 Deze map bevat alle technische informatie die nodig is om het PX4-Interactive-Sound-Art project op te bouwen, begrijpen en presenteren. De documentatie ondersteunt zowel de hardware- als softwarecomponenten van de installatie.
 
-## Mappenstructuur
+## Inhoudstafel
 
 - **[Bestelling](./Bestelling/)**  
   Bevat een overzicht van alle benodigde materialen en componenten, inclusief bestellingslijsten en leveranciersinformatie.
