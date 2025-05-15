@@ -1,43 +1,27 @@
-## Manuel setup
+# Manuele setup
 
-1) dowload github repo
+1) **Download de GitHub repository**
+```bash
+git clone https://github.com/vives-project-xp/PX4-Interactive-Sound-Art.git
+```
 
-2) terminal in backend
+2) **Terminal in backend**
+```bash
+cd website/backend
+```
 
-**Vanaf hier in docker**
-3)  - nodejs moet geinstalleerd zijn
-    - npm moet geinstalleerd zijn
+# Vanaf hier in docker
 
-4) installeren dependencies
-- npm install
+3)  **Zorg ervoor dat het volgende geïnstalleerd is:**
+- Node.js 
+- npm 
 
-5) runnen server
-- npm start
+4) **Installeer de benodigde pakketten**
+```bash
+npm install
+```
 
-
---- 
-
-Voorbeeld door chatgpt
-
-# Use an official Node.js runtime as a base image
-FROM node:16-alpine
-
-# Set the working directory in the container
-WORKDIR /app
-
-# Copy package.json and package-lock.json (if available)
-COPY package*.json ./
-
-# Install the dependencies
-RUN npm install
-
-# Copy the rest of your application code
-COPY . .
-
-# Expose the port the app runs on
-EXPOSE 4000
-
-# Start the application
-CMD ["npm", "start"]
-
----
+5) **Start de server**
+```bash
+npm start
+```
