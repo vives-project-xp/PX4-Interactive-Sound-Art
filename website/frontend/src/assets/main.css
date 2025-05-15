@@ -1,7 +1,6 @@
 @import './base.css';
 
 #app {
-  background: linear-gradient(135deg, #1e1e1e, #2f2f2f);
   margin: 0 auto;
   padding: 2rem;
   font-weight: normal;

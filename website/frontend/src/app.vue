@@ -21,7 +21,7 @@ export default {
     // Check system preference
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     this.isDarkMode = prefersDark;
-    
+
     // Listen for changes
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
       this.isDarkMode = e.matches;
