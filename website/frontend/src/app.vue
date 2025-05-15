@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" :class="{'dark-theme': isDarkMode, 'light-theme': !isDarkMode}">
     <MusicBoxSelector />
   </div>
 </template>
@@ -8,20 +8,52 @@
 import MusicBoxSelector from "./components/MusicBoxSelector.vue";
 
 export default {
+  name: "App",
   components: {
     MusicBoxSelector,
+  },
+  data() {
+    return {
+      isDarkMode: false,
+    };
+  },
+  mounted() {
+    // Check system preference
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    this.isDarkMode = prefersDark;
+    
+    // Listen for changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+      this.isDarkMode = e.matches;
+    });
   },
 };
 </script>
 
 <style>
-/* Dark Mode Background */
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
 #app {
-  font-family: "Arial", sans-serif;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background: linear-gradient(135deg, #1e1e1e, #3a3a3a);
+  transition: background-color 0.3s ease;
+}
+
+.dark-theme {
+  background-color: #1a1a1a;
+}
+
+.light-theme {
+  background-color: #ffffff;
 }
 </style>
