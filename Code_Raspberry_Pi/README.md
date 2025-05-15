@@ -49,16 +49,16 @@ Maak onderstaande files aan in de map ``/etc/systemd/system/``
 ``sound_player.service``
 ```
 [Unit]
-Description=Sound-Player Service
+Description=Sound Player Service
 After=led_sensor.service sound.target
-Requires=led_sensor.service sound.target
+Requires=led_sensor.service
 
 [Service]
 User=RPI2
-Enviroment=XDG_RUNTIME_DIR=/run/user/1000
+Environment=XDG_RUNTIME_DIR=/run/user/1000
 Type=simple
 WorkingDirectory=/home/RPI2/Documents
-ExecStart=python3 /home/RPI2/Documents/sound_player.py
+ExecStart=/usr/bin/python3 /home/RPI2/Documents/sound_player.py
 Restart=on-failure
 RestartSec=5
 
@@ -92,9 +92,9 @@ sudo systemctl enable sound_player.service
 sudo systemctl enable led_sensor.service
 
 sudo systemctl start sound_player.service
-sudo systemctl enable led_sensor.service
+sudo systemctl start led_sensor.service
 ```
-Heb je een probleem met de scripts die niet werken? Dan kun je alle logs zien sinds de laatste met onderstaande commando's :
+Heb je een probleem met de scripts die niet werken? Dan kun je alle logs zien sinds de laatste boot met onderstaande commando's :
 ```
 sudo journalctl -u sound_player.service -b
 sudo journalctl -u led_sensor.service -b
@@ -182,29 +182,21 @@ instruments = {
 ```
 def get_level(distance):
     if distance < 10:
-        #print(f"Speelt sample niveau 1 af (afstand < 10)")
         return 1
-    elif 10 <= distance < 20:
-        #print(f"Speelt sample niveau 2 af (afstand 10-20)")
+    elif distance < 20:
         return 2
-    elif 20 <= distance < 30:
-        #print(f"Speelt sample niveau 3 af (afstand 20-30)")
+    elif distance < 30:
         return 3
-    elif 30 <= distance < 40:
-        #print(f"Speelt sample niveau 4 af (afstand 30-40)")
+    elif distance < 40:
         return 4
-    elif 40 <= distance < 50:
-        #print(f"Speelt sample niveau 5 af (afstand 40-50)")
+    elif distance < 50:
         return 5
-    elif 50 <= distance < 60:
-        #print(f"Speelt sample niveau 6 af (afstand 50-60)")
+    elif distance < 60:
         return 6
-    elif 60 <= distance < 70:
-        #print(f"Speelt sample niveau 7 af (afstand 60-70)")
+    elif distance < 70:
         return 7
-    elif distance >= 70:
-        #print(f"Speelt sample niveau 8 af (afstand >= 70)")
-        return 8        
+    else:
+        return 8     
 ```
 
 ## Meerdere Pi’s instellen
