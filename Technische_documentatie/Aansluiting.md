@@ -22,7 +22,7 @@
 2. Verbind de uitgangen van beide weerstanden samen naar **Audio In +** van de versterker.
 3. Verbind **GND (zwart)** naar **Audio In -**.
 
-![schema](../documentatie/images/amplifierMod.jpg)
+![schema](../Technische_documentatie/Foto's/amplifierMod.jpg)
 
 ## Stap 2: Versterker aansluiten
 1. **Voeding:** Sluit een **12V DC** aan op de **VCC** en **GND** van de versterker.
