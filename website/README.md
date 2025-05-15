@@ -1,6 +1,5 @@
 # PX4 Interactive Sound Art Website
 
-# PX4 Interactive Sound Art Website
 
 ![Desktopweergave](fotos/desktop_view.jpeg)
 
