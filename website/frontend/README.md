@@ -12,9 +12,14 @@ Welkom bij de frontend van de Interactive Sound Art Controller. Deze handleiding
    ```bash
    git clone https://github.com/vives-project-xp/PX4-Interactive-Sound-Art.git
    cd vives-project-xp PX4-Interactive-Sound-Art
+   ```
 2. **Installeer de packages:**
     ```bash
     npm install
+    ```
 3. **Start the Frontend:**
     ```bash
     npm run dev
+    ```
+
+    <a href="../README.md" style="display:inline-block; padding:8px 16px; color:white; border-radius:6px; text-decoration:none;">⬅️ Terug naar overzicht</a>
