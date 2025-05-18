@@ -106,3 +106,4 @@ Komt er langer dan 60 seconden geen heartbeat van een box, dan wordt deze automa
 
 De cleanup gebeurt automatisch elke 30 seconden.
 
+⬅️ [Terug naar overzicht](../README.md#specificaties)
