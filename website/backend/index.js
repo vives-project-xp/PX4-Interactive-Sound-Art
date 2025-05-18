@@ -5,7 +5,7 @@ import { Server as SocketIOServer } from "socket.io";
 
 const app = express();
 const server = http.createServer(app);
-const io = new SocketIOServer(server, {
+const io = new SocketIOServer(server, { 
   cors: { origin: "*" }
 });
 const PORT = 4000;
@@ -17,7 +17,7 @@ const commands = {};  // { [boxId]: { isOn, color, effect, instrument, … } }
 app.use(cors());
 app.use(express.json());
 
-// Hello from backend
+// Hello from backend to check connection
 app.get("/", (req, res) => {
   res.json({ message: "Hello from the backend!" });
 });
@@ -46,7 +46,7 @@ io.on("connection", (socket) => {
     socket.join(`pi-${boxId}`);
     console.log(`Pi registered → boxId=${boxId}, joined room pi-${boxId}`);
 
-    // Ack & notify all front-ends about the new box
+    // Succes & notify all front-ends about the new box
     socket.emit("register_ack", { success: true });
     io.to("frontends").emit("device-connected", { boxId, ip });
   });
@@ -77,7 +77,7 @@ io.on("connection", (socket) => {
 
   // Clean up on disconnect
   socket.on("disconnect", () => {
-    // Was it a Pi?
+    // Check if a Pi disconnected
     const gone = Object.entries(devices).find(
       ([, info]) => info.socketId === socket.id
     );
