@@ -1,8 +1,10 @@
 # PX4-Interactive-Sound-Art
 
-**PX4-Interactive-Sound-Art** is een interactieve kunstinstallatie waarin je door simpele handbewegingen muziek en licht tot leven brengt. Het project combineert technologie en kunst en nodigt uit tot speels experimenteren met geluid en visuele effecten. Beweeg je hand boven een sensor en het systeem reageert onmiddellijk met klanken en licht — alsof je zelf een muzikaal instrument en lichtshow bestuurt.
+![Box resultaat](./Technische_documentatie/Foto's/Box_eind.png)
 
-De installatie is ontworpen om intuïtief en toegankelijk te zijn voor jong en oud. Of je nu houdt van technologie, kunst of gewoon wilt spelen met geluid, PX4 biedt een creatieve ruimte waarin iedereen kan ontdekken en creëren.
+**PX4-Interactive-Sound-Art** is een interactieve kunstinstallatie waarin je door simpele handbewegingen muziek en licht tot leven brengt. Het project combineert technologie en kunst en nodigt uit tot speels experimenteren met geluid en visuele effecten. Beweeg je hand boven een sensor en het systeem reageert onmiddellijk met klanken en licht, alsof je zelf een muzikaal instrument en lichtshow bestuurt.
+
+De installatie is ontworpen om intuïtief en toegankelijk te zijn voor jong en oud. Of je nu houdt van technologie, kunst of gewoon wilt spelen met geluid, PX4-Interactive-Sound-Art biedt een creatieve ruimte waarin iedereen kan ontdekken en creëren.
 
 ## Doel
 
@@ -22,11 +24,16 @@ De gebruikersinterface is de visuele en digitale bediening van onze installatie.
 
 Via een eenvoudige en duidelijke webpagina kunnen gebruikers bepaalde functies aan- of uitzetten of instellingen wijzigen. Denk bijvoorbeeld aan het kiezen van een geluidstype of het aanpassen van de lichtkleur.
 
-Onze frontend is voornamelijk ontworpen met Vue.js, terwijl de backend geschreven is in Node.js.
+Onze frontend is voornamelijk ontworpen met Vue.js, terwijl de backend geschreven is in javascript en draait op node.js.
 
 De interface is bewust zo ontworpen dat je geen technische kennis nodig hebt om ermee aan de slag te gaan. Alles werkt via duidelijke knoppen en visuele elementen, zodat iedereen de installatie op een intuïtieve manier kan bedienen.
 
-👉 Via deze [link](https://soundart.devbitapp.be/) komt u op onze website terecht.
+<div style="display: flex; justify-content: center; gap: 16px;">
+  <img src="./Technische_documentatie/Foto's/desktop_view.jpeg" alt="Frontend desktop" style="max-height: 400px;">
+  <img src="./Technische_documentatie/Foto's/mobile_view.jpeg" alt="Frontend mobiel" style="max-height: 400px;">
+</div>
+
+👉 Via deze [link](https://soundart.devbitapp.be/){:target="_blank" rel="noopener"} komt u op onze website terecht.
 
 ## Specificaties
 
