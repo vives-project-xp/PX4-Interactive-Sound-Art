@@ -109,15 +109,18 @@ export default {
     };
   },
   mounted() {
+    // Initialize color mode based on system preference
     this.initColorMode();
 
+    // connect to the socket server
     socketService.connect();
     socketService.emit("register", { client: "frontend" });
     socketService.on("connect", () => {
       console.log("[Vue] connected to socket server");
     });
-
-    socketService.on("devices-list", list => {
+    
+    // receive initial list of already-connected boxes
+    socketService.on("devices-list", (list) => {
       this.musicBoxes = list.map(({ boxId, ip }) => ({
         id: boxId,
         ip,
@@ -130,54 +133,61 @@ export default {
       }));
     });
 
-    socketService.on("command", this.handleCommand);
+    // handle updates from any client or Pi
+    socketService.on("command", (data) => {
+      console.log("[Vue] received command:", data);
+      const idx = this.musicBoxes.findIndex((b) => b.id === data.boxId);
+      if (idx !== -1) {
+        const updated = { ...this.musicBoxes[idx], ...data };
+        // reactive in-place replace so all UIs update
+        this.musicBoxes.splice(idx, 1, updated);
+        if (this.selectedBox && this.selectedBox.id === data.boxId) {
+          this.selectedBox = updated;
+        }
+      }
+    });
 
-    // When a new Pi connects: add and immediately push defaults
+    // when a new Pi connects  
     socketService.on("device-connected", ({ boxId, ip }) => {
-      if (!this.musicBoxes.some(b => b.id === boxId)) {
-        const newBox = {
+      if (!this.musicBoxes.some((b) => b.id === boxId)) {
+        this.musicBoxes.push({
           id: boxId,
           ip,
           name: `Box ${boxId}`,
-          isOn: false,
-          color: "#FF0000",
+        
+          color: "#ff0000",
           effect: "solid",
           instrument: "Gitaar",
           volume: 50,
-        };
-        this.musicBoxes.push(newBox);
-
-        // Auto‑push default settings
-        socketService.emit("update-settings", {
-          boxId,
-          settings: {
-            isOn: newBox.isOn,
-            color: newBox.color,
-            effect: newBox.effect,
-            instrument: newBox.instrument,
-            volume: newBox.volume,
-          },
         });
       }
     });
 
+    // when a Pi disconnects 
     socketService.on("device-disconnected", ({ boxId }) => {
-      this.musicBoxes = this.musicBoxes.filter(b => b.id !== boxId);
-      if (this.selectedBox?.id === boxId) {
+      this.musicBoxes = this.musicBoxes.filter((b) => b.id !== boxId);
+      if (this.selectedBox && this.selectedBox.id === boxId) {
         this.selectedBox = null;
       }
     });
   },
   methods: {
+    // Color mode methods
     initColorMode() {
+      // Use system preference
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       this.isDarkMode = prefersDark;
-      window.matchMedia('(prefers-color-scheme: dark)')
-            .addEventListener('change', e => this.isDarkMode = e.matches);
+      
+      // Listen for system preference changes
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        this.isDarkMode = e.matches;
+      });
     },
+    
     selectBox(box) {
       this.selectedBox = box;
     },
+    
     togglePower(box) {
       box.isOn = !box.isOn;
       socketService.emit("update-settings", {
@@ -185,44 +195,39 @@ export default {
         settings: { isOn: box.isOn },
       });
     },
+    
     updateColor() {
       socketService.emit("update-settings", {
         boxId: this.selectedBox.id,
         settings: { color: this.selectedBox.color },
       });
     },
+    
     updateEffect() {
       socketService.emit("update-settings", {
         boxId: this.selectedBox.id,
         settings: { effect: this.selectedBox.effect },
       });
     },
+    
     updateInstrument() {
       socketService.emit("update-settings", {
         boxId: this.selectedBox.id,
         settings: { instrument: this.selectedBox.instrument },
       });
     },
+    
     updateVolume() {
       socketService.emit("update-settings", {
         boxId: this.selectedBox.id,
         settings: { volume: this.selectedBox.volume },
       });
     },
+    
     getBoxBackground(box) {
-      if (!box.isOn || box.effect === 'rainbow') return 'transparent';
+      if (!box.isOn) return 'transparent';
+      if (box.effect === 'rainbow') return 'transparent'; // The rainbow class will handle the background
       return box.color;
-    },
-    handleCommand(data) {
-      console.log("[Vue] received command:", data);
-      const idx = this.musicBoxes.findIndex(b => b.id === data.boxId);
-      if (idx !== -1) {
-        const updated = { ...this.musicBoxes[idx], ...data };
-        this.$set(this.musicBoxes, idx, updated);
-        if (this.selectedBox?.id === data.boxId) {
-          this.selectedBox = updated;
-        }
-      }
     },
   },
 };
@@ -502,15 +507,31 @@ h1, h2 {
   background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet);
   background-size: 400% 400%;
   animation: rainbow-animation 5s linear infinite;
+  position: relative;
+  z-index: 1;
+}
+
+.rainbow::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet);
+  background-size: 400% 400%;
+  animation: rainbow-animation 5s linear infinite;
+  z-index: -1;
+  border-radius: 15px;
+  filter: blur(8px);
 }
 
 .dark-mode .rainbow {
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: none;
 }
 
 .light-mode .rainbow {
   border: none;
-  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
 }
 
 @keyframes rainbow-animation {
