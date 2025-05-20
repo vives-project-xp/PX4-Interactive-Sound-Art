@@ -33,7 +33,9 @@ De interface is bewust zo ontworpen dat je geen technische kennis nodig hebt om 
   <img src="./Technische_documentatie/Foto's/mobile_view.jpeg" alt="Frontend mobiel" style="max-height: 400px;">
 </div>
 
-👉 Via deze [link](https://soundart.devbitapp.be/){:target="_blank" rel="noopener"} komt u op onze website terecht.
+👉 Klik <a href="https://soundart.devbitapp.be/" target="_blank" rel="noopener noreferrer">
+hier</a> om naar onze website te gaan.
+
 
 ## Specificaties
 
