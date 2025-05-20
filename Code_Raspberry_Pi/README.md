@@ -219,14 +219,12 @@ Als je dit project op meerdere Raspberry Pi’s wilt draaien, kun je het handigs
 2. **SD-kaart flashen**  
    – Schrijf dat `.img`-bestand naar de doel-SD-kaart en steek die in de volgende Pi.
 
-Ná het klonen moet je in `main.py` twee variabelen per Pi nog aanpassen, zodat elke Pi uniek is en met de website communiceert:
+Na het klonen moet je in `main.py` 1 variabelen per Pi nog aanpassen, zodat elke Pi uniek is en met de website communiceert:
 
 ```python
 # Regel 62: box-nummer van deze Pi
 box_id = "Vul_hier_je_box_nummer_in"
 
-# Regel 213: Tailscale-IP van deze Pi
-tailscale_ip = "IP_Van_Je_Pi"
 ```
 
 <a href="../README.md" style="text-decoration: none; color: white;">⬅️ Terug naar overzicht</a>
