@@ -58,7 +58,7 @@ current_volume = 100
 idle_mode = True
 last_valid_distance = 0
 
-status_file = "/home/RPI2/Documents/txtFile/status.json"
+status_file = "/root/sound-art/status.json"
 box_id = "2"
 sound_isOff = False
 

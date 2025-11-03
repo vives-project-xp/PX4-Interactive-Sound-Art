@@ -8,7 +8,7 @@ import os
 pygame.mixer.init()
 
 # Basis pad voor de geluiden
-SOUNDS_BASE_PATH = "/home/RPI2/Documents/Sounds"
+SOUNDS_BASE_PATH = "/root/sound-art/Instrumenten"
 
 def load_instrument_sounds(instrument_name):
     """
