@@ -22,7 +22,7 @@ De website ondersteunt verschillende weergaven:
 ## Hoe het is gemaakt
 
 - **Frontend**: Vue.js
-- **Backend**: Node.js
+- **Backend**: geschreven in javascript en draait op node.js.
 - **Interactiviteit**: JavaScript voor dynamische elementen
 - **Responsiviteit**: CSS Media Queries voor aanpassing aan verschillende schermformaten
 
@@ -36,7 +36,3 @@ Voor meer gedetailleerde informatie over de werking van de gebruikersinterface k
 Deze secties geven inzicht in de opbouw, gebruikte technologieën en functionaliteit van beide onderdelen van de installatie.
 
 ⬅️ [Terug naar overzicht](../README.md#specificaties)
-
-
-
-
