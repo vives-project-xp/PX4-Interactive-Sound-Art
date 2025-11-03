@@ -55,7 +55,6 @@ def read_status():
         with open(status_file, "r") as file:
             status = json.load(file)
             raw_vol = status.get("volume", 100)
-            # Converteer 0-100 naar 0.0-1.0
             vol = max(0, min(raw_vol, 100)) / 100.0
             return status.get("instrument"), status.get("sound_level"), status.get("sound_stop"), vol
     except Exception as e:
@@ -74,46 +73,19 @@ def play_sound(sound_level, instrument, sound_stop, volume):
         print(f"Geen geluiden gevonden voor instrument: {instrument}")
         return
 
-    if not sound_stop:
-        match sound_level:
-            case 1:
-                sounds["niv1"].set_volume(volume)
-                sounds["niv1"].play()
-                print(f"Speelt {instrument} sample niveau 1 af (afstand < 10) met volume {volume*100:.0f}%")
-            case 2:
-                sounds["niv2"].set_volume(volume)
-                sounds["niv2"].play()
-                print(f"Speelt {instrument} sample niveau 2 af (afstand 10-20) met volume {volume*100:.0f}%")
-            case 3:
-                sounds["niv3"].set_volume(volume)
-                sounds["niv3"].play()
-                print(f"Speelt {instrument} sample niveau 3 af (afstand 20-30) met volume {volume*100:.0f}%")
-            case 4:
-                sounds["niv4"].set_volume(volume)
-                sounds["niv4"].play()
-                print(f"Speelt {instrument} sample niveau 4 af (afstand 30-40) met volume {volume*100:.0f}%")
-            case 5:
-                sounds["niv5"].set_volume(volume)
-                sounds["niv5"].play()
-                print(f"Speelt {instrument} sample niveau 5 af (afstand 40-50) met volume {volume*100:.0f}%")
-            case 6:
-                sounds["niv6"].set_volume(volume)
-                sounds["niv6"].play()
-                print(f"Speelt {instrument} sample niveau 6 af (afstand 50-60) met volume {volume*100:.0f}%")
-            case 7:
-                sounds["niv7"].set_volume(volume)
-                sounds["niv7"].play()
-                print(f"Speelt {instrument} sample niveau 7 af (afstand 60-70) met volume {volume*100:.0f}%")
-            case 8:
-                sounds["niv8"].set_volume(volume)
-                sounds["niv8"].play()
-                print(f"Speelt {instrument} sample niveau 8 af (afstand >= 70) met volume {volume*100:.0f}%")
-            case _:
-                print("Ongeldig geluidsniveau")
-    else:
-        # Stop alle lopende geluiden
+    if sound_stop:
         pygame.mixer.stop()
         print("Sound Off")
+        return
+    
+    sound: pygame.mixer.Sound = sounds.get("niv"+str(sound_level))
+    if sound:
+        sound.set_volume(volume)
+        sound.play()
+        print(f"Speelt {instrument} sample niveau {sound_level} af met volume {volume*100:.0f}%")
+    else:
+        print("Ongeldig geluidsniveau")
+        
 
 try:
     while True:

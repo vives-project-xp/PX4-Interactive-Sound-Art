@@ -14,7 +14,7 @@ def normalize_hex(hex_color):
     r = int(hex_color[0:2], 16)
     g = int(hex_color[2:4], 16)
     b = int(hex_color[4:6], 16)
-    return (g, r, b)
+    return (r, g, b)
 
 def effect_solid(strip, leds_to_light, hex_color):
     rgb_color = normalize_hex(hex_color)
@@ -24,23 +24,27 @@ def effect_solid(strip, leds_to_light, hex_color):
         else:
             strip.setPixelColor(i, Color(0, 0, 0, 0))
     strip.show()
+    
+def pulse(color, brightness):
+    return min(255, int(color * brightness))
 
 def effect_puls(strip, leds_to_light, hex_color):
     period = 2.0  # Puls-periode in seconden
     brightness_factor = 0.35 * (math.sin(2 * math.pi * time.time() / period) + 1) + 0.3
     rgb_color = normalize_hex(hex_color)
-    puls_color = (min(255, int(rgb_color[0] * brightness_factor)),
-                  min(255, int(rgb_color[1] * brightness_factor)),
-                  min(255, int(rgb_color[2] * brightness_factor)))
+    pulse_color = (
+        pulse(rgb_color[0], brightness_factor),
+        pulse(rgb_color[1], brightness_factor),
+        pulse(rgb_color[2], brightness_factor)
+    )
     for i in range(strip.numPixels()):
         if i < leds_to_light:
-            strip.setPixelColor(i, Color(puls_color[0], puls_color[1], puls_color[2], 0))
+            strip.setPixelColor(i, Color(pulse_color[0], pulse_color[1], pulse_color[2], 0))
         else:
             strip.setPixelColor(i, Color(0, 0, 0, 0))
     strip.show()
 
 def color_wheel(pos):
-    # Retourneert een Color gebaseerd op een positie 0-255
     if pos < 85:
         return Color(pos * 3, 255 - pos * 3, 0, 0)
     elif pos < 170:
@@ -50,7 +54,7 @@ def color_wheel(pos):
         pos -= 170
         return Color(0, pos * 3, 255 - pos * 3, 0)
 
-def effect_rainbow(strip, leds_to_light):
+def effect_rainbow(strip, leds_to_light, /):
     offset = int(time.time() * 50) % 256
     for i in range(leds_to_light):
         pos = ((i * 256 // strip.numPixels()) + offset) & 255
@@ -61,9 +65,9 @@ def effect_rainbow(strip, leds_to_light):
 
 def effect_chase(strip, leds_to_light, hex_color):
     rgb_color = normalize_hex(hex_color)
-    chase_speed = 20  # Aantal keren per seconde
+    chase_speed = 20
     offset = int(time.time() * chase_speed) % (leds_to_light if leds_to_light > 0 else 1)
-    group_size = 4  # Vier LED's in een groep
+    group_size = 4
     for i in range(strip.numPixels()):
         if i < leds_to_light and offset <= i < offset + group_size:
             strip.setPixelColor(i, Color(rgb_color[0], rgb_color[1], rgb_color[2], 0))
@@ -73,13 +77,14 @@ def effect_chase(strip, leds_to_light, hex_color):
 
 def effect_fire(strip, leds_to_light):
     for i in range(strip.numPixels()):
-        if i < leds_to_light:
-            red = random.randint(200, 255)
-            green = random.randint(40, 100)
-            blue = random.randint(0, 20)
-            strip.setPixelColor(i, Color(green, red, blue, 0))
-        else:
+        if i >= leds_to_light:
             strip.setPixelColor(i, Color(0, 0, 0, 0))
+            break
+        
+        red = random.randint(200, 255)
+        green = random.randint(40, 100)
+        blue = random.randint(0, 20)
+        strip.setPixelColor(i, Color(green, red, blue, 0))
     strip.show()
 
 def effect_sparkle(strip, leds_to_light, hex_color):

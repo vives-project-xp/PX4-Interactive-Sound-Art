@@ -116,24 +116,27 @@ def write_status_to_file(distance):
     except Exception as e:
         print("Error writing status:", e)
 
-def update_leds(leds_to_light):
-    if current_effect == "solid":
-        effect_solid(strip, leds_to_light, current_color)
-    elif current_effect == "puls":
-        effect_puls(strip, leds_to_light, current_color)
-    elif current_effect == "rainbow":
-        effect_rainbow(strip, leds_to_light)
-    elif current_effect == "chase":
-        effect_chase(strip, leds_to_light, current_color)
-    elif current_effect == "fire":
-        effect_fire(strip, leds_to_light)
-    elif current_effect == "sparkle":
-        effect_sparkle(strip, leds_to_light, current_color)
-    else:
-        effect_solid(strip, leds_to_light, current_color)
+def update_leds(leds_to_light):    
+    getattr(__import__("main"), "effect_"+current_effect, effect_solid)(strip, leds_to_light, current_color)
+    
+    # if current_effect == "solid":
+    #     effect_solid(strip, leds_to_light, current_color)
+    # elif current_effect == "puls":
+    #     effect_puls(strip, leds_to_light, current_color)
+    # elif current_effect == "rainbow":
+    #     effect_rainbow(strip, leds_to_light)
+    # elif current_effect == "chase":
+    #     effect_chase(strip, leds_to_light, current_color)
+    # elif current_effect == "fire":
+    #     effect_fire(strip, leds_to_light)
+    # elif current_effect == "sparkle":
+    #     effect_sparkle(strip, leds_to_light, current_color)
+    # else:
+    #     effect_solid(strip, leds_to_light, current_color)
 
 
 def get_level(distance):
+    return (distance//10) + 1 
     if distance < 10:
         return 1
     elif distance < 20:
@@ -177,7 +180,6 @@ def distance_monitor():
                     idle_start = time.time()
                 if time.time() - idle_start >= 60:
                     idle_mode = True
-                    current_instrument = "Stop"
             else:
                 last_valid_distance = distance
                 idle_start = None
